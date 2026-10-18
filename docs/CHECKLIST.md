@@ -109,12 +109,19 @@ Legend: `[x]` done · `[ ]` open · `[~]` partial / placeholder
 - [x] Categories, filters, pricing, package and estimator links, accessibility (previews are `role="img"` with descriptions) and responsiveness preserved
 - [x] Tests: concept framing, no demo wording, no client-work implications, no ratings/reviews/percentages in preview copy (unit); concept labels, preview images load and stay inside their frames, desktop and mobile previews on detail pages (e2e)
 
-## Sprint 7: Contact and quote request
+## Sprint 7: Contact and quote request ✅
 
-- [ ] Shared zod schema, with client and server validation
-- [ ] Server Action, honeypot and rate limiting
-- [ ] Configurable delivery (Resend once the API key and receiving address are provided)
-- [ ] Honest success and error states (never a fake success)
+- [x] `/kontakt`: Albanian quote form (name, business (optional), email, phone (optional), project type, package, budget range, desired timeline, description), "what happens next" steps, links to estimator and pricing, configured contact details only (none yet). Indexable; no closing CTA band
+- [x] Pre-fill from pricing, service, project and estimator links (`?paketa`, `?faqe`, `?shtesa`, new `?projekti`), all parsed safely (`parseQuotePrefill`); estimate shown as an itemised card, removable, tied to its package, recalculated on the server
+- [x] Shared validation for client and server (`src/lib/quote-request.ts`). Decision: a small hand-written validator instead of zod (no new dependency, Albanian messages keyed by error codes)
+- [x] Accessible form: labels, hints, `aria-invalid` / `aria-describedby`, focused error summary with links to fields, live error updates after the first attempt, focused confirmation, keyboard-only flow, loading state (`aria-busy`, announced)
+- [x] Server Action with server-side validation, honeypot, minimum fill time, per-visitor (5 / 10 min) and site-wide (50 emails / h) in-memory rate limits, input sanitizing, HTML-escaped email, idempotency key
+- [x] Delivery via the Resend REST API (no SDK dependency) when `RESEND_API_KEY`, `QUOTE_TO_EMAIL`, `QUOTE_FROM_EMAIL` are set; labelled local test mode (`next dev` or `QUOTE_DELIVERY=log`); otherwise the form says it is not active and is disabled. Never a fake success
+- [x] Error states: invalid data, too fast, honeypot, rate limit, provider failure, delivery not configured, network/server error (data always kept)
+- [x] Project detail quote links now reference the concept (`?paketa=…&projekti=<slug>`)
+- [x] Tests: validation, sanitizing, prefill parsing incl. malicious values, estimate recalculation, email escaping, delivery config, rate limiter, every result state with mocked Resend (unit); form behaviour with mocked action (component); prefill from pricing / estimator / project pages, malicious parameters, validation and focus, keyboard flow, test-mode confirmation, loading state, network and server errors, too-fast, honeypot, rate limit (e2e); axe and CLS on `/kontakt`
+- [ ] **Needs owner input:** Resend API key, receiving address and a verified sending domain (form is disabled in production until then)
+- [ ] **Needs owner review:** privacy line under the form ("Të dhënat tuaja përdoren vetëm për t'iu përgjigjur kësaj kërkese") and budget ranges in `src/content/sq/contact-page.ts`
 
 ## Sprint 8: FAQ, SEO and deployment docs
 
@@ -135,7 +142,7 @@ Legend: `[x]` done · `[ ]` open · `[~]` partial / placeholder
 - [x] Official logo and brand assets (WIDE_CODE_LOGO_PACK, integrated)
 - [ ] Production domain (`NEXT_PUBLIC_SITE_URL`)
 - [ ] Real contact details (email, phone, location) and social profile URLs → `src/config/site.ts`
-- [ ] Resend API key and receiving email address
+- [ ] Resend API key, receiving email address and verified sending domain (`RESEND_API_KEY`, `QUOTE_TO_EMAIL`, `QUOTE_FROM_EMAIL`)
 - [ ] Deployment approval (Vercel)
 
 ## Known issues

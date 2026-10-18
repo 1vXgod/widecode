@@ -50,8 +50,26 @@ Copy `.env.example` to `.env.local`. **Never commit real `.env` files.** They ar
 | Variable               | Required | Purpose                                                                    |
 | ---------------------- | -------- | -------------------------------------------------------------------------- |
 | `NEXT_PUBLIC_SITE_URL` | No       | Canonical site URL, e.g. `https://example.com`. Falls back to the Vercel production URL on Vercel, or `http://localhost:3000` locally. |
+| `RESEND_API_KEY`       | For the quote form | Resend API key (server-only secret). |
+| `QUOTE_TO_EMAIL`       | For the quote form | Address that receives quote requests (or up to 5, comma-separated). |
+| `QUOTE_FROM_EMAIL`     | For the quote form | Sender, e.g. `WideCode <ofertat@your-domain>`. The domain must be verified in Resend. |
+| `QUOTE_DELIVERY`       | No       | `log` forces test mode (validate and print to the server console, never email). Used by the e2e tests. Not allowed on Vercel production. |
 
 The production domain has not been decided, so no domain is hardcoded.
+
+### Quote form delivery
+
+The quote form on `/kontakt` sends requests through a Server Action ([`src/app/kontakt/actions.ts`](src/app/kontakt/actions.ts)). The delivery mode is decided from server-side variables only ([`src/lib/quote-delivery.ts`](src/lib/quote-delivery.ts)), and the form always tells visitors the truth about it:
+
+| Situation | Mode | What visitors see |
+| --- | --- | --- |
+| `RESEND_API_KEY`, `QUOTE_TO_EMAIL` and `QUOTE_FROM_EMAIL` set and valid | `resend` | Confirmation only after Resend accepted the email; an error (with their data kept) if it did not |
+| `next dev` without complete Resend settings, or `QUOTE_DELIVERY=log` | `log` | A "Mënyrë testimi lokal" notice; requests are validated and printed to the server console, **no email is sent**, and the confirmation says so |
+| Anything else (e.g. production without Resend) | `disabled` | "Formulari nuk është aktiv ende"; the submit button is disabled and the server refuses requests. The server log names the missing variables (never their values) |
+
+To activate it: create a Resend account, verify the sending domain, create an API key, then set the three variables in `.env.local` (locally) or in the Vercel project settings (production). For a quick local test before the domain is verified, Resend accepts `QUOTE_FROM_EMAIL=WideCode <onboarding@resend.dev>`, but only delivers to the email address of the Resend account itself.
+
+Protection: the same validation runs in the browser and on the server ([`src/lib/quote-request.ts`](src/lib/quote-request.ts)), inputs are length-limited and stripped of control and bidi characters, every value is HTML-escaped in the email, estimate prices are always recalculated on the server, and the visitor's address is used only as `reply_to`. Spam checks: a hidden honeypot field and a minimum fill time. Rate limits (in [`src/config/quote.ts`](src/config/quote.ts)): 5 requests per visitor per 10 minutes and 50 emails per hour site-wide. The limiter is in-memory, so on Vercel it is per instance (best effort); for strict limits, back it with a shared store or enable Vercel's firewall rate limiting. Retries reuse an idempotency key, so Resend never sends the same request twice.
 
 ## Project structure
 
@@ -134,7 +152,7 @@ Content rules: natural Kosovo Albanian with correct **ë** and **ç**; no invent
 ### Services and quote links
 
 - **Services:** [`src/config/services.ts`](src/config/services.ts) lists the services in order, each with its section anchor on `/sherbimet` and the pricing packages that fit it. Text is in `src/content/sq/services.ts` and `src/content/sq/services-page.ts`.
-- **Quote links:** always build them with `quoteHref(packageId)` from `src/lib/quote.ts`. It returns `/kontakt?paketa=<id>`, which the contact form will use to pre-select the package.
+- **Quote links:** always build them with `quoteHref(packageId, projectSlug?)` or `quoteHrefForEstimate(input)` from `src/lib/quote.ts`. The contact form reads `?paketa=…&faqe=…&shtesa=…&projekti=…` with `parseQuotePrefill()`, which ignores anything unknown: the package (and the matching project type) is pre-selected, an estimate from the estimator is shown and sent with the request, and a referenced website concept is named in it.
 
 ### Contact details and social links
 

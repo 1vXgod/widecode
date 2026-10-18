@@ -1,5 +1,6 @@
 import type { Dictionary } from "@/types/content";
 import { aboutPage } from "./about-page";
+import { contactPage } from "./contact-page";
 import { estimator } from "./estimator";
 import { faq } from "./faq";
 import { cta as ctaSection, home, processCopy, why } from "./home";
@@ -70,7 +71,8 @@ export const sq = {
     },
     contact: {
       title: "Kontakti",
-      description: "Na kontaktoni ose kërkoni një ofertë për projektin tuaj.",
+      description:
+        "Kërkoni ofertë për website, online shop ose custom development. Na tregoni për projektin dhe ju dërgojmë një ofertë të qartë, pa obligim.",
     },
   },
   header: {
@@ -117,6 +119,7 @@ export const sq = {
   pricingPage,
   estimator,
   projectsPage,
+  contactPage,
   placeholder: {
     badge: "Në përgatitje",
     text: "Kjo faqe është në përgatitje dhe do të publikohet së shpejti.",

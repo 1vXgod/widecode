@@ -34,6 +34,9 @@ export default defineConfig({
   webServer: {
     command: `npm run start -- --port ${PORT}`,
     url: baseURL,
+    // Test mode for the quote form: requests are validated and logged, never emailed,
+    // even if .env.local holds real Resend credentials.
+    env: { QUOTE_DELIVERY: "log" },
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
   },

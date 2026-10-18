@@ -1,9 +1,11 @@
 import type { AddOnId } from "@/config/estimator";
 import type { PackageId } from "@/config/pricing";
 import type { ProjectCategory, ProjectSlug } from "@/config/projects";
+import type { BudgetId, ProjectTypeId, TimelineId } from "@/config/quote";
 import type { ServiceId } from "@/config/services";
 import type { FooterNavGroup, RouteKey } from "@/config/routes";
 import type { ContactChannel, SocialPlatform } from "@/lib/contact";
+import type { QuoteField, QuoteFieldError } from "@/lib/quote-request";
 
 export interface PageCopy {
   title: string;
@@ -308,6 +310,105 @@ export interface Dictionary {
       metaTitle: string;
       /** Uses {summary}. */
       metaDescription: string;
+    };
+  };
+  contactPage: {
+    intro: {
+      eyebrow: string;
+      title: string;
+      lead: string;
+    };
+    form: {
+      label: string;
+      requiredNote: string;
+      optional: string;
+      sections: {
+        contact: string;
+        project: string;
+      };
+      fields: Record<QuoteField, { label: string; hint?: string }>;
+      selectPlaceholder: string;
+      options: {
+        projectType: Record<ProjectTypeId, string>;
+        /** Package names come from `pricing.packages`; this is the extra "not sure" option. */
+        packageUnsure: string;
+        budget: Record<BudgetId, string>;
+        timeline: Record<TimelineId, string>;
+      };
+      /** Uses {count} and {max}. */
+      characterCount: string;
+      prefillNotice: string;
+      estimate: {
+        title: string;
+        text: string;
+        edit: string;
+        remove: string;
+      };
+      project: {
+        title: string;
+        remove: string;
+      };
+      submit: string;
+      submitting: string;
+      privacy: string;
+      honeypotLabel: string;
+    };
+    errors: {
+      summaryOne: string;
+      /** Uses {count}. */
+      summaryMany: string;
+      /** A message for every error the validator can return for a field (checked by a unit test). */
+      fields: Record<QuoteField, Partial<Record<QuoteFieldError, string>>>;
+    };
+    status: {
+      unavailableNotice: { title: string; text: string };
+      testNotice: { title: string; text: string };
+      invalid: string;
+      /** Uses {time}. */
+      rateLimited: string;
+      minuteOne: string;
+      /** Uses {count}. */
+      minuteMany: string;
+      tooFast: string;
+      rejected: string;
+      unavailable: string;
+      failed: string;
+      network: string;
+    };
+    success: {
+      title: string;
+      /** Uses {email}. */
+      text: string;
+      summaryTitle: string;
+      again: string;
+      projects: string;
+    };
+    testSuccess: {
+      title: string;
+      text: string;
+    };
+    aside: {
+      nextTitle: string;
+      steps: Array<{ title: string; text: string }>;
+      priceTitle: string;
+      priceText: string;
+      estimatorCta: string;
+      pricingCta: string;
+      contactTitle: string;
+    };
+    /** Email sent to WideCode for each request. */
+    email: {
+      /** Uses {name} and {projectType}. */
+      subject: string;
+      heading: string;
+      intro: string;
+      notProvided: string;
+      estimateTitle: string;
+      estimateTotal: string;
+      project: string;
+      submittedAt: string;
+      reference: string;
+      replyHint: string;
     };
   };
   placeholder: {

@@ -101,9 +101,11 @@ export function estimateToSearchParams(raw: Parameters<typeof normalizeInput>[0]
   return params;
 }
 
-type ParamSource = URLSearchParams | Record<string, string | string[] | undefined>;
+/** URL parameters from useSearchParams() or from a page's `searchParams` prop. */
+export type ParamSource = URLSearchParams | Record<string, string | string[] | undefined>;
 
-function readParam(source: ParamSource, key: string): string | undefined {
+/** First value of a URL parameter, from either source shape. */
+export function readParam(source: ParamSource, key: string): string | undefined {
   if (source instanceof URLSearchParams) return source.get(key) ?? undefined;
   const value = source[key];
   return Array.isArray(value) ? value[0] : value;

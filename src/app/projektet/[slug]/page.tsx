@@ -200,7 +200,7 @@ export default async function ProjectPage({ params }: PageProps<"/projektet/[slu
               <div className="mt-5 grid gap-3">
                 {/* Long label: allow wrapping so it never forces the card wider on small phones. */}
                 <ButtonLink
-                  href={quoteHref(project.packageId)}
+                  href={quoteHref(project.packageId, project.slug)}
                   className="group h-auto min-h-11 w-full py-3 text-center whitespace-normal"
                 >
                   {copy.quoteCta}

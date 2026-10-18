@@ -128,7 +128,7 @@ test.describe("project detail page", () => {
     await expect(aside).toContainText(/Business\s*nga 399\s€/);
     await expect(aside.getByRole("link", { name: "Merr ofertë për një projekt të ngjashëm" })).toHaveAttribute(
       "href",
-      `${routes.contact}?paketa=business`,
+      `${routes.contact}?paketa=business&projekti=restorant-tradicional`,
     );
     await expect(aside.getByRole("link", { name: "Llogarit çmimin" })).toHaveAttribute(
       "href",
@@ -143,7 +143,7 @@ test.describe("project detail page", () => {
     await expect(aside).toContainText(/Custom\s*Me ofertë/);
     await expect(aside.getByRole("link", { name: "Merr ofertë për një projekt të ngjashëm" })).toHaveAttribute(
       "href",
-      `${routes.contact}?paketa=custom`,
+      `${routes.contact}?paketa=custom&projekti=panel-palestre`,
     );
     await expect(aside.getByRole("link", { name: "Llogarit çmimin" })).toHaveCount(0);
   });
