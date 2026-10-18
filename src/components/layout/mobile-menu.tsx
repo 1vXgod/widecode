@@ -88,8 +88,8 @@ export function MobileMenu({ items, cta, labels, extra }: MobileMenuProps) {
         className="fixed inset-0 m-0 h-dvh max-h-none w-full max-w-none overflow-y-auto overscroll-contain bg-bg/95 p-0 pb-10 text-fg backdrop-blur-xl backdrop:bg-black/60 open:animate-fade-in lg:hidden"
       >
         <Container className="flex h-header items-center justify-between">
-          <Link href="/" aria-label={labels.home} onClick={closeMenu} className="rounded-lg">
-            <Logo />
+          <Link href="/" aria-label={labels.home} onClick={closeMenu} className="shrink-0 rounded-lg">
+            <Logo loading="eager" />
           </Link>
           <button
             type="button"

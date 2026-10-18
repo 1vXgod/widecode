@@ -35,8 +35,8 @@ export function SiteHeader({ dict }: { dict: Dictionary }) {
   return (
     <HeaderShell>
       <Container className="flex h-header items-center justify-between gap-6">
-        <Link href={routes.home} aria-label={dict.a11y.homeLinkLabel} className="rounded-lg">
-          <Logo />
+        <Link href={routes.home} aria-label={dict.a11y.homeLinkLabel} className="shrink-0 rounded-lg">
+          <Logo loading="eager" />
         </Link>
 
         <MainNav items={items} label={dict.a11y.mainNavLabel} className="hidden lg:block" />

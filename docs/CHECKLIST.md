@@ -21,7 +21,7 @@ Legend: `[x]` done · `[ ]` open · `[~]` partial / placeholder
 - [x] Footer (no invented contact details)
 - [x] Albanian 404 page
 - [x] Placeholder pages for all main routes (`noindex`)
-- [~] Favicon / apple icon: temporary mark until official logo is provided
+- [x] Favicon / apple icon (replaced with official assets, see Brand assets)
 - [x] Typed content dictionary (`src/content/sq`), ready for English later
 - [x] Reduced-motion support and global focus styles
 - [x] Unit tests (Vitest) and e2e tests (Playwright + axe)
@@ -39,6 +39,16 @@ Legend: `[x]` done · `[ ]` open · `[~]` partial / placeholder
 - [x] Typed `contact` / `social` config with validation; nothing invented (empty by default)
 - [x] Dead-link crawler e2e test; header, footer and navigation e2e tests on mobile and desktop
 - [x] Screenshot review at 360, 768, 1024 and 1280px
+
+## Brand assets ✅ (between Sprint 2 and Sprint 3)
+
+- [x] Evaluated all 9 files in `WIDE_CODE_LOGO_PACK` on the site background (originals unchanged, SHA-256 verified)
+- [x] Primary logo: `wide-code-dark.png` → `public/brand/wide-code-logo-dark.png` (transparent margin removed only); used in header (44px), mobile menu (44px) and footer (52px)
+- [x] Favicon: `wide-code-app-icon-gradient.png` → `src/app/icon.png` (96×96)
+- [x] Apple touch icon: `wide-code-app-icon-gradient.png` → `src/app/apple-icon.png` (180×180 on `#07070a`)
+- [x] Removed the temporary hand-made logo, `icon.svg` and generated `apple-icon.tsx`
+- [x] Tests: logo aspect ratio (unit); logo loads in header, menu and footer without stretching, and icons are served as PNGs (e2e)
+- [ ] Not used yet (light-background versions): `wide-code-primary.png`, `wide-code-horizontal.png`, `wide-code-divider-tagline.png`, `wide-code-stacked.png`, `wide-code-app-icon-light.png`, `wide-code-app-icon-dark.png`, `wide-code-w-symbol.png`. Candidates for future light contexts (e.g. Open Graph images, documents).
 
 ## Sprint 3: Home page and interactive hero
 
@@ -87,7 +97,7 @@ Legend: `[x]` done · `[ ]` open · `[~]` partial / placeholder
 
 ## Open decisions and inputs needed
 
-- [ ] Official logo and brand assets
+- [x] Official logo and brand assets (WIDE_CODE_LOGO_PACK, integrated)
 - [ ] Production domain (`NEXT_PUBLIC_SITE_URL`)
 - [ ] Real contact details (email, phone, location) and social profile URLs → `src/config/site.ts`
 - [ ] Resend API key and receiving email address

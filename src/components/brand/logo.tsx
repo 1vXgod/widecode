@@ -1,39 +1,41 @@
+import Image from "next/image";
 import { cn } from "@/lib/cn";
 
 /**
- * Temporary WideCode logo (no official logo provided yet).
- * Replace the mark here and in src/app/icon.svg / apple-icon.tsx when brand assets exist.
+ * Official WideCode logo for dark backgrounds.
+ * Source: WIDE_CODE_LOGO_PACK/wide-code-dark.png, with only its fully transparent
+ * margin removed (see docs/CHECKLIST.md → Brand assets).
  */
-export function LogoMark({ className }: { className?: string }) {
-  return (
-    <span
-      aria-hidden="true"
-      className={cn(
-        "grid size-8 shrink-0 place-items-center rounded-[0.6rem] bg-linear-to-br from-accent to-accent-2 shadow-glow",
-        className,
-      )}
-    >
-      <svg viewBox="0 0 32 32" className="size-6" fill="none">
-        <path
-          d="M7 10l4 12 5-9 5 9 4-12"
-          stroke="currentColor"
-          className="text-white"
-          strokeWidth="2.6"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    </span>
-  );
-}
+export const LOGO_DARK = {
+  src: "/brand/wide-code-logo-dark.png",
+  width: 688,
+  height: 174,
+} as const;
 
-export function Logo({ className }: { className?: string }) {
+/** Allowed in next.config.ts `images.qualities`; keeps the wordmark crisp. */
+export const LOGO_QUALITY = 90;
+
+type LogoProps = {
+  /** Rendered height in CSS pixels; width follows the file's aspect ratio. */
+  height?: number;
+  /** Use "eager" for above-the-fold placements such as the header. */
+  loading?: "eager" | "lazy";
+  className?: string;
+};
+
+export function Logo({ height = 44, loading = "lazy", className }: LogoProps) {
+  const width = Math.round((height * LOGO_DARK.width) / LOGO_DARK.height);
+
   return (
-    <span className={cn("inline-flex items-center gap-2.5", className)}>
-      <LogoMark />
-      <span className="font-display text-lg font-semibold tracking-tight text-fg">
-        Wide<span className="text-accent-text">Code</span>
-      </span>
-    </span>
+    <Image
+      src={LOGO_DARK.src}
+      alt="WideCode"
+      width={width}
+      height={height}
+      quality={LOGO_QUALITY}
+      loading={loading}
+      draggable={false}
+      className={cn("block h-auto max-w-full select-none", className)}
+    />
   );
 }

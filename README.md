@@ -86,7 +86,17 @@ All tokens live in [`src/styles/theme.css`](src/styles/theme.css).
 - **Motion:** `ease-out-expo` and `animate-fade-up`. All animations and transitions are effectively disabled for visitors with `prefers-reduced-motion: reduce`.
 - **Focus:** a single, high-contrast `:focus-visible` outline for every focusable element.
 
-The current logo is a **temporary** mark (`src/components/brand/logo.tsx`, `src/app/icon.svg`, `src/app/apple-icon.tsx`). Replace it when official brand assets are available.
+### Logo and icons
+
+The official logo comes from the `WIDE_CODE_LOGO_PACK` folder. The original files are never modified. The site uses derived copies, made by removing fully transparent margin pixels only, with no recolouring, cropping of visible pixels or stretching:
+
+| Site file | Source in pack | Used for |
+| --------- | -------------- | -------- |
+| `public/brand/wide-code-logo-dark.png` (688×174) | `wide-code-dark.png` | Header, mobile menu and footer, rendered by `src/components/brand/logo.tsx` via `next/image` at quality 90 |
+| `src/app/icon.png` (96×96, transparent) | `wide-code-app-icon-gradient.png` | Browser favicon |
+| `src/app/apple-icon.png` (180×180) | `wide-code-app-icon-gradient.png`, on the site background `#07070a` | iOS home-screen icon |
+
+`wide-code-dark.png` is the pack's dark-background version and the only full logo whose "WIDE" wordmark is legible on the near-black theme. The other lockups (`primary`, `horizontal`, `divider-tagline`, `stacked`) use a dark navy wordmark intended for light backgrounds. To change the logo size, pass `height` to `<Logo />`; the width always follows the file's aspect ratio.
 
 ## Content and localization
 
