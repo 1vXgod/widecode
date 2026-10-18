@@ -1,0 +1,84 @@
+@import "tailwindcss";
+@import "../styles/theme.css";
+
+@layer base {
+  html {
+    background-color: var(--color-bg);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    min-height: 100dvh;
+    background-color: var(--color-bg);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background-color: color-mix(in oklab, var(--color-accent) 55%, transparent);
+    color: var(--color-white);
+  }
+
+  /* One consistent, highly visible focus indicator for every focusable element. */
+  :focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 3px;
+    border-radius: 0.25rem;
+  }
+
+  /* Keep anchored sections clear of the sticky header. */
+  :target {
+    scroll-margin-top: calc(var(--spacing-header) + 1rem);
+  }
+
+  /* Prevent background scroll while a modal dialog (e.g. mobile menu) is open. */
+  html:has(dialog[open]:modal) {
+    overflow: hidden;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Respect reduced-motion preferences globally. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Subtle background texture used behind hero/feature areas. */
+@utility bg-grid {
+  background-image:
+    linear-gradient(to right, var(--color-border) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--color-border) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+}
+
+@utility text-gradient {
+  background-image: linear-gradient(110deg, var(--color-fg) 20%, var(--color-accent-text) 60%, var(--color-accent-2));
+  background-clip: text;
+  color: transparent;
+}
