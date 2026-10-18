@@ -86,7 +86,7 @@ Legend: `[x]` done · `[ ]` open · `[~]` partial / placeholder
 - [x] Shared `PackageGrid` / `CustomPackageBand` / `PricingDisclaimer` used by home and pricing page
 - [x] Fix: price formatting no longer uses `Intl` (Chromium renders `sq` currency as "€399", Node as "399 €"; would mismatch server/client); deterministic `formatPrice` and `formatList`
 - [x] Tests: calculations, edge cases (invalid/out-of-range/duplicate input, malicious URL values), package ↔ estimator ↔ copy consistency, formatting (unit); pricing links, add-on prices, full estimator flow incl. keyboard, Custom, URL restore, reset, live announcement (e2e); axe, CLS and overflow on both pages
-- [ ] **Needs owner confirmation:** add-on and extra-page prices in `src/config/estimator.ts` are proposed defaults
+- [x] Add-on and extra-page prices confirmed by the owner (2026-10-18) as indicative prices for standard implementations; payment-provider transaction fees and third-party subscriptions are stated as not included
 
 ## Sprint 6: Projects (portfolio)
 

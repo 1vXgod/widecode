@@ -182,6 +182,15 @@ describe("estimator rules are consistent with the pricing config", () => {
     expect(addOnStatus("analytics", "professional")).toBe("included");
   });
 
+  it("states the limits of the estimate: standard scope and no third-party fees", () => {
+    expect(dict.estimator.summary.disclaimer).toMatch(/implementime standarde/);
+    expect(dict.estimator.summary.disclaimer).toMatch(/ofertë të veçantë/);
+    expect(dict.estimator.summary.thirdParty).toMatch(/tarifat e transaksioneve/);
+    expect(dict.estimator.summary.thirdParty).toMatch(/abonimet/);
+    expect(dict.estimator.summary.thirdParty).toMatch(/nuk përfshihen/);
+    expect(dict.estimator.addOns.payments.description).toMatch(/ofruesit të pagesave nuk përfshihen/);
+  });
+
   it("has copy for every add-on", () => {
     for (const id of addOnIds) {
       expect(dict.estimator.addOns[id].label, id).toBeTruthy();

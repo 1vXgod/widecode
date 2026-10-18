@@ -42,7 +42,8 @@ export const estimator = {
     },
     payments: {
       label: "Pagesa online",
-      description: "Pagesë me kartelë në online shop.",
+      description:
+        "Pagesë me kartelë në online shop. Tarifat e transaksioneve të ofruesit të pagesave nuk përfshihen.",
     },
   },
   summary: {
@@ -53,7 +54,9 @@ export const estimator = {
     quoteOnly: "Me ofertë",
     quoteOnlyText: "Për Custom Development nuk japim çmim paraprak. Përgatisim ofertë pasi t'i analizojmë kërkesat tuaja.",
     disclaimer:
-      "Ky është vlerësim orientues, jo ofertë përfundimtare. Çmimin e konfirmojmë vetëm pasi t'i shqyrtojmë kërkesat e projektit tuaj.",
+      "Ky është vlerësim orientues për implementime standarde, jo ofertë përfundimtare. Kërkesat komplekse mund të kërkojnë ofertë të veçantë. Çmimin e konfirmojmë vetëm pasi t'i shqyrtojmë kërkesat e projektit tuaj.",
+    thirdParty:
+      "Tarifat e palëve të treta, si tarifat e transaksioneve të ofruesve të pagesave ose abonimet për shërbime të jashtme, nuk përfshihen në çmim.",
     cta: "Kërko ofertë me këtë vlerësim",
     quoteCta: "Kërko ofertë",
     reset: "Rifillo",

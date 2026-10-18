@@ -252,6 +252,8 @@ export interface Dictionary {
       quoteOnly: string;
       quoteOnlyText: string;
       disclaimer: string;
+      /** Third-party costs (payment fees, subscriptions) are never included. */
+      thirdParty: string;
       cta: string;
       quoteCta: string;
       reset: string;

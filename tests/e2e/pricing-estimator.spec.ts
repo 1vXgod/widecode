@@ -32,7 +32,15 @@ test.describe("pricing page", () => {
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Paketa me çmime transparente");
     await expect(page.locator('meta[name="robots"]')).toHaveCount(0);
     await expect(page.locator("main")).toContainText("Të gjitha çmimet janë fillestare dhe orientuese");
-    await expect(page.locator("main")).toContainText("Ky është vlerësim orientues, jo ofertë përfundimtare");
+    await expect(page.locator("main")).toContainText(
+      "Ky është vlerësim orientues për implementime standarde, jo ofertë përfundimtare",
+    );
+    await expect(page.locator("main")).toContainText("Kërkesat komplekse mund të kërkojnë ofertë të veçantë");
+    await expect(page.locator("main")).toContainText(
+      "tarifat e transaksioneve të ofruesve të pagesave ose abonimet për shërbime të jashtme, nuk përfshihen",
+    );
+    const payments = page.getByRole("listitem").filter({ has: page.getByRole("heading", { name: "Pagesa online" }) });
+    await expect(payments).toContainText("Tarifat e transaksioneve të ofruesit të pagesave nuk përfshihen");
   });
 
   test("shows every package from the central config with working links", async ({ page }) => {
@@ -202,6 +210,10 @@ test.describe("price estimator", () => {
     await openEstimator(page);
     const summary = page.getByRole("complementary", { name: "Vlerësimi juaj" });
     await expect(summary).toContainText("Vlerësim orientues");
-    await expect(summary).toContainText("Ky është vlerësim orientues, jo ofertë përfundimtare");
+    await expect(summary).toContainText(
+      "Ky është vlerësim orientues për implementime standarde, jo ofertë përfundimtare",
+    );
+    await expect(summary).toContainText("Kërkesat komplekse mund të kërkojnë ofertë të veçantë");
+    await expect(summary).toContainText("nuk përfshihen në çmim");
   });
 });

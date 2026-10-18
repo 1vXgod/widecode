@@ -17,7 +17,8 @@ export const pricingPage = {
   addOns: {
     eyebrow: "Shtesat",
     title: "Funksionalitete shtesë",
-    description: "Çmimet orientuese të funksionaliteteve që mund t'i shtoni në projekt. Të njëjtat çmime përdoren në llogaritës.",
+    description:
+      "Çmimet orientuese për implementime standarde të funksionaliteteve që mund t'i shtoni në projekt. Të njëjtat çmime përdoren në llogaritës.",
     extraPage: "Faqe shtesë",
     extraPageNote: "Për faqet mbi numrin e përfshirë në paketë",
     includedPages: "{name} {count} faqe",

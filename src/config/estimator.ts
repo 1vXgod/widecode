@@ -5,9 +5,11 @@ import type { PackageId } from "@/config/pricing";
  * file only adds what the estimator needs on top of them. All amounts are
  * whole euros and, like the package prices, indicative only.
  *
- * NOTE: the add-on and extra-page prices below are PROPOSED DEFAULTS that the
- * owner must confirm before launch. No other fees (setup, VAT, recurring) are
- * added anywhere.
+ * The add-on and extra-page prices below were confirmed by the owner on
+ * 2026-10-18 as initial indicative prices for STANDARD implementations;
+ * complex requirements may need a custom quote. No other fees (setup, VAT,
+ * recurring) are added anywhere, and third-party costs (payment-provider
+ * transaction fees, external subscriptions) are never included.
  */
 
 export type PageRule = {

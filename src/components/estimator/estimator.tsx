@@ -331,7 +331,10 @@ export function Estimator({ initialInput, copy, pricing }: EstimatorProps) {
           {estimate.kind === "estimate" ? (
             <p className="mt-6 flex items-start gap-2.5 rounded-xl border border-warning/30 bg-warning/[0.06] p-4 text-sm leading-relaxed text-fg-muted">
               <Info aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-warning" />
-              {copy.summary.disclaimer}
+              <span>
+                {copy.summary.disclaimer}
+                <span className="mt-2 block text-fg-subtle">{copy.summary.thirdParty}</span>
+              </span>
             </p>
           ) : null}
 

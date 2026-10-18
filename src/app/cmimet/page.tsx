@@ -66,6 +66,7 @@ export default function PricingPage() {
           <AddOnList dict={dict} />
         </div>
         <PricingDisclaimer text={dict.estimator.summary.disclaimer} className="reveal mt-8" />
+        <PricingDisclaimer text={dict.estimator.summary.thirdParty} className="reveal mt-3" />
       </Section>
 
       <Section aria-labelledby="factors-title">
