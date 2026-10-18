@@ -83,7 +83,7 @@ All tokens live in [`src/styles/theme.css`](src/styles/theme.css).
 - **Typography:** Geist for body text and Sora for headings, loaded with `next/font`. Both include ë and ç. Fluid sizes: `text-display`, `text-title`, `text-heading`, `text-lead`.
 - **Layout:** `max-w-narrow` (48rem), `max-w-content` (76rem), `max-w-wide` (90rem); spacing `px-gutter`, `py-section`, `h-header`.
 - **Breakpoints:** Tailwind defaults (`sm` 40rem, `md` 48rem, `lg` 64rem, `xl` 80rem, `2xl` 96rem), plus `xs` (30rem).
-- **Motion:** `ease-out-expo` and `animate-fade-up`. All animations and transitions are effectively disabled for visitors with `prefers-reduced-motion: reduce`.
+- **Motion:** `ease-out-expo` and `animate-fade-up`. Add the `reveal` class to fade a block in once when it scrolls into view (`src/components/layout/scroll-reveal.tsx`); content on screen at load and content for visitors without JavaScript is never hidden. All animations and transitions are effectively disabled for visitors with `prefers-reduced-motion: reduce`.
 - **Focus:** a single, high-contrast `:focus-visible` outline for every focusable element.
 
 ### Logo and icons
@@ -112,6 +112,11 @@ Content rules: natural Kosovo Albanian with correct **ë** and **ç**; no invent
 
 - **Prices:** [`src/config/pricing.ts`](src/config/pricing.ts) holds every starting price (whole euros; `null` = custom quote) and the recommended package. Package names, summaries and feature lists are in `src/content/sq/pricing.ts`. Prices are formatted with the Albanian locale (`199 €`). All prices are indicative starting prices, and the disclaimer must stay next to them.
 - **Projects:** [`src/config/projects.ts`](src/config/projects.ts) lists portfolio entries. Every current entry is a **demonstration** (`demo: true`) and is shown with a "Projekt demonstrues" badge. Never present them as client work.
+
+### Services and quote links
+
+- **Services:** [`src/config/services.ts`](src/config/services.ts) lists the services in order, each with its section anchor on `/sherbimet` and the pricing packages that fit it. Text is in `src/content/sq/services.ts` and `src/content/sq/services-page.ts`.
+- **Quote links:** always build them with `quoteHref(packageId)` from `src/lib/quote.ts`. It returns `/kontakt?paketa=<id>`, which the contact form will use to pre-select the package.
 
 ### Contact details and social links
 

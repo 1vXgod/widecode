@@ -2,25 +2,29 @@ import { expect, test } from "@playwright/test";
 import { routes } from "../../src/config/routes";
 
 test.describe("links", () => {
-  test("every link on every page resolves (no dead links)", async ({ page, request }) => {
-    const hrefs = new Set<string>();
+  test("every link on every page resolves, including #anchors (no dead links)", async ({ page, request }) => {
+    test.setTimeout(90_000);
+    // Resolve every link to an absolute target: path + optional fragment.
+    const targets = new Map<string, { path: string; hash: string; foundOn: string }>();
     for (const path of Object.values(routes)) {
       await page.goto(path);
       const found = await page.locator("a[href]").evaluateAll((anchors) =>
         anchors.map((a) => (a as HTMLAnchorElement).getAttribute("href") ?? ""),
       );
-      for (const href of found) hrefs.add(href);
+      for (const href of found) {
+        expect(href, `empty or placeholder link on ${path}`).not.toMatch(/^(#?|javascript:.*)$/i);
+        if (/^(https?:|mailto:|tel:)/.test(href)) continue;
+        const url = new URL(href, `http://localhost${path}`);
+        targets.set(`${url.pathname}${url.search}${url.hash}`, { path: `${url.pathname}${url.search}`, hash: url.hash, foundOn: path });
+      }
     }
 
-    for (const href of hrefs) {
-      expect(href, "links must not be empty or placeholder anchors").not.toMatch(/^(#?|javascript:.*)$/i);
-      if (href.startsWith("#")) {
-        expect(await page.locator(href).count(), `anchor target ${href}`).toBeGreaterThan(0);
-        continue;
-      }
-      if (href.startsWith("/")) {
-        const response = await request.get(href);
-        expect(response.status(), href).toBe(200);
+    for (const [href, { path, hash, foundOn }] of targets) {
+      const response = await request.get(path);
+      expect(response.status(), `${href} (linked from ${foundOn})`).toBe(200);
+      if (hash) {
+        await page.goto(path);
+        expect(await page.locator(hash).count(), `anchor ${href} (linked from ${foundOn})`).toBeGreaterThan(0);
       }
     }
   });
@@ -32,6 +36,56 @@ test.describe("links", () => {
       await expect(link).toHaveAttribute("target", "_blank");
       await expect(link).toHaveAttribute("rel", /noopener/);
     }
+  });
+});
+
+test.describe("scroll reveal", () => {
+  /** Opacity of every `.reveal` element, including inherited parent opacity, and whether it is on screen. */
+  async function revealStates(page: import("@playwright/test").Page) {
+    return page.locator(".reveal").evaluateAll((elements) =>
+      elements.map((el) => {
+        let opacity = 1;
+        for (let node: Element | null = el; node; node = node.parentElement) opacity *= Number(getComputedStyle(node).opacity);
+        const rect = el.getBoundingClientRect();
+        return { opacity, onScreen: rect.bottom > 0 && rect.top < window.innerHeight };
+      }),
+    );
+  }
+
+  for (const path of ["/", "/sherbimet", "/rreth-nesh"]) {
+    test(`${path}: content on screen is fully visible at load, the rest once scrolled to`, async ({ page }) => {
+      await page.setViewportSize({ width: 390, height: 844 });
+      await page.goto(path);
+      await page.waitForLoadState("networkidle");
+      await page.waitForTimeout(800); // longer than the 0.7s transition
+      const atLoad = await revealStates(page);
+      expect(atLoad.filter((s) => s.onScreen && s.opacity < 0.99)).toEqual([]);
+
+      for (let i = 0; i < 40; i++) {
+        await page.mouse.wheel(0, 500);
+        await page.waitForTimeout(60);
+      }
+      await page.waitForTimeout(800);
+      const seen = await revealStates(page);
+      expect(seen.filter((s) => s.onScreen && s.opacity < 0.99)).toEqual([]);
+    });
+  }
+
+  test("nothing is hidden without JavaScript", async ({ browser }) => {
+    const context = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 390, height: 844 } });
+    const page = await context.newPage();
+    await page.goto("/rreth-nesh");
+    expect((await revealStates(page)).filter((s) => s.opacity < 0.99)).toEqual([]);
+    await context.close();
+  });
+
+  test("nothing is hidden with reduced motion", async ({ browser }) => {
+    const context = await browser.newContext({ reducedMotion: "reduce", viewport: { width: 390, height: 844 } });
+    const page = await context.newPage();
+    await page.goto("/");
+    await page.waitForLoadState("networkidle");
+    expect((await revealStates(page)).filter((s) => s.opacity < 0.99)).toEqual([]);
+    await context.close();
   });
 });
 

@@ -39,8 +39,8 @@
     border-radius: 0.25rem;
   }
 
-  /* Keep anchored sections clear of the sticky header. */
-  :target {
+  /* Keep anchored sections clear of the sticky header (also for client-side hash navigation). */
+  [id] {
     scroll-margin-top: calc(var(--spacing-header) + 1rem);
   }
 
@@ -69,31 +69,21 @@
 }
 
 /*
- * Scroll reveal: pure CSS (scroll-driven animations), so there is no JavaScript
- * cost and content stays fully visible in browsers without support or when the
- * visitor prefers reduced motion. Only opacity and transform change, so it
- * cannot cause layout shift.
+ * Scroll reveal (driven by components/layout/scroll-reveal.tsx). Elements are
+ * only hidden once that script has run (.reveal-ready) and only when motion is
+ * allowed; anything already on screen is revealed before the first paint.
+ * Opacity and transform only, so no layout shift.
  */
-@keyframes reveal-up {
-  from {
-    opacity: 0;
-    transform: translateY(28px);
+@media (prefers-reduced-motion: no-preference) {
+  .reveal-ready .reveal {
+    transition:
+      opacity 0.7s var(--ease-out-expo),
+      transform 0.7s var(--ease-out-expo);
   }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
 
-@layer components {
-  @supports (animation-timeline: view()) {
-    @media (prefers-reduced-motion: no-preference) {
-      .reveal {
-        animation: reveal-up linear both;
-        animation-timeline: view();
-        animation-range: entry 0% entry 40%;
-      }
-    }
+  .reveal-ready .reveal:not([data-revealed]) {
+    opacity: 0;
+    transform: translateY(24px);
   }
 }
 

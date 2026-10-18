@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Sora } from "next/font/google";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
+import { ScrollReveal } from "@/components/layout/scroll-reveal";
 import { MAIN_CONTENT_ID, SkipLink } from "@/components/layout/skip-link";
 import { siteConfig } from "@/config/site";
 import { getDictionary } from "@/content";
@@ -64,6 +65,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           {children}
         </main>
         <SiteFooter dict={dict} />
+        <ScrollReveal />
       </body>
     </html>
   );

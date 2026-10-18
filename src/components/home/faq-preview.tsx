@@ -7,10 +7,20 @@ import { routes } from "@/config/routes";
 import { fill } from "@/lib/template";
 import type { Dictionary } from "@/types/content";
 
-const PREVIEW_COUNT = 4;
+const DEFAULT_ITEMS = [0, 1, 2, 3] as const;
 
-export function FaqPreview({ copy }: { copy: Dictionary["faq"] }) {
+type FaqPreviewProps = {
+  copy: Dictionary["faq"];
+  /** Which questions to show, by index in copy.items (defaults to the first four). */
+  itemIndices?: readonly number[];
+};
+
+export function FaqPreview({ copy, itemIndices = DEFAULT_ITEMS }: FaqPreviewProps) {
   const price = formatPrice(lowestStartingPrice());
+  const items = itemIndices.flatMap((i) => {
+    const item = copy.items[i];
+    return item ? [item] : [];
+  });
 
   return (
     <Section id="pyetje" aria-labelledby="faq-title" containerClassName="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
@@ -26,8 +36,8 @@ export function FaqPreview({ copy }: { copy: Dictionary["faq"] }) {
       </div>
 
       {/* Native <details>: keyboard accessible and works without JavaScript. */}
-      <div className="reveal divide-y divide-border border-y border-border">
-        {copy.items.slice(0, PREVIEW_COUNT).map((item) => (
+      <div className="reveal self-start divide-y divide-border border-y border-border">
+        {items.map((item) => (
           <details key={item.question} className="group">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-5 text-left text-base font-medium text-fg transition-colors hover:text-accent-text [&::-webkit-details-marker]:hidden">
               {item.question}

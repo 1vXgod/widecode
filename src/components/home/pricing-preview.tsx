@@ -3,15 +3,11 @@ import { SectionHeader } from "@/components/sections/section-header";
 import { Badge } from "@/components/ui/badge";
 import { ButtonLink } from "@/components/ui/button";
 import { Section } from "@/components/ui/section";
-import { formatPrice, packages, type PackageId } from "@/config/pricing";
+import { formatPrice, packages } from "@/config/pricing";
 import { routes } from "@/config/routes";
 import { cn } from "@/lib/cn";
+import { quoteHref } from "@/lib/quote";
 import type { Dictionary } from "@/types/content";
-
-/** Contact link that pre-selects a package for the (upcoming) quote form. */
-export function quoteHref(id: PackageId): string {
-  return `${routes.contact}?paketa=${id}`;
-}
 
 export function PricingPreview({ copy }: { copy: Dictionary["pricing"] }) {
   const priced = packages.filter((p) => p.startingPrice !== null);

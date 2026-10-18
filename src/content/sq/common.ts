@@ -1,9 +1,11 @@
 import type { Dictionary } from "@/types/content";
+import { aboutPage } from "./about-page";
 import { faq } from "./faq";
 import { cta as ctaSection, home, processCopy, why } from "./home";
 import { pricing } from "./pricing";
 import { projects } from "./projects";
 import { services } from "./services";
+import { servicesPage } from "./services-page";
 
 const cta = "Merr një ofertë";
 
@@ -37,7 +39,8 @@ export const sq = {
   pages: {
     services: {
       title: "Shërbimet",
-      description: "Uebfaqe prezantuese, uebfaqe biznesi, dyqane online dhe platforma me porosi.",
+      description:
+        "Uebfaqe prezantuese, uebfaqe biznesi, dyqane online dhe platforma me porosi për bizneset në Kosovë, me çmime fillestare transparente.",
     },
     projects: {
       title: "Projektet",
@@ -53,7 +56,8 @@ export const sq = {
     },
     about: {
       title: "Rreth nesh",
-      description: "Kush është WideCode dhe si punojmë.",
+      description:
+        "Njihuni me WideCode: misioni, vlerat dhe mënyra si ndërtojmë uebfaqe dhe dyqane online me porosi.",
     },
     faq: {
       title: "Pyetjet e shpeshta",
@@ -103,6 +107,8 @@ export const sq = {
   why,
   faq,
   cta: ctaSection,
+  servicesPage,
+  aboutPage,
   placeholder: {
     badge: "Në përgatitje",
     text: "Kjo faqe është në përgatitje dhe do të publikohet së shpejti.",

@@ -159,11 +159,13 @@ test.describe("stability", () => {
     expect(problems).toEqual([]);
   });
 
-  for (const viewport of [
-    { name: "mobile", width: 390, height: 844 },
-    { name: "desktop", width: 1280, height: 800 },
-  ]) {
-    test(`home page layout shift stays low (${viewport.name})`, async ({ page }) => {
+  for (const [path, viewport] of ["/", "/sherbimet", "/rreth-nesh"].flatMap((p) =>
+    [
+      { name: "mobile", width: 390, height: 844 },
+      { name: "desktop", width: 1280, height: 800 },
+    ].map((v) => [p, v] as const),
+  )) {
+    test(`${path} layout shift stays low (${viewport.name})`, async ({ page }) => {
       await page.setViewportSize({ width: viewport.width, height: viewport.height });
       await page.addInitScript(() => {
         const w = window as unknown as { __cls: number };
@@ -174,7 +176,7 @@ test.describe("stability", () => {
           }
         }).observe({ type: "layout-shift", buffered: true });
       });
-      await page.goto("/");
+      await page.goto(path);
       await page.waitForLoadState("networkidle");
       for (let i = 0; i < 12; i++) {
         await page.mouse.wheel(0, 700);

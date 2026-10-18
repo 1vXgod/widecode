@@ -1,5 +1,6 @@
 import type { PackageId } from "@/config/pricing";
 import type { ProjectCategory, ProjectSlug } from "@/config/projects";
+import type { ServiceId } from "@/config/services";
 import type { FooterNavGroup, RouteKey } from "@/config/routes";
 import type { ContactChannel, SocialPlatform } from "@/lib/contact";
 
@@ -14,8 +15,20 @@ export interface SectionIntro {
   description: string;
 }
 
-export const serviceIds = ["presentation", "business", "ecommerce", "platform"] as const;
-export type ServiceId = (typeof serviceIds)[number];
+/** Intro block at the top of inner pages. */
+export interface PageIntroCopy {
+  eyebrow: string;
+  title: string;
+  lead: string;
+  primaryCta: string;
+  secondaryCta: string;
+}
+
+export const standardIds = ["responsive", "seo", "performance", "accessibility", "security", "custom"] as const;
+export type StandardId = (typeof standardIds)[number];
+
+export const valueIds = ["transparency", "quality", "custom", "communication", "honesty", "partnership"] as const;
+export type ValueId = (typeof valueIds)[number];
 
 export const reasonIds = ["transparent", "custom", "devices", "communication"] as const;
 export type ReasonId = (typeof reasonIds)[number];
@@ -134,6 +147,43 @@ export interface Dictionary {
     text: string;
     primary: string;
     secondary: string;
+  };
+  servicesPage: {
+    intro: PageIntroCopy;
+    onThisPage: string;
+    idealForLabel: string;
+    includesLabel: string;
+    packagesLabel: string;
+    /** Visible label of each package's quote link; its accessible name adds the package name. */
+    quoteCta: string;
+    details: Record<ServiceId, { description: string; idealFor: string[]; includes: string[] }>;
+    standards: SectionIntro & {
+      items: Record<StandardId, { title: string; text: string }>;
+    };
+    process: {
+      title: string;
+      text: string;
+      cta: string;
+    };
+  };
+  aboutPage: {
+    intro: PageIntroCopy;
+    mission: {
+      eyebrow: string;
+      title: string;
+      paragraphs: string[];
+      statement: string;
+    };
+    values: SectionIntro & {
+      items: Record<ValueId, { title: string; text: string }>;
+    };
+    services: SectionIntro & {
+      cta: string;
+    };
+    market: {
+      title: string;
+      text: string;
+    };
   };
   placeholder: {
     badge: string;

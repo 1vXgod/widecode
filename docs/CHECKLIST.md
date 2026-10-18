@@ -59,14 +59,21 @@ Legend: `[x]` done · `[ ]` open · `[~]` partial / placeholder
 - [x] Pricing preview from the central config (`src/config/pricing.ts`), with the "indicative prices" disclaimer
 - [x] Process (5 steps, anchor `#procesi`), "Pse WideCode" (no fabricated claims), FAQ preview (native `<details>`)
 - [x] Shared closing CTA section (moved out of the footer); compact use on inner pages
-- [x] Motion: CSS scroll-driven reveals only where supported and motion is allowed. Decision: **no Motion/Framer Motion dependency**, as CSS covers the needs with zero JS cost
+- [x] Motion: lightweight scroll reveals and CSS transitions. Decision: **no Motion/Framer Motion dependency** (reveal mechanism revised in Sprint 4, see below)
 - [x] Tests: pricing config and formatting (unit); home sections, CTAs, demo labels, prices, FAQ keyboard, showcase keyboard/autoplay/pause/reduced motion, zero console errors on all routes, CLS < 0.1 on mobile and desktop (e2e)
 - [ ] **Needs review by owner:** package feature lists in `src/content/sq/pricing.ts` (e.g. "Deri në 5 faqe") are proposed defaults
 
-## Sprint 4: Services and About
+## Sprint 4: Services and About ✅
 
-- [ ] Services page
-- [ ] About page (no fabricated history, team or statistics)
+- [x] Services page (`/sherbimet`): intro, in-page navigation, one anchored section per service (who it suits, what is included, matching packages with prices from config), price disclaimer, "Çfarë përfshin çdo projekt" standards, link to the process, FAQ subset, shared CTA
+- [x] Every quote link pre-selects its package (`/kontakt?paketa=<id>`, via `src/lib/quote.ts`); service ↔ package mapping in `src/config/services.ts`
+- [x] About page (`/rreth-nesh`): mission (with the official logo), values, services overview with deep links, process (`#procesi`), market focus, shared CTA. No founding year, team, clients, statistics or technologies
+- [x] Home service cards deep-link to their section on the services page
+- [x] Both pages indexable with real titles and descriptions
+- [x] Fix: anchors now clear the sticky header for client-side hash navigation too (`[id]` scroll margin)
+- [x] Fix: scroll reveal replaced. The CSS scroll-driven version left content that was partly on screen at load semi-transparent (found by axe on mobile). Now a small IntersectionObserver reveal (`src/components/layout/scroll-reveal.tsx`): on-screen content is never hidden, the rest fades in once; nothing hidden without JS or with reduced motion
+- [x] Fix: FAQ list no longer stretches to the height of its intro column
+- [x] Tests: services/pricing mapping and copy (unit); services and about pages, package pre-selection, anchors clear of the header, home deep links, no unverifiable claims, reveal visibility (incl. no-JS and reduced motion), crawler now verifies #anchors on their target page, axe on both pages, CLS on both pages (e2e)
 
 ## Sprint 5: Pricing and estimator
 
