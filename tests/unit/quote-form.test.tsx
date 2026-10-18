@@ -5,7 +5,6 @@ import { QuoteForm } from "@/components/quote/quote-form";
 import { projectSlugs, type ProjectSlug } from "@/config/projects";
 import { getDictionary } from "@/content";
 import { emptyQuotePrefill, parseQuotePrefill, type QuotePrefill } from "@/lib/quote-request";
-import type { DeliveryMode } from "@/lib/quote-delivery";
 
 const submitQuoteRequest = vi.fn();
 vi.mock("@/app/kontakt/actions", () => ({ submitQuoteRequest: (...args: unknown[]) => submitQuoteRequest(...args) }));
@@ -17,8 +16,8 @@ const projectTitles = Object.fromEntries(projectSlugs.map((s) => [s, dict.projec
   string
 >;
 
-function renderForm(prefill: QuotePrefill = emptyQuotePrefill, deliveryMode: DeliveryMode | null = "resend") {
-  return render(<QuoteForm prefill={prefill} deliveryMode={deliveryMode} copy={copy} projectTitles={projectTitles} />);
+function renderForm(prefill: QuotePrefill = emptyQuotePrefill, available: boolean | null = true) {
+  return render(<QuoteForm prefill={prefill} available={available} copy={copy} projectTitles={projectTitles} />);
 }
 
 async function fillValid(user: ReturnType<typeof userEvent.setup>) {
@@ -84,20 +83,25 @@ describe("QuoteForm", () => {
     expect(payload.submissionId).toEqual(expect.any(String));
   });
 
-  it("labels test mode clearly instead of claiming an email was sent", async () => {
-    submitQuoteRequest.mockResolvedValue({ status: "test" });
+  it("never mentions testing or the server console to visitors", async () => {
+    const all = JSON.stringify(dict.contactPage).toLowerCase();
+    for (const word of ["testim", "test mode", "konsol", "console", "resend", "zhvillim"]) {
+      expect(all, word).not.toContain(word);
+    }
+    // Any status other than "sent" leaves the form in place, without a confirmation.
+    submitQuoteRequest.mockResolvedValue({ status: "unavailable" });
     const user = userEvent.setup();
-    renderForm(emptyQuotePrefill, "log");
-    expect(screen.getByText("Mënyrë testimi lokal")).toBeInTheDocument();
+    renderForm();
     await fillValid(user);
     await user.click(screen.getByRole("button", { name: "Dërgo kërkesën" }));
-    expect(await screen.findByRole("heading", { name: "Mënyrë testimi: kërkesa nuk u dërgua me email" })).toBeInTheDocument();
+    expect(await screen.findByRole("alert")).toBeInTheDocument();
     expect(screen.queryByText("Faleminderit, kërkesa juaj u dërgua!")).not.toBeInTheDocument();
   });
 
   it.each([
     [{ status: "failed" }, "Kërkesa nuk u dërgua për shkak të një problemi teknik."],
-    [{ status: "unavailable" }, "Kërkesa nuk u dërgua, sepse dërgimi i kërkesave"],
+    [{ status: "unavailable" }, "Kërkesa nuk u dërgua, sepse formulari është përkohësisht i padisponueshëm"],
+    [{ status: "rejected" }, "Kërkesa nuk mund të pranohej"],
     [{ status: "rateLimited", retryAfterSeconds: 300 }, "provoni përsëri pas 5 minutash"],
     [{ status: "rateLimited", retryAfterSeconds: 20 }, "provoni përsëri pas 1 minute"],
     [{ status: "tooFast" }, "Formulari u dërgua shumë shpejt"],
@@ -131,10 +135,14 @@ describe("QuoteForm", () => {
     expect(screen.getByLabelText("Email")).toHaveAttribute("aria-invalid", "true");
   });
 
-  it("disables submission when delivery is not configured", () => {
-    renderForm(emptyQuotePrefill, "disabled");
-    expect(screen.getByText("Formulari nuk është aktiv ende")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Dërgo kërkesën" })).toBeDisabled();
+  it("shows a professional unavailable message instead of the form when delivery is not configured", () => {
+    renderForm(emptyQuotePrefill, false);
+    expect(
+      screen.getByRole("heading", { name: "Formulari është përkohësisht i padisponueshëm" }),
+    ).toBeInTheDocument();
+    expect(screen.queryByRole("form")).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Dërgo kërkesën" })).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Shiko çmimet" })).toHaveAttribute("href", "/cmimet");
   });
 
   it("pre-fills from an estimator link and sends the estimate choices", async () => {

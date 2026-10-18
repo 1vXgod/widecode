@@ -105,12 +105,8 @@ export const contactPage = {
   },
   status: {
     unavailableNotice: {
-      title: "Formulari nuk është aktiv ende",
-      text: "Dërgimi i kërkesave përmes website-it ende nuk është aktivizuar, prandaj formulari është çaktivizuar përkohësisht. Ju lutemi provoni përsëri më vonë.",
-    },
-    testNotice: {
-      title: "Mënyrë testimi lokal",
-      text: "Shërbimi i email-it nuk është konfiguruar. Kërkesat verifikohen, por shfaqen vetëm në konsolën e serverit dhe nuk dërgohen me email.",
+      title: "Formulari është përkohësisht i padisponueshëm",
+      text: "Për momentin nuk mund të pranojmë kërkesa përmes website-it. Ju lutemi provoni përsëri më vonë. Ndërkohë, mund t'i shikoni paketat dhe çmimet ose të llogaritni një vlerësim orientues për projektin tuaj.",
     },
     invalid: "Disa fusha nuk janë plotësuar saktë. Ju lutemi kontrolloni mesazhet te fushat.",
     rateLimited: "Keni dërguar disa kërkesa brenda një kohe të shkurtër. Ju lutemi provoni përsëri pas {time}.",
@@ -119,7 +115,7 @@ export const contactPage = {
     tooFast: "Formulari u dërgua shumë shpejt pasi u hap. Ju lutemi kontrolloni të dhënat dhe provoni përsëri.",
     rejected: "Kërkesa nuk mund të pranohej. Ju lutemi rifreskoni faqen dhe provoni përsëri.",
     unavailable:
-      "Kërkesa nuk u dërgua, sepse dërgimi i kërkesave përmes website-it ende nuk është aktivizuar. Ju lutemi provoni përsëri më vonë.",
+      "Kërkesa nuk u dërgua, sepse formulari është përkohësisht i padisponueshëm. Të dhënat tuaja janë ende në formular. Ju lutemi provoni përsëri më vonë.",
     failed:
       "Kërkesa nuk u dërgua për shkak të një problemi teknik. Të dhënat tuaja janë ende në formular, prandaj mund të provoni përsëri pas pak.",
     network:
@@ -131,10 +127,6 @@ export const contactPage = {
     summaryTitle: "Përmbledhje e kërkesës",
     again: "Dërgo një kërkesë tjetër",
     projects: "Shiko projektet",
-  },
-  testSuccess: {
-    title: "Mënyrë testimi: kërkesa nuk u dërgua me email",
-    text: "Të dhënat u verifikuan me sukses dhe kërkesa u shfaq në konsolën e serverit. Asnjë email nuk u dërgua, sepse shërbimi i email-it nuk është konfiguruar.",
   },
   aside: {
     nextTitle: "Çfarë ndodh pasi e dërgoni",

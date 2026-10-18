@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useTransition, type FormEvent, type ReactNode } from "react";
 import Link from "next/link";
-import { AlertCircle, ArrowRight, Calculator, CheckCircle2, ChevronDown, FlaskConical, Info, Loader2, X } from "lucide-react";
+import { AlertCircle, ArrowRight, Calculator, CheckCircle2, ChevronDown, Clock, Info, Loader2, X } from "lucide-react";
 import { submitQuoteRequest } from "@/app/kontakt/actions";
 import { buttonClasses, ButtonLink } from "@/components/ui/button";
 import { formatPrice } from "@/config/pricing";
@@ -11,7 +11,6 @@ import { budgetIds, projectTypeIds, quoteLimits, quotePackageIds, timelineIds } 
 import { routes } from "@/config/routes";
 import { cn } from "@/lib/cn";
 import { calculateEstimate, estimateToSearchParams, type EstimateInput } from "@/lib/estimator";
-import type { DeliveryMode } from "@/lib/quote-delivery";
 import { estimateLineLabel, packageOptionLabel, type QuoteCopy } from "@/lib/quote-labels";
 import {
   emptyQuoteValues,
@@ -30,8 +29,12 @@ type Outcome = QuoteSubmitResult | { status: "network" };
 
 type QuoteFormProps = {
   prefill: QuotePrefill;
-  /** null while unknown (prerendered fallback); the real mode streams in with the request. */
-  deliveryMode: DeliveryMode | null;
+  /**
+   * Whether requests can be delivered. null while unknown (prerendered fallback);
+   * the real value streams in with the request. The delivery mode itself never
+   * reaches the browser.
+   */
+  available: boolean | null;
   copy: QuoteCopy;
   projectTitles: Record<ProjectSlug, string>;
 };
@@ -52,9 +55,9 @@ function initialValues(prefill: QuotePrefill): QuoteFormValues {
 /**
  * Quote request form. Validates with the same rules as the server, then calls
  * the Server Action, which validates again and reports honestly whether the
- * request was emailed, only logged (test mode) or not sent at all.
+ * request was emailed. Only an email accepted by Resend leads to the confirmation.
  */
-export function QuoteForm({ prefill, deliveryMode, copy, projectTitles }: QuoteFormProps) {
+export function QuoteForm({ prefill, available, copy, projectTitles }: QuoteFormProps) {
   const text = copy.contactPage;
   const [values, setValues] = useState<QuoteFormValues>(() => initialValues(prefill));
   const [estimate, setEstimate] = useState<EstimateInput | null>(prefill.estimate);
@@ -83,7 +86,6 @@ export function QuoteForm({ prefill, deliveryMode, copy, projectTitles }: QuoteF
     element?.scrollIntoView({ block: "center", behavior: "smooth" });
   }, [focusTarget]);
 
-  const disabled = deliveryMode === "disabled";
   // The estimate only belongs to the request while its package is still selected.
   const attachedEstimate = estimate && estimate.packageId === values.packageId ? estimate : null;
   const estimateResult = attachedEstimate ? calculateEstimate(attachedEstimate) : null;
@@ -101,7 +103,7 @@ export function QuoteForm({ prefill, deliveryMode, copy, projectTitles }: QuoteF
 
   function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (isPending || disabled) return;
+    if (isPending || available === false) return;
 
     setAttempted(true);
     setOutcome(null);
@@ -131,7 +133,7 @@ export function QuoteForm({ prefill, deliveryMode, copy, projectTitles }: QuoteF
         result = { status: "network" };
       }
       setOutcome(result);
-      if (result.status === "sent" || result.status === "test") {
+      if (result.status === "sent") {
         setSubmitted(values);
         setFocusTarget({ id: SUCCESS_ID });
       } else if (result.status === "invalid") {
@@ -154,16 +156,11 @@ export function QuoteForm({ prefill, deliveryMode, copy, projectTitles }: QuoteF
     setFocusTarget({ id: fieldId("name") });
   }
 
-  if (submitted && (outcome?.status === "sent" || outcome?.status === "test")) {
-    return (
-      <QuoteConfirmation
-        values={submitted}
-        testMode={outcome.status === "test"}
-        copy={copy}
-        onStartOver={startOver}
-      />
-    );
+  if (submitted && outcome?.status === "sent") {
+    return <QuoteConfirmation values={submitted} copy={copy} onStartOver={startOver} />;
   }
+
+  if (available === false) return <QuoteUnavailable copy={copy} />;
 
   const fieldProps = (field: QuoteField) => ({
     field,
@@ -183,17 +180,6 @@ export function QuoteForm({ prefill, deliveryMode, copy, projectTitles }: QuoteF
       onSubmit={onSubmit}
       className="relative grid gap-8 rounded-card border border-border bg-surface p-5 sm:p-8"
     >
-      {deliveryMode === "disabled" ? (
-        <Notice tone="warning" icon={<AlertCircle />} title={text.status.unavailableNotice.title}>
-          {text.status.unavailableNotice.text}
-        </Notice>
-      ) : null}
-      {deliveryMode === "log" ? (
-        <Notice tone="warning" icon={<FlaskConical />} title={text.status.testNotice.title}>
-          {text.status.testNotice.text}
-        </Notice>
-      ) : null}
-
       {attempted && errorCount > 0 ? (
         <div
           id={SUMMARY_ID}
@@ -394,7 +380,6 @@ export function QuoteForm({ prefill, deliveryMode, copy, projectTitles }: QuoteF
           <p className="text-xs leading-relaxed text-fg-subtle sm:max-w-xs">{text.form.privacy}</p>
           <button
             type="submit"
-            disabled={disabled}
             aria-disabled={isPending || undefined}
             className={buttonClasses({ size: "lg", className: cn("group w-full sm:w-auto", isPending && "cursor-wait opacity-80") })}
           >
@@ -445,14 +430,13 @@ function outcomeMessage(outcome: Outcome, copy: QuoteCopy): string | null {
   }
 }
 
+/** Shown only after Resend accepted the email. */
 function QuoteConfirmation({
   values,
-  testMode,
   copy,
   onStartOver,
 }: {
   values: QuoteFormValues;
-  testMode: boolean;
   copy: QuoteCopy;
   onStartOver: () => void;
 }) {
@@ -466,23 +450,13 @@ function QuoteConfirmation({
   ];
 
   return (
-    <section
-      aria-labelledby={SUCCESS_ID}
-      className={cn(
-        "rounded-card border p-6 sm:p-10",
-        testMode ? "border-warning/40 bg-warning/[0.05]" : "border-success/40 bg-success/[0.05]",
-      )}
-    >
-      {testMode ? (
-        <FlaskConical aria-hidden="true" className="size-10 text-warning" />
-      ) : (
-        <CheckCircle2 aria-hidden="true" className="size-10 text-success" />
-      )}
+    <section aria-labelledby={SUCCESS_ID} className="rounded-card border border-success/40 bg-success/[0.05] p-6 sm:p-10">
+      <CheckCircle2 aria-hidden="true" className="size-10 text-success" />
       <h2 id={SUCCESS_ID} tabIndex={-1} className="mt-5 text-heading font-semibold text-fg">
-        {testMode ? text.testSuccess.title : text.success.title}
+        {text.success.title}
       </h2>
       <p className="mt-3 max-w-prose leading-relaxed text-fg-muted">
-        {testMode ? text.testSuccess.text : fill(text.success.text, { email: values.email.trim() })}
+        {fill(text.success.text, { email: values.email.trim() })}
       </p>
 
       <h3 className="mt-8 text-sm font-semibold text-fg">{text.success.summaryTitle}</h3>
@@ -508,30 +482,34 @@ function QuoteConfirmation({
   );
 }
 
-function Notice({
-  tone,
-  icon,
-  title,
-  children,
-}: {
-  tone: "warning";
-  icon: ReactNode;
-  title: string;
-  children: ReactNode;
-}) {
+/** Replaces the form while delivery is not configured, so nobody fills it in for nothing. */
+function QuoteUnavailable({ copy }: { copy: QuoteCopy }) {
+  const text = copy.contactPage;
   return (
-    <div
-      className={cn(
-        "flex items-start gap-3 rounded-xl border p-4 text-sm leading-relaxed [&>svg]:mt-0.5 [&>svg]:size-5 [&>svg]:shrink-0",
-        tone === "warning" && "border-warning/40 bg-warning/[0.06] [&>svg]:text-warning",
-      )}
+    <section
+      aria-labelledby="quote-unavailable-title"
+      className="rounded-card border border-border-strong bg-surface p-6 sm:p-10"
     >
-      {icon}
-      <div>
-        <p className="font-semibold text-fg">{title}</p>
-        <p className="mt-1 text-fg-muted">{children}</p>
+      <span
+        aria-hidden="true"
+        className="grid size-12 place-items-center rounded-full border border-accent/40 bg-accent/10 text-accent-text"
+      >
+        <Clock className="size-5" />
+      </span>
+      <h2 id="quote-unavailable-title" className="mt-6 text-heading font-semibold text-fg">
+        {text.status.unavailableNotice.title}
+      </h2>
+      <p className="mt-3 max-w-prose leading-relaxed text-fg-muted">{text.status.unavailableNotice.text}</p>
+      <div className="mt-8 flex flex-col gap-3 xs:flex-row">
+        <ButtonLink href={routes.pricing} variant="secondary">
+          {text.aside.pricingCta}
+        </ButtonLink>
+        <ButtonLink href={routes.estimator} variant="ghost">
+          <Calculator aria-hidden="true" />
+          {text.aside.estimatorCta}
+        </ButtonLink>
       </div>
-    </div>
+    </section>
   );
 }
 

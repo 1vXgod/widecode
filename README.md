@@ -53,7 +53,8 @@ Copy `.env.example` to `.env.local`. **Never commit real `.env` files.** They ar
 | `RESEND_API_KEY`       | For the quote form | Resend API key (server-only secret). |
 | `QUOTE_TO_EMAIL`       | For the quote form | Address that receives quote requests (or up to 5, comma-separated). |
 | `QUOTE_FROM_EMAIL`     | For the quote form | Sender, e.g. `WideCode <ofertat@your-domain>`. The domain must be verified in Resend. |
-| `QUOTE_DELIVERY`       | No       | `log` forces test mode (validate and print to the server console, never email). Used by the e2e tests. Not allowed on Vercel production. |
+| `QUOTE_DELIVERY`       | No       | Developer aid: `log` validates requests and prints them to the server console instead of emailing (visitors only see "not sent"). Not allowed on Vercel production. |
+| `RESEND_API_URL`       | No       | Tests only: replaces the Resend endpoint. Accepted only for `localhost` / `127.0.0.1`; the e2e tests point it at a local mock. Leave unset everywhere else. |
 
 The production domain has not been decided, so no domain is hardcoded.
 
@@ -63,9 +64,11 @@ The quote form on `/kontakt` sends requests through a Server Action ([`src/app/k
 
 | Situation | Mode | What visitors see |
 | --- | --- | --- |
-| `RESEND_API_KEY`, `QUOTE_TO_EMAIL` and `QUOTE_FROM_EMAIL` set and valid | `resend` | Confirmation only after Resend accepted the email; an error (with their data kept) if it did not |
-| `next dev` without complete Resend settings, or `QUOTE_DELIVERY=log` | `log` | A "Mënyrë testimi lokal" notice; requests are validated and printed to the server console, **no email is sent**, and the confirmation says so |
-| Anything else (e.g. production without Resend) | `disabled` | "Formulari nuk është aktiv ende"; the submit button is disabled and the server refuses requests. The server log names the missing variables (never their values) |
+| `RESEND_API_KEY`, `QUOTE_TO_EMAIL` and `QUOTE_FROM_EMAIL` set and valid | `resend` | The confirmation, **only** after Resend accepted the email; an error (with their data kept) if it did not |
+| `next dev` without complete Resend settings, or `QUOTE_DELIVERY=log` | `log` | The normal form. Requests are validated and printed to the server console for the developer; the visitor gets the "not sent, temporarily unavailable" message, never a confirmation |
+| Anything else (e.g. production without Resend) | `disabled` | "Formulari është përkohësisht i padisponueshëm" in place of the form, with links to pricing and the estimator; the server refuses requests. The server log names the missing variables (never their values) |
+
+Visitors never see testing or configuration details, and the browser only learns whether the form is available, never the mode. The e2e tests run the real `resend` path against a local mock of the Resend API ([`tests/e2e/mock-resend.mjs`](tests/e2e/mock-resend.mjs)), so they check the confirmation and the email content without sending anything.
 
 To activate it: create a Resend account, verify the sending domain, create an API key, then set the three variables in `.env.local` (locally) or in the Vercel project settings (production). For a quick local test before the domain is verified, Resend accepts `QUOTE_FROM_EMAIL=WideCode <onboarding@resend.dev>`, but only delivers to the email address of the Resend account itself.
 

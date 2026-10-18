@@ -12,6 +12,7 @@ const resendConfig: DeliveryConfig = {
   apiKey: "re_test_secret_key",
   to: ["owner@example.com"],
   from: "WideCode <quotes@example.com>",
+  endpoint: "https://api.resend.com/emails",
 };
 
 function submission(overrides: Partial<QuoteSubmission> = {}): QuoteSubmission {
@@ -102,9 +103,10 @@ describe("handleQuoteSubmission", () => {
     expect(log.warn.mock.calls[0]?.[0]).toContain("RESEND_API_KEY is not set");
   });
 
-  it("only logs in test mode and says so", async () => {
+  it("in log mode only prints for developers and tells the visitor it was not sent", async () => {
     const { fetchImpl, context, log } = setup({ mode: "log" });
-    await expect(handleQuoteSubmission(submission(), context)).resolves.toEqual({ status: "test" });
+    // Never a success: only an email accepted by Resend counts as sent.
+    await expect(handleQuoteSubmission(submission(), context)).resolves.toEqual({ status: "unavailable" });
     expect(fetchImpl).not.toHaveBeenCalled();
     expect(log.info.mock.calls[0]?.[0]).toContain("NOT emailed");
   });
@@ -147,10 +149,10 @@ describe("handleQuoteSubmission", () => {
   });
 
   it("rate-limits each visitor, including invalid attempts", async () => {
-    const { context } = setup({ mode: "log" });
+    const { context } = setup();
     for (let i = 0; i < quoteProtection.perVisitor.limit; i++) {
       const result = await handleQuoteSubmission(submission(), { ...context, now: 1_000_000 + i });
-      expect(result.status).toBe("test");
+      expect(result.status).toBe("sent");
     }
     const blocked = await handleQuoteSubmission(submission(), { ...context, now: 1_000_100 });
     expect(blocked).toMatchObject({ status: "rateLimited" });
@@ -158,11 +160,11 @@ describe("handleQuoteSubmission", () => {
 
     // Other visitors are unaffected, and the window slides.
     await expect(handleQuoteSubmission(submission(), { ...context, visitorKey: "198.51.100.1" })).resolves.toEqual({
-      status: "test",
+      status: "sent",
     });
     await expect(
       handleQuoteSubmission(submission(), { ...context, now: 1_000_000 + quoteProtection.perVisitor.windowMs + 10 }),
-    ).resolves.toEqual({ status: "test" });
+    ).resolves.toEqual({ status: "sent" });
   });
 
   it("caps the number of emails site-wide", async () => {
@@ -248,6 +250,7 @@ describe("resolveDeliveryConfig", () => {
       apiKey: "re_123",
       to: ["owner@example.com"],
       from: "WideCode <quotes@example.com>",
+      endpoint: "https://api.resend.com/emails",
     });
     expect(resolveDeliveryConfig({ ...complete, QUOTE_TO_EMAIL: "a@example.com, b@example.com" })).toMatchObject({
       to: ["a@example.com", "b@example.com"],
@@ -267,8 +270,21 @@ describe("resolveDeliveryConfig", () => {
     );
   });
 
-  it("falls back to test mode in local development", () => {
+  it("only logs (internally) in local development without Resend", () => {
     expect(resolveDeliveryConfig({ NODE_ENV: "development" })).toEqual({ mode: "log" });
+  });
+
+  it("accepts an endpoint override for tests only on the loopback interface", () => {
+    expect(resolveDeliveryConfig({ ...complete, RESEND_API_URL: "http://127.0.0.1:3199/emails" })).toMatchObject({
+      mode: "resend",
+      endpoint: "http://127.0.0.1:3199/emails",
+    });
+    expect(resolveDeliveryConfig({ ...complete, RESEND_API_URL: "http://localhost:3199/emails" }).mode).toBe("resend");
+    for (const url of ["https://evil.example/emails", "http://127.0.0.1.evil.example/", "file:///etc/passwd", "not a url"]) {
+      const result = resolveDeliveryConfig({ ...complete, NODE_ENV: "production", RESEND_API_URL: url });
+      expect(result.mode, url).toBe("disabled");
+      expect(JSON.stringify(result)).not.toContain("re_123");
+    }
   });
 
   it("honours QUOTE_DELIVERY=log, even with Resend configured, except on Vercel production", () => {

@@ -6,16 +6,21 @@ import { isValidEmail } from "@/lib/quote-request";
  * variables only (never NEXT_PUBLIC_*, so nothing here reaches the browser):
  *
  * - "resend": RESEND_API_KEY, QUOTE_TO_EMAIL and QUOTE_FROM_EMAIL are set and
- *   valid. Requests are emailed through the Resend API.
- * - "log": local testing. Requests are validated and printed to the server
- *   console; no email is sent and the visitor is told so. Used automatically
- *   in `next dev` when Resend is not configured, or when QUOTE_DELIVERY=log
- *   (e.g. for e2e tests). Never allowed on a Vercel production deployment.
- * - "disabled": anything else. The form says it is not active yet and the
- *   server refuses submissions. It never pretends a request was sent.
+ *   valid. Requests are emailed through the Resend API. This is the only mode
+ *   in which a visitor ever sees a success confirmation.
+ * - "log": developer aid. Requests are validated and printed to the server
+ *   console only. Used automatically in `next dev` when Resend is not
+ *   configured, or when QUOTE_DELIVERY=log. Visitors are never told about it:
+ *   the form looks normal and a submission ends with the "not sent" message.
+ *   Never allowed on a Vercel production deployment.
+ * - "disabled": anything else. The page shows a "temporarily unavailable"
+ *   message instead of the form and the server refuses submissions.
+ *
+ * Automated tests use "resend" against a local mock server (RESEND_API_URL),
+ * so the real success path is tested without sending email.
  */
 export type DeliveryConfig =
-  | { mode: "resend"; apiKey: string; to: string[]; from: string }
+  | { mode: "resend"; apiKey: string; to: string[]; from: string; endpoint: string }
   | { mode: "log" }
   /** `problems` names missing or invalid variables (never their values), for server logs. */
   | { mode: "disabled"; problems: string[] };
@@ -25,6 +30,23 @@ export type DeliveryMode = DeliveryConfig["mode"];
 type Env = Record<string, string | undefined>;
 
 const RESEND_ENDPOINT = "https://api.resend.com/emails";
+const LOOPBACK_HOSTS = new Set(["localhost", "127.0.0.1", "[::1]"]);
+
+/**
+ * RESEND_API_URL replaces the Resend endpoint for automated tests. It is only
+ * accepted on this machine's loopback interface, so a misconfiguration can
+ * never send the API key or visitors' data to another host.
+ */
+function resolveEndpoint(value: string | undefined): string | null {
+  const raw = value?.trim();
+  if (!raw) return RESEND_ENDPOINT;
+  try {
+    const url = new URL(raw);
+    return (url.protocol === "http:" || url.protocol === "https:") && LOOPBACK_HOSTS.has(url.hostname) ? url.href : null;
+  } catch {
+    return null;
+  }
+}
 const RESEND_TIMEOUT_MS = 10_000;
 const MAX_RECIPIENTS = 5;
 
@@ -61,8 +83,11 @@ export function resolveDeliveryConfig(env: Env = process.env): DeliveryConfig {
   if (!from) problems.push("QUOTE_FROM_EMAIL is not set");
   else if (!isValidSender(from)) problems.push('QUOTE_FROM_EMAIL must look like "WideCode <name@your-domain>"');
 
-  if (problems.length === 0) return { mode: "resend", apiKey, to, from };
-  // Local development without (complete) Resend settings: test mode instead of a dead form.
+  const endpoint = resolveEndpoint(env.RESEND_API_URL);
+  if (!endpoint) problems.push("RESEND_API_URL may only point to a local (loopback) test server");
+
+  if (problems.length === 0 && endpoint) return { mode: "resend", apiKey, to, from, endpoint };
+  // Local development without (complete) Resend settings: log instead of a dead form.
   if (env.NODE_ENV === "development" && logAllowed && requested !== "resend") return { mode: "log" };
   return { mode: "disabled", problems };
 }
@@ -80,7 +105,7 @@ export async function sendWithResend(
   { fetchImpl = fetch, log = console }: { fetchImpl?: typeof fetch; log?: Logger } = {},
 ): Promise<boolean> {
   try {
-    const response = await fetchImpl(RESEND_ENDPOINT, {
+    const response = await fetchImpl(config.endpoint, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${config.apiKey}`,
@@ -117,11 +142,11 @@ export async function sendWithResend(
   }
 }
 
-/** Test mode: prints the request to the server console instead of sending it. */
+/** "log" mode: prints the request to the server console (developers only) instead of sending it. */
 export function logQuoteEmail(email: QuoteEmail, log: Logger = console): void {
   log.info(
     [
-      "[quote] TEST MODE: the request below was validated but NOT emailed (Resend is not configured).",
+      "[quote] Resend is not configured: the request below was validated but NOT emailed. The visitor was told it was not sent.",
       `Subject: ${email.subject}`,
       `Reply-To: ${email.replyTo}`,
       "",

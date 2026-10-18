@@ -361,8 +361,8 @@ export interface Dictionary {
       fields: Record<QuoteField, Partial<Record<QuoteFieldError, string>>>;
     };
     status: {
+      /** Shown instead of the form when delivery is not configured. */
       unavailableNotice: { title: string; text: string };
-      testNotice: { title: string; text: string };
       invalid: string;
       /** Uses {time}. */
       rateLimited: string;
@@ -382,10 +382,6 @@ export interface Dictionary {
       summaryTitle: string;
       again: string;
       projects: string;
-    };
-    testSuccess: {
-      title: string;
-      text: string;
     };
     aside: {
       nextTitle: string;

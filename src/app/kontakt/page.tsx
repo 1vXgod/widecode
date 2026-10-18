@@ -21,8 +21,8 @@ type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
 /**
  * Reads the pre-selections from the URL and the delivery mode from server
- * environment variables at request time. Only the mode ("resend", "log" or
- * "disabled") reaches the browser, never the configuration itself.
+ * environment variables at request time. Only "available or not" reaches the
+ * browser, never the delivery mode or its configuration.
  */
 async function QuoteFormForRequest({
   searchParams,
@@ -34,8 +34,8 @@ async function QuoteFormForRequest({
   projectTitles: Record<ProjectSlug, string>;
 }) {
   const prefill = parseQuotePrefill(await searchParams);
-  const { mode } = resolveDeliveryConfig();
-  return <QuoteForm prefill={prefill} deliveryMode={mode} copy={copy} projectTitles={projectTitles} />;
+  const available = resolveDeliveryConfig().mode !== "disabled";
+  return <QuoteForm prefill={prefill} available={available} copy={copy} projectTitles={projectTitles} />;
 }
 
 export default function ContactPage({ searchParams }: { searchParams: SearchParams }) {
@@ -57,7 +57,7 @@ export default function ContactPage({ searchParams }: { searchParams: SearchPara
             {/* The fallback is the empty form, so the prerendered HTML has the same layout. */}
             <Suspense
               fallback={
-                <QuoteForm prefill={emptyQuotePrefill} deliveryMode={null} copy={copy} projectTitles={projectTitles} />
+                <QuoteForm prefill={emptyQuotePrefill} available={null} copy={copy} projectTitles={projectTitles} />
               }
             >
               <QuoteFormForRequest searchParams={searchParams} copy={copy} projectTitles={projectTitles} />

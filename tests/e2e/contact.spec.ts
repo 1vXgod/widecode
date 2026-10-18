@@ -1,12 +1,12 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type APIRequestContext, type Page } from "@playwright/test";
 import { quoteProtection } from "../../src/config/quote";
 import { routes } from "../../src/config/routes";
 
 /**
- * The e2e server runs with QUOTE_DELIVERY=log (playwright.config.ts), so valid
- * requests end in the clearly labelled test-mode confirmation and nothing is
- * ever emailed. Each test uses its own client address, so rate limiting in one
- * test never affects another.
+ * The e2e server delivers quote requests to a local mock of the Resend API
+ * (tests/e2e/mock-resend.mjs, see playwright.config.ts), so the real success
+ * path is tested and nothing is ever emailed. Each test uses its own client
+ * address and email, so rate limits and received emails never mix between tests.
  */
 let visitor = 0;
 test.beforeEach(async ({ page }, testInfo) => {
@@ -28,14 +28,31 @@ async function openContact(page: Page, query = "") {
   return Date.now();
 }
 
-async function fillValid(page: Page, { selectPackage = true } = {}) {
+const MOCK_RESEND_URL = `http://127.0.0.1:${process.env.MOCK_RESEND_PORT ?? 3199}`;
+
+type MockEmail = { reply_to: string; subject: string; text: string; to: string[]; idempotencyKey: string | null };
+
+/** Emails the mock Resend API received for a visitor's address. */
+async function emailsFrom(request: APIRequestContext, address: string): Promise<MockEmail[]> {
+  const all = (await (await request.get(`${MOCK_RESEND_URL}/emails`)).json()) as MockEmail[];
+  return all.filter((email) => email.reply_to === address);
+}
+
+/** A unique visitor address per call, so each test finds only its own emails. */
+function uniqueEmail() {
+  return `arta+${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}@example.com`;
+}
+
+async function fillValid(page: Page, { selectPackage = true, email = "arta@example.com", description = "" } = {}) {
   await page.getByLabel("Emri dhe mbiemri").fill("Arta Krasniqi");
-  await page.getByLabel("Email", { exact: true }).fill("arta@example.com");
+  await page.getByLabel("Email", { exact: true }).fill(email);
   await page.getByLabel("Lloji i projektit").selectOption("business");
   if (selectPackage) await page.getByLabel("Paketa").selectOption("business");
   await page.getByLabel("Buxheti i përafërt").selectOption("300-600");
   await page.getByLabel("Afati i dëshiruar").selectOption("flexible");
-  await page.getByLabel("Përshkrimi i projektit").fill("Website për restorantin tonë, me menu dhe rezervime online.");
+  await page
+    .getByLabel("Përshkrimi i projektit")
+    .fill(description || "Website për restorantin tonë, me menu dhe rezervime online.");
 }
 
 /**
@@ -63,8 +80,8 @@ test.describe("contact page", () => {
     await expect(page.getByRole("form", { name: "Kërkesë për ofertë" })).toBeVisible();
     await expect(page.getByRole("complementary", { name: "Çfarë ndodh pasi e dërgoni" })).toBeVisible();
     await expect(page.locator('main a[href^="mailto:"], main a[href^="tel:"]')).toHaveCount(0);
-    // Delivery mode is reported honestly.
-    await expect(page.getByText("Mënyrë testimi lokal")).toBeVisible();
+    // Nothing about delivery internals or testing is ever shown to visitors.
+    await expect(page.locator("main")).not.toContainText(/testim|konsol|resend/i);
     await expect(page.getByText("Disa fusha u plotësuan")).toHaveCount(0);
   });
 
@@ -180,17 +197,29 @@ test.describe("quote form submission", () => {
     await expect(page.getByText("Shkruani të paktën 20 karaktere").first()).toBeVisible();
   });
 
-  test("submits a valid request and confirms honestly in test mode", async ({ page }) => {
-    const openedAt = await openContact(page, "?paketa=business&faqe=6");
-    await fillValid(page, { selectPackage: false });
+  test("sends a valid request and confirms only after the email was accepted", async ({ page, request }) => {
+    const email = uniqueEmail();
+    const openedAt = await openContact(page, "?paketa=business&faqe=6&projekti=restorant-tradicional");
+    await fillValid(page, { selectPackage: false, email });
     await waitForMinFillTime(page, openedAt);
     await submit(page).click();
 
-    const heading = page.getByRole("heading", { name: "Mënyrë testimi: kërkesa nuk u dërgua me email" });
+    const heading = page.getByRole("heading", { name: "Faleminderit, kërkesa juaj u dërgua!" });
     await expect(heading).toBeFocused();
-    await expect(page.getByText("Asnjë email nuk u dërgua")).toBeVisible();
-    await expect(page.getByText("Faleminderit, kërkesa juaj u dërgua!")).toHaveCount(0);
-    const summary = page.getByRole("region", { name: "Mënyrë testimi: kërkesa nuk u dërgua me email" });
+    await expect(page.getByText(`do t'ju kthejmë përgjigje në ${email}`)).toBeVisible();
+    await expect(page.locator("main")).not.toContainText(/testim|konsol/i);
+
+    // The email reached the (mock) provider exactly once, with the estimate recalculated on the server.
+    const received = await emailsFrom(request, email);
+    expect(received).toHaveLength(1);
+    const sent = received[0]!;
+    expect(sent.to).toEqual(["quotes@example.test"]);
+    expect(sent.subject).toBe("Kërkesë për ofertë: Arta Krasniqi – Website biznesi");
+    expect(sent.idempotencyKey).toMatch(/^quote-/);
+    expect(sent.text.replace(/\s/g, " ")).toContain("Totali orientues: nga 429 €");
+    expect(sent.text).toContain("Restorant tradicional");
+
+    const summary = page.getByRole("region", { name: "Faleminderit, kërkesa juaj u dërgua!" });
     await expect(summary).toContainText("Website biznesi");
     await expect(summary).toContainText(/Business \(nga 399\s€\)/);
 
@@ -223,7 +252,7 @@ test.describe("quote form submission", () => {
     await expect(submit(page)).toBeFocused();
     await waitForMinFillTime(page, openedAt);
     await page.keyboard.press("Enter");
-    await expect(page.getByRole("heading", { name: /Mënyrë testimi/ })).toBeFocused();
+    await expect(page.getByRole("heading", { name: "Faleminderit, kërkesa juaj u dërgua!" })).toBeFocused();
   });
 
   test("shows a loading state while sending", async ({ page }) => {
@@ -246,7 +275,19 @@ test.describe("quote form submission", () => {
     // A second click while sending does not send twice.
     await sending.click({ force: true });
     release();
-    await expect(page.getByRole("heading", { name: /Mënyrë testimi/ })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Faleminderit, kërkesa juaj u dërgua!" })).toBeVisible();
+  });
+
+  test("never confirms when the email provider fails", async ({ page, request }) => {
+    const email = uniqueEmail();
+    const openedAt = await openContact(page);
+    await fillValid(page, { email, description: "Website për restorantin tonë. [mock-resend:fail]" });
+    await waitForMinFillTime(page, openedAt);
+    await submit(page).click();
+    await expect(formAlert(page)).toContainText("Kërkesa nuk u dërgua për shkak të një problemi teknik");
+    await expect(page.getByRole("heading", { name: "Faleminderit, kërkesa juaj u dërgua!" })).toHaveCount(0);
+    await expect(page.getByLabel("Email", { exact: true })).toHaveValue(email);
+    expect(await emailsFrom(request, email)).toEqual([]);
   });
 
   test("keeps the data and explains a network failure", async ({ page }) => {
@@ -271,28 +312,32 @@ test.describe("quote form submission", () => {
     await submit(page).click();
     await expect(formAlert(page)).toContainText("provoni përsëri");
     await expect(page.getByLabel("Përshkrimi i projektit")).not.toHaveValue("");
-    await expect(page.getByRole("heading", { name: /Faleminderit|Mënyrë testimi:/ })).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: /Faleminderit/ })).toHaveCount(0);
   });
 });
 
 test.describe("quote form spam protection", () => {
-  test("rejects a form submitted faster than a person can fill it", async ({ page }) => {
+  test("rejects a form submitted faster than a person can fill it", async ({ page, request }) => {
+    const email = uniqueEmail();
     await openWithFrozenClock(page);
-    await fillValid(page);
+    await fillValid(page, { email });
     await submit(page).click();
     await expect(formAlert(page)).toContainText("Formulari u dërgua shumë shpejt");
-    await expect(page.getByRole("heading", { name: /Mënyrë testimi:/ })).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: /Faleminderit/ })).toHaveCount(0);
+    expect(await emailsFrom(request, email)).toEqual([]);
   });
 
-  test("rejects requests with the honeypot filled in", async ({ page }) => {
+  test("rejects requests with the honeypot filled in", async ({ page, request }) => {
+    const email = uniqueEmail();
     const openedAt = await openContact(page);
-    await fillValid(page);
+    await fillValid(page, { email });
     // A bot filling every input it finds; people never see this field.
     await page.locator("#quote-website").fill("https://spam.example", { force: true });
     await waitForMinFillTime(page, openedAt);
     await submit(page).click();
     await expect(formAlert(page)).toContainText("Kërkesa nuk mund të pranohej");
-    await expect(page.getByRole("heading", { name: /Mënyrë testimi:/ })).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: /Faleminderit/ })).toHaveCount(0);
+    expect(await emailsFrom(request, email)).toEqual([]);
   });
 
   test("the honeypot is hidden from people and assistive technology", async ({ page }) => {

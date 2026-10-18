@@ -14,17 +14,15 @@ import { RateLimiter } from "@/lib/rate-limit";
 
 /** What the Server Action returns. Shaped for the UI; never contains secrets or internals. */
 export type QuoteSubmitResult =
-  /** Emailed through Resend. */
+  /** Emailed through Resend. The only result that leads to a success confirmation. */
   | { status: "sent" }
-  /** Test mode: valid, printed to the server console, not emailed. */
-  | { status: "test" }
   | { status: "invalid"; errors: QuoteFieldErrors }
   | { status: "rateLimited"; retryAfterSeconds: number }
   /** Sent sooner after the form appeared than a person can fill it in. */
   | { status: "tooFast" }
   /** Malformed request or honeypot filled in. */
   | { status: "rejected" }
-  /** Delivery is not configured; nothing was sent. */
+  /** Delivery is not configured (or only logged for developers); nothing was sent. */
   | { status: "unavailable" }
   /** The email provider failed; nothing was sent. */
   | { status: "failed" };
@@ -110,8 +108,9 @@ export async function handleQuoteSubmission(raw: unknown, context: SubmissionCon
   );
 
   if (config.mode === "log") {
+    // Developer aid only: the visitor gets the same honest "not sent" answer as when delivery is off.
     logQuoteEmail(email, log);
-    return { status: "test" };
+    return { status: "unavailable" };
   }
 
   const globalLimit = limiters.global.hit("all", now);
