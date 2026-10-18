@@ -23,6 +23,8 @@ export function ProjectPreview({ preview, className }: { preview: PreviewConfig;
           <span className="size-[1.8cqw] rounded-full bg-white/20" />
         </div>
         <div className="p-[4cqw]">
+          {preview.layout === "gallery" && <GalleryLayout />}
+          {preview.layout === "clinic" && <ClinicLayout />}
           {preview.layout === "restaurant" && <RestaurantLayout />}
           {preview.layout === "shop" && <ShopLayout />}
           {preview.layout === "dashboard" && <DashboardLayout />}
@@ -34,6 +36,54 @@ export function ProjectPreview({ preview, className }: { preview: PreviewConfig;
 
 function Bar({ className }: { className?: string }) {
   return <span className={cn("block h-[2cqw] rounded-full bg-white/15", className)} />;
+}
+
+function GalleryLayout() {
+  const tiles = ["row-span-2", "", "", "", "row-span-2", ""];
+  return (
+    <div className="grid gap-[3cqw]">
+      <div className="flex items-center justify-between">
+        <Bar className="h-[2.6cqw] w-1/3 bg-white/40" />
+        <Bar className="w-[14cqw] bg-(--p-accent)/70" />
+      </div>
+      <div className="grid h-[38cqw] grid-cols-3 grid-rows-3 gap-[1.6cqw]">
+        {tiles.map((span, i) => (
+          <span
+            key={i}
+            className={cn(
+              "block rounded-[1.4cqw]",
+              span,
+              i % 3 === 0 ? "bg-linear-to-br from-(--p-accent)/60 to-(--p-accent)/15" : "bg-white/10",
+            )}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ClinicLayout() {
+  return (
+    <div className="grid gap-[3cqw]">
+      <div className="grid grid-cols-[1.3fr_1fr] gap-[3cqw]">
+        <div className="grid content-center gap-[1.6cqw]">
+          <Bar className="h-[3cqw] w-4/5 bg-white/60" />
+          <Bar className="w-3/5" />
+          <span className="mt-[1cqw] block h-[5cqw] w-[20cqw] rounded-full bg-(--p-accent)/70" />
+        </div>
+        <span className="block h-[20cqw] rounded-[2cqw] bg-linear-to-br from-(--p-accent)/45 to-(--p-accent)/10" />
+      </div>
+      <div className="grid grid-cols-3 gap-[2cqw]">
+        {[0, 1, 2].map((card) => (
+          <div key={card} className="grid gap-[1.2cqw] rounded-[1.6cqw] bg-white/[0.06] p-[2cqw]">
+            <span className="block size-[4cqw] rounded-full bg-(--p-accent)/60" />
+            <Bar className="w-3/4" />
+            <Bar className="w-1/2 bg-white/10" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 function RestaurantLayout() {

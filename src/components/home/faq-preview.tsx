@@ -23,7 +23,7 @@ export function FaqPreview({ copy, itemIndices = DEFAULT_ITEMS }: FaqPreviewProp
   });
 
   return (
-    <Section id="pyetje" aria-labelledby="faq-title" containerClassName="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
+    <Section id="pyetje" aria-labelledby="faq-title" containerClassName="grid grid-cols-1 gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
       <div className="reveal flex flex-col items-start gap-8">
         <SectionHeading id="faq-title" eyebrow={copy.eyebrow} title={copy.title} description={copy.description} />
         <Link

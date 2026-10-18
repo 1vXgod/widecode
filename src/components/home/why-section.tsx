@@ -12,7 +12,7 @@ const icons: Record<ReasonId, LucideIcon> = {
 
 export function WhySection({ copy }: { copy: Dictionary["why"] }) {
   return (
-    <Section id="pse-widecode" aria-labelledby="why-title" containerClassName="grid gap-14 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
+    <Section id="pse-widecode" aria-labelledby="why-title" containerClassName="grid grid-cols-1 gap-14 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
       <div className="reveal lg:sticky lg:top-28 lg:self-start">
         <SectionHeading id="why-title" eyebrow={copy.eyebrow} title={copy.title} description={copy.description} />
       </div>

@@ -88,11 +88,16 @@ Legend: `[x]` done · `[ ]` open · `[~]` partial / placeholder
 - [x] Tests: calculations, edge cases (invalid/out-of-range/duplicate input, malicious URL values), package ↔ estimator ↔ copy consistency, formatting (unit); pricing links, add-on prices, full estimator flow incl. keyboard, Custom, URL restore, reset, live announcement (e2e); axe, CLS and overflow on both pages
 - [x] Add-on and extra-page prices confirmed by the owner (2026-10-18) as indicative prices for standard implementations; payment-provider transaction fees and third-party subscriptions are stated as not included
 
-## Sprint 6: Projects (portfolio)
+## Sprint 6: Projects (portfolio) ✅
 
-- [ ] Portfolio grid with category filters
-- [ ] Project detail pages
-- [ ] Every demo project clearly labelled as a demonstration
+- [x] Six demo projects (all `demo: true`), with categories that mirror the services and a matching package per project
+- [x] `/projektet`: intro, "Pse projekte demonstruese?" notice, category filter (toggle buttons with counts, keyboard accessible, result count announced, kept in `?kategoria=`), project grid
+- [x] `/projektet/[slug]`: demo badge and banner, CSS-only preview, concept, goals (aims, not results), features, page structure, matching service and package with starting price, pre-selected quote and estimator links, related demo projects
+- [x] Real 404 for unknown project slugs via `src/proxy.ts` (with Cache Components the page alone would send a "soft 404" with status 200 on first request)
+- [x] Home project cards link to detail pages; shared `ProjectCard`
+- [x] Fix: two-column grids hardened with `grid-cols-1` (implicit grid columns could grow past the screen on 360px phones); long button labels allowed to wrap
+- [x] Tests: demo flags, config/copy consistency, no claim-like numbers or testimonial wording, filters and related projects (unit); filters incl. keyboard and URL, demo labels everywhere, detail links, first-request 404, home deep links, axe, CLS and overflow (e2e)
+- [ ] Real client projects can replace demos later; each needs explicit client approval and must drop `demo: true`
 
 ## Sprint 7: Contact and quote request
 

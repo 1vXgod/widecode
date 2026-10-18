@@ -6,6 +6,7 @@ import { cta as ctaSection, home, processCopy, why } from "./home";
 import { pricing } from "./pricing";
 import { pricingPage } from "./pricing-page";
 import { projects } from "./projects";
+import { projectsPage } from "./projects-page";
 import { services } from "./services";
 import { servicesPage } from "./services-page";
 
@@ -46,7 +47,8 @@ export const sq = {
     },
     projects: {
       title: "Projektet",
-      description: "Projekte demonstruese që tregojnë qasjen tonë ndaj dizajnit dhe zhvillimit.",
+      description:
+        "Projekte demonstruese të WideCode: website, online shop dhe web aplikacione që tregojnë qasjen tonë ndaj dizajnit dhe zhvillimit.",
     },
     pricing: {
       title: "Çmimet",
@@ -114,6 +116,7 @@ export const sq = {
   aboutPage,
   pricingPage,
   estimator,
+  projectsPage,
   placeholder: {
     badge: "Në përgatitje",
     text: "Kjo faqe është në përgatitje dhe do të publikohet së shpejti.",

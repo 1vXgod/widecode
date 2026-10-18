@@ -7,7 +7,7 @@ for (const width of widths) {
   test.describe(`layout at ${width}px`, () => {
     test.use({ viewport: { width, height: 800 } });
 
-    for (const path of Object.values(routes)) {
+    for (const path of [...Object.values(routes), `${routes.projects}/klinike-dentare`]) {
       test(`${path} has no horizontal overflow`, async ({ page }) => {
         await page.goto(path);
         const overflow = await page.evaluate(

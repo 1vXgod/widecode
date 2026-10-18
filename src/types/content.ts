@@ -121,7 +121,21 @@ export interface Dictionary {
   projects: SectionIntro & {
     demoBadge: string;
     categories: Record<ProjectCategory, string>;
-    items: Record<ProjectSlug, { title: string; summary: string; tags: string[] }>;
+    items: Record<
+      ProjectSlug,
+      {
+        title: string;
+        summary: string;
+        tags: string[];
+        /** What the demo concept explores (never presented as client work). */
+        concept: string;
+        /** What the concept is designed to achieve; aims, not results. */
+        goals: string[];
+        features: string[];
+        /** Pages or sections of the concept. */
+        sections: string[];
+      }
+    >;
     previewLabel: string;
     cta: string;
   };
@@ -260,6 +274,42 @@ export interface Dictionary {
       /** Screen-reader announcement; uses {total}. */
       announce: string;
       announceQuote: string;
+    };
+  };
+  projectsPage: {
+    intro: PageIntroCopy;
+    notice: {
+      title: string;
+      text: string;
+    };
+    filter: {
+      label: string;
+      all: string;
+      /** Uses {count}. */
+      resultsOne: string;
+      /** Uses {count}. */
+      resultsMany: string;
+      empty: string;
+    };
+    cardCta: string;
+    detail: {
+      back: string;
+      banner: string;
+      conceptTitle: string;
+      goalsTitle: string;
+      featuresTitle: string;
+      sectionsTitle: string;
+      serviceLabel: string;
+      packageLabel: string;
+      ctaTitle: string;
+      ctaText: string;
+      quoteCta: string;
+      estimateCta: string;
+      relatedTitle: string;
+      /** Uses {title}. */
+      metaTitle: string;
+      /** Uses {summary}. */
+      metaDescription: string;
     };
   };
   placeholder: {

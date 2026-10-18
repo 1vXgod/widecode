@@ -33,7 +33,7 @@ test.describe("routes", () => {
   });
 
   test("placeholder pages are excluded from search indexing", async ({ page }) => {
-    await page.goto(routes.projects);
+    await page.goto(routes.faq);
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
   });
 });

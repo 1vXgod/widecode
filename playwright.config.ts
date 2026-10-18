@@ -12,6 +12,14 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
+  // One production server serves every worker; more parallel browsers than this
+  // overloads it (especially next to a running `next dev`) and causes timeouts
+  // that say nothing about the site itself.
+  workers: process.env.CI ? 2 : 4,
+  expect: {
+    // Pages hydrate within ~1s in isolation; allow headroom on a busy machine.
+    timeout: 10_000,
+  },
   reporter: process.env.CI ? "github" : "list",
   use: {
     baseURL,

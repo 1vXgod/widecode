@@ -24,7 +24,7 @@ export function ServiceDetail({ service, index, dict }: ServiceDetailProps) {
 
   return (
     <section id={service.anchor} aria-labelledby={headingId} className="border-t border-border py-16 sm:py-20">
-      <Container className="grid gap-10 lg:grid-cols-[1fr_1.1fr] lg:gap-16">
+      <Container className="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_1.1fr] lg:gap-16">
         <div className="reveal">
           <div className="flex items-center gap-4">
             <span className="grid size-12 place-items-center rounded-xl border border-accent/30 bg-accent/10 text-accent-text">

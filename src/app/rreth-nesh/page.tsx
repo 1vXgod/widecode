@@ -63,7 +63,7 @@ export default function AboutPage() {
       />
 
       {/* Mission */}
-      <Section aria-labelledby="mission-title" containerClassName="grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-20">
+      <Section aria-labelledby="mission-title" containerClassName="grid grid-cols-1 items-center gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-20">
         <div className="reveal">
           <p className="text-sm font-medium text-accent-text">{page.mission.eyebrow}</p>
           <h2 id="mission-title" className="mt-4 text-title font-semibold text-fg">
