@@ -1,3 +1,4 @@
+import type { AddOnId } from "@/config/estimator";
 import type { PackageId } from "@/config/pricing";
 import type { ProjectCategory, ProjectSlug } from "@/config/projects";
 import type { ServiceId } from "@/config/services";
@@ -29,6 +30,9 @@ export type StandardId = (typeof standardIds)[number];
 
 export const valueIds = ["transparency", "quality", "custom", "communication", "honesty", "partnership"] as const;
 export type ValueId = (typeof valueIds)[number];
+
+export const priceFactorIds = ["scope", "features", "content", "integrations", "complexity"] as const;
+export type PriceFactorId = (typeof priceFactorIds)[number];
 
 export const reasonIds = ["transparent", "custom", "devices", "communication"] as const;
 export type ReasonId = (typeof reasonIds)[number];
@@ -183,6 +187,77 @@ export interface Dictionary {
     market: {
       title: string;
       text: string;
+    };
+  };
+  pricingPage: {
+    intro: PageIntroCopy;
+    packages: SectionIntro & {
+      /** Secondary link on each package card, opening the estimator with it preselected. */
+      estimateCta: string;
+    };
+    addOns: SectionIntro & {
+      extraPage: string;
+      extraPageNote: string;
+      /** Uses {name} and {count}. */
+      includedPages: string;
+      /** Uses {price}. */
+      perPage: string;
+      /** Uses {packages}. */
+      includedIn: string;
+      /** Uses {packages}. */
+      availableFor: string;
+    };
+    factors: SectionIntro & {
+      items: Record<PriceFactorId, { title: string; text: string }>;
+    };
+    estimatorCta: {
+      title: string;
+      text: string;
+      cta: string;
+    };
+  };
+  estimator: {
+    intro: {
+      eyebrow: string;
+      title: string;
+      lead: string;
+    };
+    formLabel: string;
+    steps: {
+      package: string;
+      pages: string;
+      addOns: string;
+    };
+    /** Uses {count} and {price}. */
+    pagesHelp: string;
+    pagesFixed: string;
+    pagesNotApplicable: string;
+    pagesInputLabel: string;
+    decreasePages: string;
+    increasePages: string;
+    addOnsNone: string;
+    addOnState: {
+      included: string;
+      /** Uses {price}. */
+      price: string;
+    };
+    addOns: Record<AddOnId, { label: string; description: string }>;
+    summary: {
+      title: string;
+      /** Uses {name}. */
+      base: string;
+      /** Uses {count} and {price}. */
+      extraPages: string;
+      total: string;
+      quoteOnly: string;
+      quoteOnlyText: string;
+      disclaimer: string;
+      cta: string;
+      quoteCta: string;
+      reset: string;
+      /** Screen-reader announcement; uses {total}. */
+      announce: string;
+      announceQuote: string;
     };
   };
   placeholder: {

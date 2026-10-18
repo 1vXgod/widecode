@@ -38,11 +38,18 @@ export function lowestStartingPrice(): number {
   return Math.min(...prices);
 }
 
-/** Formats whole-euro amounts using the locale's conventions, e.g. "199 €" in Albanian. */
-export function formatPrice(amount: number, locale = "sq"): string {
-  return new Intl.NumberFormat(locale, {
-    style: "currency",
-    currency,
-    maximumFractionDigits: 0,
-  }).format(amount);
+const NBSP = " ";
+
+/**
+ * Formats whole-euro amounts the Albanian way: "199 €", "1299 €", "12 500 €".
+ *
+ * Deliberately not Intl.NumberFormat: browsers ship different locale data
+ * (Chromium renders `sq` as "€199" while Node renders "199 €"), which would
+ * make server and client output disagree and break hydration.
+ */
+export function formatPrice(amount: number): string {
+  const digits = String(Math.round(Math.abs(amount)));
+  // Albanian groups thousands only from five digits up (like Intl's sq data).
+  const grouped = digits.length > 4 ? digits.replace(/\B(?=(\d{3})+(?!\d))/g, NBSP) : digits;
+  return `${amount < 0 ? "-" : ""}${grouped}${NBSP}€`;
 }

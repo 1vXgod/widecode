@@ -75,12 +75,18 @@ Legend: `[x]` done · `[ ]` open · `[~]` partial / placeholder
 - [x] Fix: FAQ list no longer stretches to the height of its intro column
 - [x] Tests: services/pricing mapping and copy (unit); services and about pages, package pre-selection, anchors clear of the header, home deep links, no unverifiable claims, reveal visibility (incl. no-JS and reduced motion), crawler now verifies #anchors on their target page, axe on both pages, CLS on both pages (e2e)
 
-## Sprint 5: Pricing and estimator
+## Sprint 5: Pricing and estimator ✅
 
-- [ ] Central pricing config (Starter €199, Business €399, Professional €699, E-commerce €999, Custom: quote)
-- [ ] Pricing page with configurable packages and an "indicative prices" disclaimer
-- [ ] Estimator logic as pure functions, with full unit tests
-- [ ] Estimator UI (keyboard accessible)
+- [x] Central pricing config (Starter 199 €, Business 399 €, Professional 699 €, E-commerce 999 €, Custom: quote)
+- [x] Estimator rules in `src/config/estimator.ts`: pages included per package, extra-page price, add-ons (price, availability, included-in)
+- [x] Estimator logic as pure functions (`src/lib/estimator.ts`): normalization of any input, itemised breakdown, total, "quote" result for Custom (never a number)
+- [x] Pricing page (`/cmimet`): package cards from config (quote link + "Llogarit me këtë paketë"), Custom band, add-on prices generated from the estimator config, price factors, disclaimers, price FAQs, CTA
+- [x] Estimator page (`/llogarit-cmimin`): native radio/checkbox/number controls, live total with screen-reader announcement, itemised summary, "indicative estimate, not a quote" notice, reset, sticky mobile total
+- [x] Estimate carries over: shareable URL and quote link use `?paketa=…&faqe=…&shtesa=…` (read by the contact form in Sprint 7)
+- [x] Shared `PackageGrid` / `CustomPackageBand` / `PricingDisclaimer` used by home and pricing page
+- [x] Fix: price formatting no longer uses `Intl` (Chromium renders `sq` currency as "€399", Node as "399 €"; would mismatch server/client); deterministic `formatPrice` and `formatList`
+- [x] Tests: calculations, edge cases (invalid/out-of-range/duplicate input, malicious URL values), package ↔ estimator ↔ copy consistency, formatting (unit); pricing links, add-on prices, full estimator flow incl. keyboard, Custom, URL restore, reset, live announcement (e2e); axe, CLS and overflow on both pages
+- [ ] **Needs owner confirmation:** add-on and extra-page prices in `src/config/estimator.ts` are proposed defaults
 
 ## Sprint 6: Projects (portfolio)
 

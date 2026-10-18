@@ -159,7 +159,7 @@ test.describe("stability", () => {
     expect(problems).toEqual([]);
   });
 
-  for (const [path, viewport] of ["/", "/sherbimet", "/rreth-nesh"].flatMap((p) =>
+  for (const [path, viewport] of ["/", "/sherbimet", "/rreth-nesh", "/cmimet", "/llogarit-cmimin"].flatMap((p) =>
     [
       { name: "mobile", width: 390, height: 844 },
       { name: "desktop", width: 1280, height: 800 },

@@ -124,7 +124,9 @@ Content rules: natural Kosovo Albanian with correct **ë** and **ç**; no invent
 
 ### Prices and projects
 
-- **Prices:** [`src/config/pricing.ts`](src/config/pricing.ts) holds every starting price (whole euros; `null` = custom quote) and the recommended package. Package names, summaries and feature lists are in `src/content/sq/pricing.ts`. Prices are formatted with the Albanian locale (`199 €`). All prices are indicative starting prices, and the disclaimer must stay next to them.
+- **Prices:** [`src/config/pricing.ts`](src/config/pricing.ts) holds every starting price (whole euros; `null` = custom quote) and the recommended package. Package names, summaries and feature lists are in `src/content/sq/pricing.ts`. Always format prices with `formatPrice()` (`199 €`, `12 500 €`). It deliberately avoids `Intl`, whose Albanian data differs between Node and browsers. All prices are indicative starting prices, and the disclaimer must stay next to them.
+- **Estimator:** [`src/config/estimator.ts`](src/config/estimator.ts) defines the pages included per package, the extra-page price and the add-ons (price, which packages can add them, which already include them). The calculation lives in `src/lib/estimator.ts` as pure, unit-tested functions. The pricing page's add-on list is generated from the same config, so the two cannot disagree. Custom work never gets a number.
+- **Estimate in URLs:** `?paketa=<package>&faqe=<pages>&shtesa=<addon,addon>`, used by the estimator's shareable URL and by `quoteHrefForEstimate()` for the quote link. Parse it with `parseEstimateParams()`, which ignores invalid values.
 - **Projects:** [`src/config/projects.ts`](src/config/projects.ts) lists portfolio entries. Every current entry is a **demonstration** (`demo: true`) and is shown with a "Projekt demonstrues" badge. Never present them as client work.
 
 ### Services and quote links

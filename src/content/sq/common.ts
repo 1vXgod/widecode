@@ -1,8 +1,10 @@
 import type { Dictionary } from "@/types/content";
 import { aboutPage } from "./about-page";
+import { estimator } from "./estimator";
 import { faq } from "./faq";
 import { cta as ctaSection, home, processCopy, why } from "./home";
 import { pricing } from "./pricing";
+import { pricingPage } from "./pricing-page";
 import { projects } from "./projects";
 import { services } from "./services";
 import { servicesPage } from "./services-page";
@@ -48,11 +50,12 @@ export const sq = {
     },
     pricing: {
       title: "Çmimet",
-      description: "Paketa me çmime fillestare transparente në euro.",
+      description:
+        "Paketat e WideCode me çmime fillestare transparente në euro: Starter, Business, Professional, E-commerce dhe Custom.",
     },
     estimator: {
       title: "Llogarit çmimin",
-      description: "Llogaritni një çmim orientues për projektin tuaj në pak hapa.",
+      description: "Llogaritni një vlerësim orientues për projektin tuaj në pak hapa, pa obligim.",
     },
     about: {
       title: "Rreth nesh",
@@ -109,6 +112,8 @@ export const sq = {
   cta: ctaSection,
   servicesPage,
   aboutPage,
+  pricingPage,
+  estimator,
   placeholder: {
     badge: "Në përgatitje",
     text: "Kjo faqe është në përgatitje dhe do të publikohet së shpejti.",

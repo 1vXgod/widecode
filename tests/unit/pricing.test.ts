@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { formatPrice, getPackage, lowestStartingPrice, packageIds, packages } from "@/config/pricing";
 import { getDictionary } from "@/content";
+import { formatList } from "@/lib/format";
 
 describe("pricing config", () => {
   it("has the agreed starting prices", () => {
@@ -41,7 +42,33 @@ describe("formatPrice", () => {
   });
 
   it("keeps the amount and currency together with a non-breaking space", () => {
+    expect(formatPrice(199)).toBe("199 €");
     expect(formatPrice(199)).not.toContain(" ");
+  });
+
+  it("groups thousands only from five digits up, like Albanian locale data", () => {
+    expect(formatPrice(1299)).toBe("1299 €");
+    expect(formatPrice(12500)).toBe("12 500 €");
+    expect(formatPrice(1250000)).toBe("1 250 000 €");
+  });
+
+  it("rounds to whole euros and handles zero", () => {
+    expect(formatPrice(0)).toBe("0 €");
+    expect(formatPrice(199.6)).toBe("200 €");
+  });
+
+  it("does not depend on the runtime's Intl locale data (server and browser must match)", () => {
+    // Chromium formats `sq` currency as "€199" while Node gives "199 €"; ours is fixed.
+    expect(formatPrice(399)).toMatch(/^399\s€$/);
+  });
+});
+
+describe("formatList", () => {
+  it("joins items the Albanian way", () => {
+    expect(formatList([])).toBe("");
+    expect(formatList(["Starter"])).toBe("Starter");
+    expect(formatList(["Starter", "Business"])).toBe("Starter dhe Business");
+    expect(formatList(["Starter", "Business", "Professional"])).toBe("Starter, Business dhe Professional");
   });
 });
 
