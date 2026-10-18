@@ -1,5 +1,7 @@
 import type { Dictionary } from "@/types/content";
 
+const cta = "Merr një ofertë";
+
 export const sq = {
   meta: {
     defaultTitle: "WideCode — Uebfaqe dhe dyqane online me porosi",
@@ -10,15 +12,17 @@ export const sq = {
     skipToContent: "Kalo te përmbajtja kryesore",
     mainNavLabel: "Navigimi kryesor",
     footerNavLabel: "Navigimi në fund të faqes",
+    socialNavLabel: "Rrjetet sociale",
     openMenu: "Hap menynë",
     closeMenu: "Mbyll menynë",
     menuTitle: "Menyja",
     homeLinkLabel: "WideCode — ballina",
+    opensInNewTab: "(hapet në skedë të re)",
   },
   nav: {
     home: "Ballina",
     services: "Shërbimet",
-    portfolio: "Portofoli",
+    projects: "Projektet",
     pricing: "Çmimet",
     estimator: "Llogarit çmimin",
     about: "Rreth nesh",
@@ -30,8 +34,8 @@ export const sq = {
       title: "Shërbimet",
       description: "Uebfaqe prezantuese, uebfaqe biznesi, dyqane online dhe platforma me porosi.",
     },
-    portfolio: {
-      title: "Portofoli",
+    projects: {
+      title: "Projektet",
       description: "Projekte demonstruese që tregojnë qasjen tonë ndaj dizajnit dhe zhvillimit.",
     },
     pricing: {
@@ -56,15 +60,36 @@ export const sq = {
     },
   },
   header: {
-    cta: "Kërko ofertë",
+    cta,
+  },
+  contact: {
+    labels: {
+      email: "Email",
+      phone: "Telefoni",
+      location: "Vendndodhja",
+    },
+  },
+  social: {
+    instagram: "Instagram",
+    facebook: "Facebook",
+    linkedin: "LinkedIn",
+    github: "GitHub",
+    tiktok: "TikTok",
+    x: "X",
   },
   footer: {
+    ctaTitle: "Keni një projekt në mendje?",
+    ctaText: "Na tregoni çfarë ju nevojitet dhe ju përgatisim një ofertë pa asnjë obligim.",
     tagline:
       "Uebfaqe dhe dyqane online të ndërtuara me porosi — me dizajn modern, performancë të lartë dhe çmime të qarta.",
-    navHeading: "Faqet",
+    groups: {
+      pages: "Faqet",
+      resources: "Më shumë",
+    },
     contactHeading: "Kontakti",
-    contactText: "Keni një projekt në mendje? Na tregoni për të përmes formularit të kontaktit.",
-    contactLink: "Shko te formulari",
+    contactPending: "Të dhënat e kontaktit do të publikohen së shpejti. Deri atëherë, na shkruani përmes faqes së kontaktit.",
+    contactLink: "Shko te kontakti",
+    socialHeading: "Na ndiqni",
     rights: "Të gjitha të drejtat e rezervuara.",
   },
   home: {
@@ -72,8 +97,8 @@ export const sq = {
     title: "Uebfaqe profesionale që punojnë për biznesin tuaj",
     lead: "Ndërtojmë uebfaqe dhe dyqane online me porosi — të shpejta, të sigurta dhe të përshtatura për çdo pajisje, me çmime fillestare të qarta.",
     primaryCta: "Shiko çmimet",
-    secondaryCta: "Kërko ofertë",
-    note: "Faqja e plotë po ndërtohet. Së shpejti: shërbimet, portofoli dhe llogaritësi i çmimit.",
+    secondaryCta: cta,
+    note: "Faqja e plotë po ndërtohet. Së shpejti: shërbimet, projektet dhe llogaritësi i çmimit.",
   },
   placeholder: {
     badge: "Në përgatitje",

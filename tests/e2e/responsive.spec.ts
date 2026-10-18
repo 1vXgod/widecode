@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { routes } from "../../src/config/routes";
 
-const widths = [360, 768, 1280];
+const widths = [360, 768, 1024, 1280];
 
 for (const width of widths) {
   test.describe(`layout at ${width}px`, () => {

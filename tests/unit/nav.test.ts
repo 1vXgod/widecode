@@ -7,7 +7,7 @@ describe("isActivePath", () => {
   });
 
   it("matches nested pages", () => {
-    expect(isActivePath("/portofoli/projekt-demo", "/portofoli")).toBe(true);
+    expect(isActivePath("/projektet/projekt-demo", "/projektet")).toBe(true);
   });
 
   it("does not match sibling paths sharing a prefix", () => {

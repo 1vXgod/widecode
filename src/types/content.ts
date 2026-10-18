@@ -1,4 +1,5 @@
-import type { RouteKey } from "@/config/routes";
+import type { FooterNavGroup, RouteKey } from "@/config/routes";
+import type { ContactChannel, SocialPlatform } from "@/lib/contact";
 
 export interface PageCopy {
   title: string;
@@ -15,10 +16,12 @@ export interface Dictionary {
     skipToContent: string;
     mainNavLabel: string;
     footerNavLabel: string;
+    socialNavLabel: string;
     openMenu: string;
     closeMenu: string;
     menuTitle: string;
     homeLinkLabel: string;
+    opensInNewTab: string;
   };
   /** Short labels used in navigation. */
   nav: Record<RouteKey, string>;
@@ -27,12 +30,20 @@ export interface Dictionary {
   header: {
     cta: string;
   };
+  contact: {
+    /** Screen-reader labels for each contact channel. */
+    labels: Record<ContactChannel["type"], string>;
+  };
+  social: Record<SocialPlatform, string>;
   footer: {
+    ctaTitle: string;
+    ctaText: string;
     tagline: string;
-    navHeading: string;
+    groups: Record<FooterNavGroup, string>;
     contactHeading: string;
-    contactText: string;
+    contactPending: string;
     contactLink: string;
+    socialHeading: string;
     rights: string;
   };
   home: {

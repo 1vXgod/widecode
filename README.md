@@ -98,6 +98,16 @@ All copy lives in `src/content/sq/` and must satisfy the `Dictionary` type. To a
 
 Content rules: natural Kosovo Albanian with correct **ë** and **ç**; no invented clients, testimonials, statistics or contact details; prices are indicative starting prices only.
 
+### Contact details and social links
+
+Public contact details (`email`, `phone`, `location`) and social profile URLs are configured in [`src/config/site.ts`](src/config/site.ts). They are empty by default:
+
+- Each contact field is rendered in the footer and mobile menu only when it is set and valid (emails become `mailto:` links, phones become `tel:` links).
+- Social links are rendered only for absolute `https://` URLs and open in a new tab with `rel="noopener noreferrer"`.
+- While nothing is configured, the footer shows a short "details coming soon" note and links to the contact page.
+
+`tests/unit/contact.test.ts` asserts that the shipped config is empty. Update that test when real details are added.
+
 ## Deployment
 
 Vercel is the intended host. Nothing is deployed yet, and deployment needs explicit approval. Full deployment documentation will be added in a later sprint.

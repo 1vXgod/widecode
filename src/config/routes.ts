@@ -5,7 +5,7 @@
 export const routes = {
   home: "/",
   services: "/sherbimet",
-  portfolio: "/portofoli",
+  projects: "/projektet",
   pricing: "/cmimet",
   estimator: "/llogarit-cmimin",
   about: "/rreth-nesh",
@@ -16,15 +16,12 @@ export const routes = {
 export type RouteKey = keyof typeof routes;
 
 /** Order of links in the main (header) navigation. */
-export const mainNav = ["services", "portfolio", "pricing", "estimator", "about"] as const satisfies readonly RouteKey[];
+export const mainNav = ["home", "services", "projects", "pricing", "about", "contact"] as const satisfies readonly RouteKey[];
 
-/** Order of links in the footer navigation. */
-export const footerNav = [
-  "services",
-  "portfolio",
-  "pricing",
-  "estimator",
-  "about",
-  "faq",
-  "contact",
-] as const satisfies readonly RouteKey[];
+/** Footer navigation groups; headings live in the content dictionaries. */
+export const footerNav = {
+  pages: ["home", "services", "projects", "pricing", "about", "contact"],
+  resources: ["estimator", "faq"],
+} as const satisfies Record<string, readonly RouteKey[]>;
+
+export type FooterNavGroup = keyof typeof footerNav;

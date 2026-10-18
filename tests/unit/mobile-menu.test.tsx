@@ -80,6 +80,25 @@ describe("MobileMenu", () => {
     expect(dialog).not.toHaveAttribute("open");
   });
 
+  it("renders optional extra content inside the menu only when provided", async () => {
+    const user = userEvent.setup();
+    const { rerender } = render(
+      <MobileMenu items={[]} cta={{ href: "/kontakt", label: "Merr një ofertë" }} labels={labels} />,
+    );
+    expect(screen.queryByTestId("menu-extra")).not.toBeInTheDocument();
+
+    rerender(
+      <MobileMenu
+        items={[]}
+        cta={{ href: "/kontakt", label: "Merr një ofertë" }}
+        labels={labels}
+        extra={<p data-testid="menu-extra">Kontakt</p>}
+      />,
+    );
+    await user.click(screen.getByRole("button", { name: labels.open }));
+    expect(screen.getByTestId("menu-extra")).toBeInTheDocument();
+  });
+
   it("marks the current page", async () => {
     const user = userEvent.setup();
     const { trigger } = renderMenu();

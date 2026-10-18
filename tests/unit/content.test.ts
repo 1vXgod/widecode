@@ -49,10 +49,28 @@ describe("Albanian copy", () => {
 
 describe("navigation config", () => {
   it("only references known routes and has no duplicates", () => {
-    for (const list of [mainNav, footerNav]) {
+    for (const list of [mainNav, ...Object.values(footerNav)]) {
       expect(new Set(list).size).toBe(list.length);
       for (const key of list) expect(routes[key]).toMatch(/^\//);
     }
+  });
+
+  it("links every route from the footer", () => {
+    const linked = new Set<string>(Object.values(footerNav).flat());
+    for (const key of Object.keys(routes)) expect(linked.has(key), key).toBe(true);
+  });
+
+  it("matches the requested main navigation order", () => {
+    const dict = getDictionary("sq");
+    expect(mainNav.map((key) => dict.nav[key])).toEqual([
+      "Ballina",
+      "Shërbimet",
+      "Projektet",
+      "Çmimet",
+      "Rreth nesh",
+      "Kontakti",
+    ]);
+    expect(dict.header.cta).toBe("Merr një ofertë");
   });
 
   it("uses unique paths", () => {

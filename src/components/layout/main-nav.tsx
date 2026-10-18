@@ -17,7 +17,7 @@ export function MainNav({ items, label, className }: MainNavProps) {
 
   return (
     <nav aria-label={label} className={className}>
-      <ul className="flex items-center gap-1">
+      <ul className="flex items-center gap-0.5">
         {items.map((item) => {
           const active = isActivePath(pathname, item.href);
           return (
@@ -26,8 +26,10 @@ export function MainNav({ items, label, className }: MainNavProps) {
                 href={item.href}
                 aria-current={pathname === item.href ? "page" : undefined}
                 className={cn(
-                  "rounded-full px-3.5 py-2 text-sm font-medium transition-colors duration-200",
-                  active ? "bg-white/[0.06] text-fg" : "text-fg-muted hover:text-fg",
+                  "block rounded-full px-3.5 py-2 text-sm font-medium transition-[color,background-color,box-shadow] duration-200",
+                  active
+                    ? "bg-white/[0.07] text-fg shadow-[inset_0_0_0_1px_var(--color-border)]"
+                    : "text-fg-muted hover:bg-white/[0.04] hover:text-fg",
                 )}
               >
                 {item.label}

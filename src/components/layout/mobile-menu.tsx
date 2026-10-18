@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useId, useRef, useState } from "react";
-import { Menu, X } from "lucide-react";
+import { useEffect, useId, useRef, useState, type ReactNode } from "react";
+import { ArrowRight, Menu, X } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
 import { buttonClasses } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
@@ -20,6 +20,8 @@ type MobileMenuProps = {
     nav: string;
     home: string;
   };
+  /** Optional content below the links (configured contact details, social links). */
+  extra?: ReactNode;
 };
 
 /** Matches Tailwind's `lg` breakpoint, where the desktop nav takes over. */
@@ -29,7 +31,7 @@ const DESKTOP_QUERY = "(min-width: 64rem)";
  * Full-screen mobile navigation built on the native <dialog> element, which
  * provides a focus trap, Escape-to-close and an inert background.
  */
-export function MobileMenu({ items, cta, labels }: MobileMenuProps) {
+export function MobileMenu({ items, cta, labels, extra }: MobileMenuProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState(false);
@@ -83,7 +85,7 @@ export function MobileMenu({ items, cta, labels }: MobileMenuProps) {
           setOpen(false);
           triggerRef.current?.focus();
         }}
-        className="fixed inset-0 m-0 h-dvh max-h-none w-full max-w-none overflow-y-auto overscroll-contain bg-bg/95 p-0 pb-10 text-fg backdrop-blur-xl backdrop:bg-black/60 lg:hidden"
+        className="fixed inset-0 m-0 h-dvh max-h-none w-full max-w-none overflow-y-auto overscroll-contain bg-bg/95 p-0 pb-10 text-fg backdrop-blur-xl backdrop:bg-black/60 open:animate-fade-in lg:hidden"
       >
         <Container className="flex h-header items-center justify-between">
           <Link href="/" aria-label={labels.home} onClick={closeMenu} className="rounded-lg">
@@ -99,35 +101,37 @@ export function MobileMenu({ items, cta, labels }: MobileMenuProps) {
           </button>
         </Container>
 
-        <Container as="nav" aria-label={labels.nav} className="mt-6 animate-fade-up">
-          <ul className="flex flex-col border-t border-border">
-            {items.map((item) => {
-              const active = isActivePath(pathname, item.href);
-              return (
-                <li key={item.href} className="border-b border-border">
-                  <Link
-                    href={item.href}
-                    onClick={closeMenu}
-                    aria-current={pathname === item.href ? "page" : undefined}
-                    className={cn(
-                      "flex items-center justify-between py-4 font-display text-2xl font-medium tracking-tight transition-colors",
-                      active ? "text-fg" : "text-fg-muted hover:text-fg",
-                    )}
-                  >
-                    {item.label}
-                    {active ? <span aria-hidden="true" className="size-2 rounded-full bg-accent-text" /> : null}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-          <Link
-            href={cta.href}
-            onClick={closeMenu}
-            className={buttonClasses({ size: "lg", className: "mt-8 w-full" })}
-          >
+        <Container className="mt-6 animate-fade-up">
+          <nav aria-label={labels.nav}>
+            <ul className="flex flex-col border-t border-border">
+              {items.map((item) => {
+                const active = isActivePath(pathname, item.href);
+                return (
+                  <li key={item.href} className="border-b border-border">
+                    <Link
+                      href={item.href}
+                      onClick={closeMenu}
+                      aria-current={pathname === item.href ? "page" : undefined}
+                      className={cn(
+                        "flex items-center justify-between py-4 font-display text-2xl font-medium tracking-tight transition-colors duration-200",
+                        active ? "text-fg" : "text-fg-muted hover:text-fg",
+                      )}
+                    >
+                      {item.label}
+                      {active ? <span aria-hidden="true" className="size-2 rounded-full bg-accent-text" /> : null}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </nav>
+
+          <Link href={cta.href} onClick={closeMenu} className={buttonClasses({ size: "lg", className: "mt-8 w-full" })}>
             {cta.label}
+            <ArrowRight aria-hidden="true" />
           </Link>
+
+          {extra ? <div className="mt-10 grid gap-6 border-t border-border pt-8">{extra}</div> : null}
         </Container>
       </dialog>
     </>
