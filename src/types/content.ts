@@ -119,7 +119,8 @@ export interface Dictionary {
     cta: string;
   };
   projects: SectionIntro & {
-    demoBadge: string;
+    /** Small label on cards and detail pages, e.g. "Koncept website". */
+    conceptLabel: string;
     categories: Record<ProjectCategory, string>;
     items: Record<
       ProjectSlug,
@@ -136,7 +137,9 @@ export interface Dictionary {
         sections: string[];
       }
     >;
-    previewLabel: string;
+    /** Accessible descriptions of the previews; use {title}. */
+    desktopPreviewLabel: string;
+    mobilePreviewLabel: string;
     cta: string;
   };
   pricing: SectionIntro & {
@@ -278,10 +281,6 @@ export interface Dictionary {
   };
   projectsPage: {
     intro: PageIntroCopy;
-    notice: {
-      title: string;
-      text: string;
-    };
     filter: {
       label: string;
       all: string;
@@ -294,7 +293,6 @@ export interface Dictionary {
     cardCta: string;
     detail: {
       back: string;
-      banner: string;
       conceptTitle: string;
       goalsTitle: string;
       featuresTitle: string;

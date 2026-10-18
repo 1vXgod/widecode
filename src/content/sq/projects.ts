@@ -1,16 +1,16 @@
 import type { Dictionary } from "@/types/content";
 
 /**
- * Demo project copy. These are concepts created by WideCode, not client work:
- * describe what each concept shows and aims to do, never invented results,
- * clients or testimonials.
+ * Portfolio copy. Every project is a website CONCEPT designed by WideCode
+ * (fictional brands), not client work: present it as a concept, describe what
+ * it shows and aims to do, and never invent clients, results or testimonials.
  */
 export const projects = {
   eyebrow: "Projektet",
-  title: "Projekte demonstruese",
+  title: "Koncepte website",
   description:
-    "Këto projekte janë krijuar nga WideCode si shembuj për të treguar stilin dhe mundësitë tona. Nuk janë punë për klientë realë.",
-  demoBadge: "Projekt demonstrues",
+    "Koncepte të dizajnuara nga WideCode për lloje të ndryshme biznesesh, nga një website prezantues deri te një web aplikacion.",
+  conceptLabel: "Koncept website",
   categories: {
     presentation: "Website prezantues",
     business: "Website biznesi",
@@ -118,6 +118,7 @@ export const projects = {
       sections: ["Dashboard", "Anëtarët", "Anëtarësimet", "Orari"],
     },
   },
-  previewLabel: "Pamje ilustruese e projektit",
+  desktopPreviewLabel: "Faqja kryesore e konceptit {title}, në kompjuter",
+  mobilePreviewLabel: "Faqja kryesore e konceptit {title}, në celular",
   cta: "Shiko të gjitha projektet",
 } satisfies Dictionary["projects"];

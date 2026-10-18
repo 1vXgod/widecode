@@ -3,14 +3,10 @@ import type { Dictionary } from "@/types/content";
 export const projectsPage = {
   intro: {
     eyebrow: "Projektet",
-    title: "Projekte demonstruese",
-    lead: "Shembuj të krijuar nga WideCode për të treguar si mund të duket dhe të funksionojë projekti juaj, nga një website prezantues deri te një web aplikacion.",
+    title: "Koncepte website",
+    lead: "Koncepte të dizajnuara nga WideCode për biznese të ndryshme. Secili tregon stilin, cilësinë dhe funksionalitetet që mund t'i ndërtojmë për ju.",
     primaryCta: "Merr një ofertë",
     secondaryCta: "Llogarit çmimin",
-  },
-  notice: {
-    title: "Pse projekte demonstruese?",
-    text: "Këto projekte janë koncepte të krijuara nga WideCode, jo punë për klientë realë. Ato tregojnë stilin, cilësinë dhe funksionalitetet që mund t'i ndërtojmë për biznesin tuaj.",
   },
   filter: {
     label: "Filtro projektet sipas kategorisë",
@@ -22,7 +18,6 @@ export const projectsPage = {
   cardCta: "Shiko projektin",
   detail: {
     back: "Të gjitha projektet",
-    banner: "Projekt demonstrues: koncept i krijuar nga WideCode, jo punë për klient real.",
     conceptTitle: "Koncepti",
     goalsTitle: "Qëllimet e konceptit",
     featuresTitle: "Funksionalitetet",
@@ -33,8 +28,8 @@ export const projectsPage = {
     ctaText: "Na tregoni për projektin tuaj dhe ju përgatisim një ofertë pa obligim.",
     quoteCta: "Merr ofertë për një projekt të ngjashëm",
     estimateCta: "Llogarit çmimin",
-    relatedTitle: "Projekte të tjera",
-    metaTitle: "{title} (projekt demonstrues)",
-    metaDescription: "{summary} Projekt demonstrues i krijuar nga WideCode.",
+    relatedTitle: "Koncepte të tjera",
+    metaTitle: "{title} – koncept website",
+    metaDescription: "{summary} Koncept website nga WideCode.",
   },
 } satisfies Dictionary["projectsPage"];

@@ -48,7 +48,7 @@ export const sq = {
     projects: {
       title: "Projektet",
       description:
-        "Projekte demonstruese të WideCode: website, online shop dhe web aplikacione që tregojnë qasjen tonë ndaj dizajnit dhe zhvillimit.",
+        "Koncepte website nga WideCode: website prezantues, online shop dhe web aplikacione që tregojnë qasjen tonë ndaj dizajnit dhe zhvillimit.",
     },
     pricing: {
       title: "Çmimet",

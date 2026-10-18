@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, ArrowRight, ArrowUpRight, Calculator, Check, Info } from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowUpRight, Calculator, Check } from "lucide-react";
 import { PricingDisclaimer } from "@/components/pricing/package-cards";
 import { ProjectCard } from "@/components/projects/project-card";
-import { ProjectPreview } from "@/components/projects/project-preview";
-import { Badge } from "@/components/ui/badge";
+import { ConceptFrame } from "@/components/projects/concepts/concept-frame";
 import { ButtonLink } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Container } from "@/components/ui/container";
@@ -18,7 +17,7 @@ import { getDictionary } from "@/content";
 import { estimatorHref, quoteHref } from "@/lib/quote";
 import { fill } from "@/lib/template";
 
-// Every demo project is prerendered; unknown slugs render notFound() (404).
+// Every concept is prerendered; unknown slugs get a 404 (see src/proxy.ts).
 export function generateStaticParams() {
   return projectSlugs.map((slug) => ({ slug }));
 }
@@ -54,8 +53,7 @@ export default async function ProjectPage({ params }: PageProps<"/projektet/[slu
         <div aria-hidden="true" className="absolute inset-0 -z-10 bg-grid opacity-40" />
         <div
           aria-hidden="true"
-          style={{ backgroundColor: project.preview.accent }}
-          className="absolute -top-48 left-1/4 -z-10 h-[30rem] w-[52rem] max-w-[160vw] -translate-x-1/2 rounded-full opacity-15 blur-[140px]"
+          className="absolute -top-48 left-1/4 -z-10 h-[30rem] w-[52rem] max-w-[160vw] -translate-x-1/2 rounded-full bg-accent/15 blur-[140px]"
         />
         <Container className="pt-10 pb-12 sm:pt-14">
           <Link
@@ -67,13 +65,11 @@ export default async function ProjectPage({ params }: PageProps<"/projektet/[slu
           </Link>
 
           <div className="mt-8 max-w-3xl animate-fade-up">
-            <div className="flex flex-wrap items-center gap-2">
-              <Badge variant="outline" className="gap-1 text-warning">
-                <Info aria-hidden="true" className="size-3.5" />
-                {dict.projects.demoBadge}
-              </Badge>
-              <span className="text-sm text-fg-subtle">{dict.projects.categories[project.category]}</span>
-            </div>
+            <p className="flex flex-wrap items-center gap-x-2 text-sm text-fg-subtle">
+              <span className="font-medium text-accent-text">{dict.projects.categories[project.category]}</span>
+              <span aria-hidden="true">·</span>
+              <span>{dict.projects.conceptLabel}</span>
+            </p>
             <h1 id="project-title" className="mt-5 text-display font-semibold text-fg">
               {item.title}
             </h1>
@@ -87,18 +83,23 @@ export default async function ProjectPage({ params }: PageProps<"/projektet/[slu
             </ul>
           </div>
 
-          <p
-            role="note"
-            className="mt-8 flex max-w-3xl items-start gap-3 rounded-xl border border-warning/30 bg-warning/[0.06] p-4 text-sm leading-relaxed text-fg-muted"
-          >
-            <Info aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-warning" />
-            {copy.banner}
-          </p>
-
-          <figure className="mt-10 overflow-hidden rounded-[1.75rem] border border-border-strong shadow-2xl shadow-black/50">
-            <ProjectPreview preview={project.preview} className="aspect-[16/10]" />
-            <figcaption className="sr-only">{dict.projects.previewLabel}</figcaption>
-          </figure>
+          {/* Live previews of the concept homepage: desktop and mobile. */}
+          <div className="mt-12 grid items-end gap-8 lg:grid-cols-[1fr_17rem] lg:gap-10">
+            <ConceptFrame
+              slug={project.slug}
+              device="desktop"
+              label={fill(dict.projects.desktopPreviewLabel, { title: item.title })}
+              sizes="(min-width: 1280px) 900px, 94vw"
+              eager
+            />
+            <ConceptFrame
+              slug={project.slug}
+              device="mobile"
+              label={fill(dict.projects.mobilePreviewLabel, { title: item.title })}
+              sizes="280px"
+              className="max-w-[17rem]"
+            />
+          </div>
         </Container>
       </section>
 
@@ -219,7 +220,7 @@ export default async function ProjectPage({ params }: PageProps<"/projektet/[slu
         </aside>
       </Section>
 
-      {/* Related demo projects */}
+      {/* Related concepts */}
       <Section tone="surface" aria-labelledby="related-title">
         <h2 id="related-title" className="text-title font-semibold text-fg">
           {copy.relatedTitle}

@@ -11,13 +11,14 @@ import {
 } from "@/config/projects";
 import { serviceIds } from "@/config/services";
 import { getDictionary } from "@/content";
+import { concepts } from "@/content/sq/concepts";
 import { categoryToParam, countByCategory, filterProjects, parseCategoryParam } from "@/lib/projects";
 
 const dict = getDictionary("sq");
 
 describe("projects config", () => {
-  it("flags every project as a demonstration", () => {
-    for (const project of projects) expect(project.demo, project.slug).toBe(true);
+  it("marks every project as a concept (not client work)", () => {
+    for (const project of projects) expect(project.kind, project.slug).toBe("concept");
   });
 
   it("lists every slug once, URL-safe, in the declared order", () => {
@@ -66,10 +67,33 @@ describe("project copy", () => {
     expect(text).not.toMatch(/klient[ëe]t? (t[ëe] )?k[ëe]naqur|rritje|dëshmi|testimonial|vlerësim nga klient/i);
   });
 
-  it("explains on the page that demos are not client work", () => {
-    expect(dict.projects.description).toMatch(/Nuk janë punë për klientë realë/);
-    expect(dict.projectsPage.notice.text).toMatch(/jo punë për klientë realë/);
-    expect(dict.projectsPage.detail.banner).toMatch(/jo punë për klient real/);
+  it("presents the work honestly as WideCode concepts, without demo labels", () => {
+    expect(dict.projects.title).toBe("Koncepte website");
+    expect(dict.projects.description).toMatch(/Koncepte të dizajnuara nga WideCode/);
+    expect(dict.projects.conceptLabel).toBe("Koncept website");
+    expect(dict.projectsPage.detail.metaTitle).toMatch(/koncept website/);
+    const visible = JSON.stringify({ projects: dict.projects, page: dict.projectsPage });
+    expect(visible).not.toMatch(/demonstrues/i);
+  });
+
+  it("never implies the concepts are completed client work", () => {
+    const visible = JSON.stringify({ projects: dict.projects, page: dict.projectsPage, concepts });
+    expect(visible).not.toMatch(/klienti ynë|klientët tanë|për klientin|projekt i përfunduar|punuam për/i);
+  });
+});
+
+describe("concept preview copy", () => {
+  it("exists for every project", () => {
+    for (const slug of projectSlugs) expect(concepts[slug].brand, slug).toBeTruthy();
+  });
+
+  it("contains no ratings, reviews, testimonials, percentages or 'N+' claims", () => {
+    const text = JSON.stringify(concepts);
+    expect(text).not.toMatch(/\d+\s*%|\d+\s*\+|★|yje|vlerësim|recension|dëshmi|testimonial/i);
+  });
+
+  it("uses the agreed terminology", () => {
+    expect(JSON.stringify(concepts)).not.toMatch(/uebfaq|shabllon/i);
   });
 });
 

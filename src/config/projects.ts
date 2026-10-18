@@ -3,11 +3,20 @@ import { routes } from "@/config/routes";
 import { serviceIds, type ServiceId } from "@/config/services";
 
 /**
- * Portfolio projects. Every entry here is a DEMONSTRATION project (a concept
- * created by WideCode), not client work, and must stay flagged with
- * `demo: true` until a real, approved client project replaces it. Never add
- * client names, results, statistics or testimonials to demo projects.
- * Text lives in src/content/<locale>/projects.ts, keyed by slug.
+ * Portfolio entries.
+ *
+ * IMPORTANT: every entry is a WEBSITE CONCEPT designed by WideCode, not
+ * completed client work. The brands shown inside the previews (Dritëhije,
+ * Oxhaku, Aura, ELARA, Bleta & Toka, Ritmi) are fictional. The site presents
+ * them as "Koncepte website" and must never claim they were built for, or
+ * used by, real clients. Never add client names, testimonials, results or
+ * statistics. A real client project may only be added with the client's
+ * explicit approval, as `kind: "client"`.
+ *
+ * Copy: src/content/<locale>/projects.ts (cards and detail pages) and
+ * src/content/<locale>/concepts.ts (text inside the previews).
+ * Previews: src/components/projects/concepts. Images: public/projects/<slug>
+ * (licences and sources in docs/IMAGE_CREDITS.md).
  */
 
 /** Project categories mirror the services, so filters, labels and links stay consistent. */
@@ -26,75 +35,24 @@ export const projectSlugs = [
 
 export type ProjectSlug = (typeof projectSlugs)[number];
 
-/** Visual style of the CSS-only preview (no stock imagery). */
-export type ProjectPreview = {
-  layout: "gallery" | "restaurant" | "clinic" | "shop" | "dashboard";
-  /** Accent color of the mock site. */
-  accent: string;
-  /** Background tint of the mock site. */
-  tint: string;
-};
-
 export type Project = {
   slug: ProjectSlug;
   category: ProjectCategory;
   /** Pricing package a similar real project would start from. */
   packageId: PackageId;
-  demo: true;
+  /** "concept" = designed by WideCode as a showcase, not client work. */
+  kind: "concept";
   /** Shown on the home page. */
   featured: boolean;
-  preview: ProjectPreview;
 };
 
 export const projects: readonly Project[] = [
-  {
-    slug: "studio-fotografie",
-    category: "presentation",
-    packageId: "starter",
-    demo: true,
-    featured: false,
-    preview: { layout: "gallery", accent: "#38bdf8", tint: "#06121a" },
-  },
-  {
-    slug: "restorant-tradicional",
-    category: "business",
-    packageId: "business",
-    demo: true,
-    featured: true,
-    preview: { layout: "restaurant", accent: "#f59e0b", tint: "#1a120a" },
-  },
-  {
-    slug: "klinike-dentare",
-    category: "business",
-    packageId: "business",
-    demo: true,
-    featured: false,
-    preview: { layout: "clinic", accent: "#2dd4bf", tint: "#061513" },
-  },
-  {
-    slug: "dyqan-veshjesh",
-    category: "ecommerce",
-    packageId: "ecommerce",
-    demo: true,
-    featured: true,
-    preview: { layout: "shop", accent: "#f472b6", tint: "#1a0c14" },
-  },
-  {
-    slug: "produkte-vendore",
-    category: "ecommerce",
-    packageId: "ecommerce",
-    demo: true,
-    featured: false,
-    preview: { layout: "shop", accent: "#a3e635", tint: "#0d1405" },
-  },
-  {
-    slug: "panel-palestre",
-    category: "platform",
-    packageId: "custom",
-    demo: true,
-    featured: true,
-    preview: { layout: "dashboard", accent: "#34d399", tint: "#08160f" },
-  },
+  { slug: "studio-fotografie", category: "presentation", packageId: "starter", kind: "concept", featured: false },
+  { slug: "restorant-tradicional", category: "business", packageId: "business", kind: "concept", featured: true },
+  { slug: "klinike-dentare", category: "business", packageId: "business", kind: "concept", featured: false },
+  { slug: "dyqan-veshjesh", category: "ecommerce", packageId: "ecommerce", kind: "concept", featured: true },
+  { slug: "produkte-vendore", category: "ecommerce", packageId: "ecommerce", kind: "concept", featured: false },
+  { slug: "panel-palestre", category: "platform", packageId: "custom", kind: "concept", featured: true },
 ];
 
 export const featuredProjects = projects.filter((p) => p.featured);

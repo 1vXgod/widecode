@@ -3,7 +3,7 @@ import { routes } from "../../src/config/routes";
 
 const sectionTitles = [
   "Çfarë ndërtojmë për biznesin tuaj",
-  "Projekte demonstruese",
+  "Koncepte website",
   "Çmime të qarta që në fillim",
   "Si punojmë",
   "Një partner i qartë për website-in tuaj",
@@ -35,15 +35,17 @@ test.describe("home page content", () => {
     await expect(page.getByRole("region", { name: /Website profesional/ })).toContainText("Çmime fillestare nga 199 €");
   });
 
-  test("every project card is labelled as a demonstration", async ({ page }) => {
+  test("featured work is presented as WideCode website concepts", async ({ page }) => {
     await page.goto("/");
-    const section = page.getByRole("region", { name: "Projekte demonstruese" });
+    const section = page.getByRole("region", { name: "Koncepte website" });
     const cards = section.getByRole("article");
     await expect(cards).toHaveCount(3);
     for (const card of await cards.all()) {
-      await expect(card).toContainText("Projekt demonstrues");
+      await expect(card).toContainText("Koncept website");
+      await expect(card.getByRole("img", { name: /Faqja kryesore e konceptit/ })).toBeVisible();
     }
-    await expect(section).toContainText("Nuk janë punë për klientë realë.");
+    await expect(section).toContainText("Koncepte të dizajnuara nga WideCode");
+    await expect(section).not.toContainText(/demonstrues/i);
   });
 
   test("pricing preview shows configured starting prices and the disclaimer", async ({ page }) => {

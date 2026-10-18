@@ -87,6 +87,47 @@
   }
 }
 
+/*
+ * Concept canvases (portfolio website concepts). Each concept is designed at a
+ * fixed width (--design-width: 1280 desktop / 390 mobile) with normal Tailwind
+ * classes. Inside the canvas, Tailwind's spacing, type and radius scales are
+ * redefined relative to the frame width (cqw), so the whole design scales like
+ * a live screenshot of a real homepage. Pure CSS: no JS, no layout shift.
+ * The frame around the canvas must be a size container (@container).
+ */
+.concept-canvas {
+  --u: calc(100cqw / var(--design-width));
+  --spacing: calc(var(--u) * 4);
+  --text-xs: calc(var(--u) * 12);
+  --text-sm: calc(var(--u) * 14);
+  --text-base: calc(var(--u) * 16);
+  --text-lg: calc(var(--u) * 18);
+  --text-xl: calc(var(--u) * 20);
+  --text-2xl: calc(var(--u) * 24);
+  --text-3xl: calc(var(--u) * 30);
+  --text-4xl: calc(var(--u) * 36);
+  --text-5xl: calc(var(--u) * 48);
+  --text-6xl: calc(var(--u) * 60);
+  --text-7xl: calc(var(--u) * 72);
+  --text-8xl: calc(var(--u) * 96);
+  --radius-sm: calc(var(--u) * 4);
+  --radius-md: calc(var(--u) * 6);
+  --radius-lg: calc(var(--u) * 8);
+  --radius-xl: calc(var(--u) * 12);
+  --radius-2xl: calc(var(--u) * 16);
+  --radius-3xl: calc(var(--u) * 24);
+  font-size: var(--text-base);
+  line-height: 1.5;
+}
+
+.font-concept-serif {
+  font-family: var(--font-concept-serif), Georgia, serif;
+}
+
+.font-concept-condensed {
+  font-family: var(--font-concept-condensed), Impact, sans-serif;
+}
+
 /* Subtle background texture used behind hero/feature areas. */
 @utility bg-grid {
   background-image:

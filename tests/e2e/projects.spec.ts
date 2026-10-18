@@ -14,17 +14,39 @@ async function openProjects(page: Page, query = "") {
 }
 
 test.describe("projects page", () => {
-  test("is complete, indexable and labels every project as a demo", async ({ page }) => {
+  test("is complete, indexable and presents every project as a website concept", async ({ page }) => {
     await openProjects(page);
     await expect(page).toHaveTitle("Projektet | WideCode");
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Projekte demonstruese");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Koncepte website");
     await expect(page.locator('meta[name="robots"]')).toHaveCount(0);
-    await expect(page.getByRole("complementary", { name: "Pse projekte demonstruese?" })).toContainText(
-      "jo punë për klientë realë",
-    );
     await expect(cards(page)).toHaveCount(ALL);
-    for (const card of await cards(page).all()) await expect(card).toContainText("Projekt demonstrues");
+    for (const card of await cards(page).all()) await expect(card).toContainText("Koncept website");
     await expect(page.getByText(`Po shfaqen ${ALL} projekte`)).toBeVisible();
+    // No demo badges or "these are demos" notices on customer-facing pages.
+    await expect(page.locator("main")).not.toContainText(/demonstrues/i);
+  });
+
+  test("previews load real images, scaled without overflowing their frames", async ({ page }) => {
+    await openProjects(page);
+    const previews = page.getByRole("img", { name: /Faqja kryesore e konceptit/ });
+    await expect(previews).toHaveCount(ALL);
+    for (const preview of await previews.all()) {
+      await preview.scrollIntoViewIfNeeded();
+      const state = await preview.evaluate((frame) => {
+        const imgs = Array.from(frame.querySelectorAll("img"));
+        const canvas = frame.querySelector(".concept-canvas") as HTMLElement | null;
+        return {
+          images: imgs.length,
+          loaded: imgs.filter((img) => img.complete && img.naturalWidth > 0).length,
+          contained: canvas ? canvas.scrollWidth <= canvas.clientWidth + 1 : false,
+        };
+      });
+      expect(state.images).toBeGreaterThan(0);
+      await expect
+        .poll(() => preview.evaluate((f) => Array.from(f.querySelectorAll("img")).every((i) => i.complete && i.naturalWidth > 0)))
+        .toBe(true);
+      expect(state.contained).toBe(true);
+    }
   });
 
   test("filters by category and keeps the choice in the URL", async ({ page }) => {
@@ -81,12 +103,14 @@ test.describe("projects page", () => {
 });
 
 test.describe("project detail page", () => {
-  test("is clearly a demo, with concept, goals, features and structure", async ({ page }) => {
+  test("presents a website concept with desktop and mobile previews and full details", async ({ page }) => {
     await page.goto(`${routes.projects}/restorant-tradicional`);
-    await expect(page).toHaveTitle("Restorant tradicional (projekt demonstrues) | WideCode");
-    await expect(page.locator('meta[name="description"]')).toHaveAttribute("content", /Projekt demonstrues/);
-    await expect(page.getByRole("note")).toContainText("jo punë për klient real");
-    await expect(page.locator("main").getByText("Projekt demonstrues").first()).toBeVisible();
+    await expect(page).toHaveTitle("Restorant tradicional – koncept website | WideCode");
+    await expect(page.locator('meta[name="description"]')).toHaveAttribute("content", /Koncept website nga WideCode/);
+    await expect(page.locator("main")).toContainText("Koncept website");
+    await expect(page.locator("main")).not.toContainText(/demonstrues/i);
+    await expect(page.getByRole("img", { name: /konceptit Restorant tradicional, në kompjuter/ })).toBeVisible();
+    await expect(page.getByRole("img", { name: /konceptit Restorant tradicional, në celular/ })).toBeVisible();
     for (const heading of ["Koncepti", "Qëllimet e konceptit", "Funksionalitetet", "Faqet dhe seksionet"]) {
       await expect(page.getByRole("heading", { level: 2, name: heading, exact: true })).toBeVisible();
     }
@@ -124,12 +148,12 @@ test.describe("project detail page", () => {
     await expect(aside.getByRole("link", { name: "Llogarit çmimin" })).toHaveCount(0);
   });
 
-  test("suggests other demo projects, not the current one", async ({ page }) => {
+  test("suggests other concepts, not the current one", async ({ page }) => {
     await page.goto(`${routes.projects}/dyqan-veshjesh`);
-    const related = page.getByRole("region", { name: "Projekte të tjera" });
+    const related = page.getByRole("region", { name: "Koncepte të tjera" });
     await expect(related.getByRole("article")).toHaveCount(3);
     await expect(related.getByRole("link", { name: "Online shop për veshje" })).toHaveCount(0);
-    await expect(related.getByRole("article").first()).toContainText("Projekt demonstrues");
+    await expect(related.getByRole("article").first()).toContainText("Koncept website");
   });
 
   test("returns a real 404 for unknown projects, even on the first request", async ({ page, request }) => {
@@ -161,7 +185,7 @@ test.describe("project detail page", () => {
 test.describe("home projects", () => {
   test("featured cards link to their detail pages", async ({ page }) => {
     await page.goto("/");
-    const section = page.getByRole("region", { name: "Projekte demonstruese" });
+    const section = page.getByRole("region", { name: "Koncepte website" });
     await expect(section.getByRole("link", { name: "Restorant tradicional" })).toHaveAttribute(
       "href",
       `${routes.projects}/restorant-tradicional`,

@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { ArrowUpRight, Info } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { ArrowUpRight } from "lucide-react";
 import { projectHref, type Project } from "@/config/projects";
+import { fill } from "@/lib/template";
 import type { Dictionary } from "@/types/content";
-import { ProjectPreview } from "./project-preview";
+import { ConceptFrame } from "./concepts/concept-frame";
 
 type ProjectCardProps = {
   project: Project;
@@ -12,25 +12,28 @@ type ProjectCardProps = {
   headingLevel?: "h2" | "h3";
 };
 
-/**
- * Card for a demo project. Always shows the "Projekt demonstrues" badge.
- * Works in server and client components (no hooks).
- */
+/** Card for a website concept: live homepage preview, category, title and tags. */
 export function ProjectCard({ project, copy, headingLevel: Heading = "h3" }: ProjectCardProps) {
   const item = copy.items[project.slug];
 
   return (
     <article className="group relative flex h-full flex-col overflow-hidden rounded-card border border-border bg-bg transition-[border-color,transform] duration-300 ease-out-expo hover:-translate-y-0.5 hover:border-border-strong">
-      <ProjectPreview preview={project.preview} />
+      <div className="relative overflow-hidden bg-linear-to-b from-white/[0.05] to-transparent p-4 pb-0">
+        <ConceptFrame
+          slug={project.slug}
+          device="desktop"
+          label={fill(copy.desktopPreviewLabel, { title: item.title })}
+          sizes="(min-width: 1024px) 380px, (min-width: 768px) 46vw, 92vw"
+          className="transition-transform duration-500 ease-out-expo group-hover:-translate-y-1"
+        />
+      </div>
       <div className="flex flex-1 flex-col p-6">
-        <div className="flex flex-wrap items-center gap-2">
-          <Badge variant="outline" className="gap-1 text-warning">
-            <Info aria-hidden="true" className="size-3.5" />
-            {copy.demoBadge}
-          </Badge>
-          <span className="text-xs text-fg-subtle">{copy.categories[project.category]}</span>
-        </div>
-        <Heading className="mt-4 text-heading font-semibold text-fg">
+        <p className="flex flex-wrap items-center gap-x-2 text-xs text-fg-subtle">
+          <span className="font-medium text-accent-text">{copy.categories[project.category]}</span>
+          <span aria-hidden="true">·</span>
+          <span>{copy.conceptLabel}</span>
+        </p>
+        <Heading className="mt-3 text-heading font-semibold text-fg">
           {/* Stretched link: the whole card is clickable, with one accessible link. */}
           <Link
             href={projectHref(project.slug)}
@@ -50,7 +53,7 @@ export function ProjectCard({ project, copy, headingLevel: Heading = "h3" }: Pro
       </div>
       <ArrowUpRight
         aria-hidden="true"
-        className="absolute top-4 right-4 size-5 text-white/60 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+        className="absolute right-6 bottom-6 size-5 text-fg-subtle transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
       />
     </article>
   );

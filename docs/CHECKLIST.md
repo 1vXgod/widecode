@@ -97,7 +97,17 @@ Legend: `[x]` done · `[ ]` open · `[~]` partial / placeholder
 - [x] Home project cards link to detail pages; shared `ProjectCard`
 - [x] Fix: two-column grids hardened with `grid-cols-1` (implicit grid columns could grow past the screen on 360px phones); long button labels allowed to wrap
 - [x] Tests: demo flags, config/copy consistency, no claim-like numbers or testimonial wording, filters and related projects (unit); filters incl. keyboard and URL, demo labels everywhere, detail links, first-request 404, home deep links, axe, CLS and overflow (e2e)
-- [ ] Real client projects can replace demos later; each needs explicit client approval and must drop `demo: true`
+- [ ] Real client projects can be added later; each needs explicit client approval and its own entry (not `kind: "concept"`)
+
+## Portfolio upgrade: premium website concepts ✅ (between Sprint 6 and Sprint 7)
+
+- [x] Six realistic first-screen homepage concepts (desktop + mobile), each with its own navigation, hero, typography, UI elements and real photography: photography studio, restaurant, dental clinic, clothing shop, local-products shop, gym management dashboard
+- [x] Scaled "live screenshot" rendering via `.concept-canvas` (pure CSS, no JS); concept display fonts loaded only where used, without preload
+- [x] 11 photos from Unsplash (free licence verified per photo, Unsplash+ excluded, metadata stripped, self-hosted, served via `next/image`); credits in `docs/IMAGE_CREDITS.md`
+- [x] Visible "Projekt demonstrues" badges, the demo notice and the demo banner removed; work presented as "Koncepte website" ("Koncept website" label), with no claim of client work
+- [x] Internal config/docs state these are concepts with fictional brands (`kind: "concept"`)
+- [x] Categories, filters, pricing, package and estimator links, accessibility (previews are `role="img"` with descriptions) and responsiveness preserved
+- [x] Tests: concept framing, no demo wording, no client-work implications, no ratings/reviews/percentages in preview copy (unit); concept labels, preview images load and stay inside their frames, desktop and mobile previews on detail pages (e2e)
 
 ## Sprint 7: Contact and quote request
 
