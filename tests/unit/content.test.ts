@@ -47,6 +47,18 @@ describe("Albanian copy", () => {
   });
 });
 
+describe("terminology", () => {
+  // Agreed wording: "website", "online shop", "SEO", "template" instead of
+  // literal translations such as "uebfaqe", "ueb" or "shabllone".
+  const strings = collectStrings(getDictionary("sq"));
+
+  it("avoids literal translations that were replaced site-wide", () => {
+    for (const [path, text] of strings) {
+      expect(text, path).not.toMatch(/uebfaq|\bueb\b|uebi\b|shabllon|optimizim bazë për motorët/i);
+    }
+  });
+});
+
 describe("navigation config", () => {
   it("only references known routes and has no duplicates", () => {
     for (const list of [mainNav, ...Object.values(footerNav)]) {

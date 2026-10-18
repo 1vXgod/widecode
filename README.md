@@ -108,6 +108,20 @@ All copy lives in `src/content/sq/` and must satisfy the `Dictionary` type. To a
 
 Content rules: natural Kosovo Albanian with correct **ë** and **ç**; no invented clients, testimonials, statistics or contact details; prices are indicative starting prices only.
 
+**Terminology:** use modern wording that businesses in Kosovo actually use, not literal translations. `tests/unit/content.test.ts` guards the most common slips.
+
+| Use | Instead of |
+| --- | --- |
+| website (e.g. "website-i", "website-in" only where grammar needs it), or *faqja* | uebfaqe |
+| Web Development | zhvillim uebi |
+| Online Shop (titles), online shop (text) | dyqan online |
+| Custom Development (service), Custom (package), aplikacione web | platforma me porosi, aplikacione ueb |
+| SEO bazë | optimizim bazë për motorët e kërkimit |
+| responsive, template | i përshtatur për çdo pajisje (as a feature), shabllone |
+| Starter, Business, Professional, E-commerce, Custom (package names) | Biznes, Profesional |
+
+"Website" is masculine: *website profesional*, *një website i qartë*.
+
 ### Prices and projects
 
 - **Prices:** [`src/config/pricing.ts`](src/config/pricing.ts) holds every starting price (whole euros; `null` = custom quote) and the recommended package. Package names, summaries and feature lists are in `src/content/sq/pricing.ts`. Prices are formatted with the Albanian locale (`199 €`). All prices are indicative starting prices, and the disclaimer must stay next to them.

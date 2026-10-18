@@ -11,9 +11,9 @@ const cta = "Merr një ofertë";
 
 export const sq = {
   meta: {
-    defaultTitle: "WideCode — Uebfaqe dhe dyqane online me porosi",
+    defaultTitle: "WideCode — Website, Online Shop dhe Custom Development",
     description:
-      "WideCode ndërton uebfaqe profesionale dhe dyqane online me porosi për bizneset në Kosovë, me çmime fillestare transparente dhe dizajn modern për çdo pajisje.",
+      "WideCode ndërton website dhe online shop me porosi për bizneset në Kosovë, me dizajn modern për çdo pajisje dhe çmime fillestare transparente.",
   },
   a11y: {
     skipToContent: "Kalo te përmbajtja kryesore",
@@ -40,7 +40,7 @@ export const sq = {
     services: {
       title: "Shërbimet",
       description:
-        "Uebfaqe prezantuese, uebfaqe biznesi, dyqane online dhe platforma me porosi për bizneset në Kosovë, me çmime fillestare transparente.",
+        "Website prezantues, website biznesi, online shop dhe custom development për bizneset në Kosovë, me çmime fillestare transparente.",
     },
     projects: {
       title: "Projektet",
@@ -57,7 +57,7 @@ export const sq = {
     about: {
       title: "Rreth nesh",
       description:
-        "Njihuni me WideCode: misioni, vlerat dhe mënyra si ndërtojmë uebfaqe dhe dyqane online me porosi.",
+        "Njihuni me WideCode: misioni, vlerat dhe mënyra si ndërtojmë website dhe online shop me porosi.",
     },
     faq: {
       title: "Pyetjet e shpeshta",
@@ -88,7 +88,7 @@ export const sq = {
   },
   footer: {
     tagline:
-      "Uebfaqe dhe dyqane online të ndërtuara me porosi — me dizajn modern, performancë të lartë dhe çmime të qarta.",
+      "Website dhe online shop me porosi — me dizajn modern, performancë të lartë dhe çmime të qarta.",
     groups: {
       pages: "Faqet",
       resources: "Më shumë",

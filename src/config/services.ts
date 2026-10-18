@@ -18,10 +18,10 @@ export type Service = {
 };
 
 export const services: readonly Service[] = [
-  { id: "presentation", anchor: "uebfaqe-prezantuese", packages: ["starter"] },
-  { id: "business", anchor: "uebfaqe-biznesi", packages: ["business", "professional"] },
-  { id: "ecommerce", anchor: "dyqane-online", packages: ["ecommerce"] },
-  { id: "platform", anchor: "platforma-me-porosi", packages: ["custom"] },
+  { id: "presentation", anchor: "website-prezantues", packages: ["starter"] },
+  { id: "business", anchor: "website-biznesi", packages: ["business", "professional"] },
+  { id: "ecommerce", anchor: "online-shop", packages: ["ecommerce"] },
+  { id: "platform", anchor: "custom-development", packages: ["custom"] },
 ];
 
 export function getService(id: ServiceId): Service {

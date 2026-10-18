@@ -8,8 +8,8 @@ import type { Dictionary } from "@/types/content";
 export const aboutPage = {
   intro: {
     eyebrow: "Rreth nesh",
-    title: "Ndërtojmë uebfaqe me kujdes, qartësi dhe çmime të ndershme",
-    lead: "WideCode është kompani për zhvillim uebi që ndërton uebfaqe, dyqane online dhe platforma me porosi, kryesisht për bizneset në Kosovë, por edhe për klientë jashtë saj.",
+    title: "Ndërtojmë website me kujdes, qartësi dhe çmime të ndershme",
+    lead: "WideCode është kompani për web development që ndërton website, online shop dhe aplikacione web me porosi, kryesisht për bizneset në Kosovë, por edhe për klientë jashtë saj.",
     primaryCta: "Merr një ofertë",
     secondaryCta: "Shiko shërbimet",
   },
@@ -17,10 +17,10 @@ export const aboutPage = {
     eyebrow: "Misioni",
     title: "Prani profesionale online për çdo biznes",
     paragraphs: [
-      "Besojmë se çdo biznes, i vogël apo i madh, meriton një uebfaqe që duket profesionale, funksionon mirë në çdo pajisje dhe e paraqet saktë atë që ofron.",
-      "Prandaj i publikojmë çmimet fillestare, shpjegojmë qartë çfarë përfshin çdo ofertë dhe e ndërtojmë çdo projekt sipas nevojave reale të klientit, pa shabllone të gatshme dhe pa premtime të paqarta.",
+      "Besojmë se çdo biznes, i vogël apo i madh, meriton një website që duket profesional, funksionon mirë në çdo pajisje dhe e paraqet saktë atë që ofron.",
+      "Prandaj i publikojmë çmimet fillestare, shpjegojmë qartë çfarë përfshin çdo ofertë dhe e ndërtojmë çdo projekt sipas nevojave reale të klientit, pa template të gatshme dhe pa premtime të paqarta.",
     ],
-    statement: "Qëllimi ynë është i thjeshtë: uebfaqe që u shërbejnë juve dhe klientëve tuaj.",
+    statement: "Qëllimi ynë është i thjeshtë: website që u shërbejnë juve dhe klientëve tuaj.",
   },
   values: {
     eyebrow: "Vlerat tona",
@@ -37,7 +37,7 @@ export const aboutPage = {
       },
       custom: {
         title: "Zgjidhje me porosi",
-        text: "Çdo projekt ndërtohet për biznesin tuaj, jo nga shabllone të gatshme.",
+        text: "Çdo projekt ndërtohet për biznesin tuaj, jo nga template të gatshme.",
       },
       communication: {
         title: "Komunikim i qartë",

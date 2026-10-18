@@ -2,10 +2,10 @@ import { expect, test, type Locator, type Page } from "@playwright/test";
 import { routes } from "../../src/config/routes";
 
 const services = [
-  { title: "Uebfaqe prezantuese", anchor: "uebfaqe-prezantuese", packages: { Starter: "starter" } },
-  { title: "Uebfaqe biznesi", anchor: "uebfaqe-biznesi", packages: { Biznes: "business", Profesional: "professional" } },
-  { title: "Dyqane online", anchor: "dyqane-online", packages: { "E-commerce": "ecommerce" } },
-  { title: "Platforma me porosi", anchor: "platforma-me-porosi", packages: { "Platformë me porosi": "custom" } },
+  { title: "Website prezantues", anchor: "website-prezantues", packages: { Starter: "starter" } },
+  { title: "Website biznesi", anchor: "website-biznesi", packages: { Business: "business", Professional: "professional" } },
+  { title: "Online Shop", anchor: "online-shop", packages: { "E-commerce": "ecommerce" } },
+  { title: "Custom Development", anchor: "custom-development", packages: { Custom: "custom" } },
 ];
 
 /** The element is visible and not hidden underneath the sticky header. */
@@ -21,7 +21,7 @@ test.describe("services page", () => {
     await page.goto(routes.services);
     await expect(page).toHaveTitle("Shërbimet | WideCode");
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-      "Uebfaqe dhe zgjidhje online, të ndërtuara me porosi",
+      "Website dhe zgjidhje digjitale, të ndërtuara me porosi",
     );
     await expect(page.locator('meta[name="robots"]')).toHaveCount(0);
     await expect(page.getByText("Në përgatitje")).toHaveCount(0);
@@ -54,11 +54,11 @@ test.describe("services page", () => {
 
   test("shows starting prices from the pricing config", async ({ page }) => {
     await page.goto(routes.services);
-    await expect(page.locator("section#uebfaqe-prezantuese")).toContainText("nga 199 €");
-    await expect(page.locator("section#uebfaqe-biznesi")).toContainText("nga 399 €");
-    await expect(page.locator("section#uebfaqe-biznesi")).toContainText("nga 699 €");
-    await expect(page.locator("section#dyqane-online")).toContainText("nga 999 €");
-    await expect(page.locator("section#platforma-me-porosi")).toContainText("Me ofertë");
+    await expect(page.locator("section#website-prezantues")).toContainText("nga 199 €");
+    await expect(page.locator("section#website-biznesi")).toContainText("nga 399 €");
+    await expect(page.locator("section#website-biznesi")).toContainText("nga 699 €");
+    await expect(page.locator("section#online-shop")).toContainText("nga 999 €");
+    await expect(page.locator("section#custom-development")).toContainText("Me ofertë");
     await expect(page.locator("main")).toContainText("Të gjitha çmimet janë fillestare dhe orientuese");
   });
 
@@ -86,9 +86,9 @@ test.describe("home service cards", () => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
     const section = page.getByRole("region", { name: "Çfarë ndërtojmë për biznesin tuaj" });
-    await section.getByRole("link", { name: "Dyqane online" }).click();
-    await expect(page).toHaveURL(/\/sherbimet#dyqane-online$/);
-    await expectClearOfHeader(page, page.locator("section#dyqane-online").getByRole("heading", { level: 2 }));
+    await section.getByRole("link", { name: "Online Shop" }).click();
+    await expect(page).toHaveURL(/\/sherbimet#online-shop$/);
+    await expectClearOfHeader(page, page.locator("section#online-shop").getByRole("heading", { level: 2 }));
   });
 });
 
@@ -97,7 +97,7 @@ test.describe("about page", () => {
     await page.goto(routes.about);
     await expect(page).toHaveTitle("Rreth nesh | WideCode");
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-      "Ndërtojmë uebfaqe me kujdes, qartësi dhe çmime të ndershme",
+      "Ndërtojmë website me kujdes, qartësi dhe çmime të ndershme",
     );
     await expect(page.locator('meta[name="robots"]')).toHaveCount(0);
     for (const title of ["Prani profesionale online për çdo biznes", "Si i qasemi punës", "Shërbimet tona", "Si punojmë", "Tregu ynë"]) {

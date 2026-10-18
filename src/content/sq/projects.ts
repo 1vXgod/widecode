@@ -7,18 +7,18 @@ export const projects = {
     "Këto projekte janë krijuar nga WideCode si shembuj për të treguar stilin dhe mundësitë tona. Nuk janë punë për klientë realë.",
   demoBadge: "Projekt demonstrues",
   categories: {
-    business: "Uebfaqe biznesi",
-    ecommerce: "Dyqan online",
-    platform: "Platformë",
+    business: "Website biznesi",
+    ecommerce: "Online Shop",
+    platform: "Web aplikacion",
   },
   items: {
     "restorant-tradicional": {
       title: "Restorant tradicional",
-      summary: "Uebfaqe me menu, galeri dhe kërkesë për rezervim, e menduar për t'u përdorur lehtë nga celulari.",
+      summary: "Website me menu, galeri dhe kërkesë për rezervim, i menduar për t'u përdorur lehtë nga celulari.",
       tags: ["Menu online", "Rezervime", "Celular"],
     },
     "dyqan-veshjesh": {
-      title: "Dyqan online veshjesh",
+      title: "Online shop për veshje",
       summary: "Katalog produktesh me filtra, shportë dhe një proces të thjeshtë porosie.",
       tags: ["Katalog", "Shportë", "Filtra"],
     },

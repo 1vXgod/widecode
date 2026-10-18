@@ -24,7 +24,7 @@ describe("services config", () => {
   });
 
   it("builds deep links to service sections", () => {
-    expect(serviceHref("ecommerce")).toBe("/sherbimet#dyqane-online");
+    expect(serviceHref("ecommerce")).toBe("/sherbimet#online-shop");
     // @ts-expect-error unknown id
     expect(() => getService("seo")).toThrow(/Unknown service/);
   });

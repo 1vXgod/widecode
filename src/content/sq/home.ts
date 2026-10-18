@@ -2,17 +2,17 @@ import type { Dictionary } from "@/types/content";
 
 export const home = {
   hero: {
-    eyebrow: "Zhvillim uebi në Kosovë",
-    title: "Uebfaqe profesionale që punojnë për",
+    eyebrow: "Web Development në Kosovë",
+    title: "Website profesional që punon për",
     titleHighlight: "biznesin tuaj",
-    lead: "Ndërtojmë uebfaqe dhe dyqane online me porosi — të shpejta, të sigurta dhe të përshtatura për çdo pajisje, me çmime të qarta që në fillim.",
+    lead: "Ndërtojmë website dhe online shop me porosi — të shpejtë, të sigurt dhe responsive në çdo pajisje, me çmime të qarta që në fillim.",
     primaryCta: "Merr një ofertë",
     secondaryCta: "Shiko projektet",
     priceNote: "Çmime fillestare nga {price}",
     noObligation: "Ofertë pa asnjë obligim",
   },
   showcase: {
-    label: "Shembull interaktiv: si ndërtohet një uebfaqe, nga dizajni te publikimi",
+    label: "Shembull interaktiv: si ndërtohet një website, nga dizajni te publikimi",
     tabs: {
       design: "Dizajni",
       code: "Kodi",
@@ -45,7 +45,7 @@ export const processCopy = {
   steps: [
     {
       title: "Bisedë fillestare",
-      text: "Na tregoni për biznesin, qëllimet dhe çfarë ju nevojitet nga uebfaqja.",
+      text: "Na tregoni për biznesin, qëllimet dhe çfarë ju nevojitet nga website-i.",
     },
     {
       title: "Ofertë dhe plan",
@@ -53,11 +53,11 @@ export const processCopy = {
     },
     {
       title: "Dizajni",
-      text: "Krijojmë pamjen e uebfaqes dhe e përshtatim bashkë me ju para zhvillimit.",
+      text: "Krijojmë dizajnin dhe e përshtatim bashkë me ju para zhvillimit.",
     },
     {
       title: "Zhvillimi",
-      text: "E ndërtojmë uebfaqen me kod me porosi, të shpejtë dhe të përshtatur për çdo pajisje.",
+      text: "E ndërtojmë faqen me kod me porosi, të shpejtë dhe responsive në çdo pajisje.",
     },
     {
       title: "Testimi dhe publikimi",
@@ -68,7 +68,7 @@ export const processCopy = {
 
 export const why = {
   eyebrow: "Pse WideCode",
-  title: "Një partner i qartë për uebfaqen tuaj",
+  title: "Një partner i qartë për website-in tuaj",
   description: "Nuk premtojmë mrekulli. Premtojmë punë të kujdesshme, komunikim të hapur dhe çmime të qarta.",
   items: {
     transparent: {
@@ -76,12 +76,12 @@ export const why = {
       text: "Çmimet fillestare janë publike. Para se të nisim, e dini saktë çfarë përfshin oferta.",
     },
     custom: {
-      title: "Të ndërtuara me porosi",
-      text: "Çdo uebfaqe dizajnohet dhe ndërtohet për biznesin tuaj, jo nga shabllone të gatshme.",
+      title: "Ndërtuar me porosi",
+      text: "Çdo website dizajnohet dhe ndërtohet për biznesin tuaj, jo nga template të gatshme.",
     },
     devices: {
       title: "Për çdo pajisje",
-      text: "Uebfaqet që ndërtojmë përshtaten për celular, tablet dhe kompjuter.",
+      text: "Çdo website që ndërtojmë përshtatet për celular, tablet dhe kompjuter.",
     },
     communication: {
       title: "Komunikim në shqip",

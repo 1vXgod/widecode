@@ -19,24 +19,24 @@ export const pricing = {
       name: "Starter",
       summary: "Për biznese që duan një prani të thjeshtë dhe profesionale online.",
       features: [
-        "Uebfaqe njëfaqëshe",
-        "Dizajn i përshtatur për çdo pajisje",
+        "One-page website",
+        "Dizajn responsive për çdo pajisje",
         "Formular kontakti",
-        "Optimizim bazë për motorët e kërkimit",
+        "SEO bazë",
       ],
     },
     business: {
-      name: "Biznes",
+      name: "Business",
       summary: "Për bizneset që duan t'i prezantojnë shërbimet në disa faqe.",
       features: [
         "Deri në 5 faqe",
         "Dizajn me porosi",
         "Formular kontakti dhe hartë",
-        "Optimizim bazë për motorët e kërkimit",
+        "SEO bazë",
       ],
     },
     professional: {
-      name: "Profesional",
+      name: "Professional",
       summary: "Për projekte me më shumë përmbajtje dhe funksionalitete.",
       features: [
         "Deri në 10 faqe",
@@ -56,8 +56,8 @@ export const pricing = {
       ],
     },
     custom: {
-      name: "Platformë me porosi",
-      summary: "Për platforma dhe aplikacione ueb me kërkesa specifike.",
+      name: "Custom",
+      summary: "Për platforma dhe aplikacione web me kërkesa specifike.",
       features: ["Analizë e detajuar e kërkesave", "Funksionalitete me porosi", "Integrime me sisteme të jashtme"],
     },
   },

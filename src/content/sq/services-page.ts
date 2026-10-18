@@ -3,8 +3,8 @@ import type { Dictionary } from "@/types/content";
 export const servicesPage = {
   intro: {
     eyebrow: "Shërbimet",
-    title: "Uebfaqe dhe zgjidhje online, të ndërtuara me porosi",
-    lead: "Ndërtojmë uebfaqe prezantuese, uebfaqe biznesi, dyqane online dhe platforma ueb për bizneset në Kosovë dhe më gjerë. Çdo projekt nis nga nevojat tuaja dhe ndërtohet nga e para.",
+    title: "Website dhe zgjidhje digjitale, të ndërtuara me porosi",
+    lead: "Ndërtojmë website prezantues dhe website biznesi, online shop dhe aplikacione web me porosi për bizneset në Kosovë dhe më gjerë. Çdo projekt nis nga nevojat tuaja dhe ndërtohet nga e para.",
     primaryCta: "Merr një ofertë",
     secondaryCta: "Shiko çmimet",
   },
@@ -16,22 +16,22 @@ export const servicesPage = {
   details: {
     presentation: {
       description:
-        "Një uebfaqe prezantuese është mënyra më e shpejtë për t'u paraqitur profesionalisht online. Në një faqe të vetme ose në pak seksione, vizitorët mësojnë kush jeni, çfarë ofroni dhe si t'ju kontaktojnë.",
+        "Një website prezantues është mënyra më e shpejtë për t'u paraqitur profesionalisht online. Në një faqe të vetme ose në pak seksione, vizitorët mësojnë kush jeni, çfarë ofroni dhe si t'ju kontaktojnë.",
       idealFor: [
         "Biznese të reja dhe profesionistë të pavarur",
         "Lansimin e një produkti ose shërbimi të ri",
         "Bizneset që duan një prani të thjeshtë dhe të shpejtë online",
       ],
       includes: [
-        "Dizajn modern i përshtatur për celular, tablet dhe kompjuter",
+        "Dizajn modern dhe responsive për celular, tablet dhe kompjuter",
         "Seksione për prezantimin, shërbimet dhe kontaktin",
         "Formular kontakti",
-        "Optimizim bazë për motorët e kërkimit",
+        "SEO bazë",
       ],
     },
     business: {
       description:
-        "Për bizneset që kanë më shumë për të treguar: shërbime të ndryshme, projekte ose informacione të detajuara. Uebfaqja ndahet në disa faqe, që klientët tuaj ta gjejnë shpejt atë që kërkojnë.",
+        "Për bizneset që kanë më shumë për të treguar: shërbime të ndryshme, projekte ose informacione të detajuara. Përmbajtja ndahet në disa faqe, që klientët tuaj ta gjejnë shpejt atë që kërkojnë.",
       idealFor: [
         "Biznese me disa shërbime ose produkte",
         "Kompani që duan të ndërtojnë besueshmëri online",
@@ -42,12 +42,12 @@ export const servicesPage = {
         "Dizajn me porosi në përputhje me identitetin e biznesit",
         "Formular kontakti dhe hartë",
         "Lidhje me rrjetet sociale",
-        "Optimizim bazë për motorët e kërkimit",
+        "SEO bazë",
       ],
     },
     ecommerce: {
       description:
-        "Një dyqan online ju lejon t'i shitni produktet tuaja në çdo kohë. Ndërtojmë një katalog të qartë, shportë të thjeshtë dhe një proces porosie që funksionon mirë edhe në celular.",
+        "Një online shop ju lejon t'i shitni produktet tuaja në çdo kohë. Ndërtojmë një katalog të qartë, shportë të thjeshtë dhe një proces porosie që funksionon mirë edhe në celular.",
       idealFor: [
         "Dyqane fizike që duan të shesin edhe online",
         "Marka dhe prodhues vendorë",
@@ -62,7 +62,7 @@ export const servicesPage = {
     },
     platform: {
       description:
-        "Kur nevojat tuaja shkojnë përtej një uebfaqeje, ndërtojmë aplikacione ueb me porosi: sisteme rezervimesh, panele menaxhimi, portale për klientë dhe zgjidhje të tjera sipas proceseve të biznesit tuaj.",
+        "Kur nevojat tuaja shkojnë përtej një website-i, ndërtojmë aplikacione web me porosi: sisteme rezervimesh, dashboard-e menaxhimi, portale për klientë dhe zgjidhje të tjera sipas proceseve të biznesit tuaj.",
       idealFor: [
         "Biznese me procese specifike që duan t'i digjitalizojnë",
         "Ide për produkte ose shërbime online",
@@ -79,18 +79,18 @@ export const servicesPage = {
   standards: {
     eyebrow: "Standardi ynë",
     title: "Çfarë përfshin çdo projekt",
-    description: "Pavarësisht paketës, çdo uebfaqe që ndërtojmë ndjek të njëjtat parime cilësie.",
+    description: "Pavarësisht paketës, çdo website që ndërtojmë ndjek të njëjtat standarde cilësie.",
     items: {
       responsive: {
-        title: "Për çdo pajisje",
+        title: "Responsive",
         text: "Dizajn që përshtatet për celular, tablet dhe kompjuter.",
       },
       seo: {
-        title: "Bazat e SEO-së",
+        title: "SEO bazë",
         text: "Strukturë e rregullt e faqeve, tituj dhe përshkrime që i ndihmojnë motorët e kërkimit.",
       },
       performance: {
-        title: "Shpejtësi",
+        title: "Performancë",
         text: "Imazhe dhe kod të optimizuar, që faqja të ngarkohet shpejt.",
       },
       accessibility: {
@@ -103,7 +103,7 @@ export const servicesPage = {
       },
       custom: {
         title: "Kod me porosi",
-        text: "Pa shabllone të gatshme: çdo projekt ndërtohet sipas nevojave tuaja.",
+        text: "Pa template të gatshme: çdo projekt ndërtohet sipas nevojave tuaja.",
       },
     },
   },

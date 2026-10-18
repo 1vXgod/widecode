@@ -6,7 +6,7 @@ const sectionTitles = [
   "Projekte demonstruese",
   "Çmime të qarta që në fillim",
   "Si punojmë",
-  "Një partner i qartë për uebfaqen tuaj",
+  "Një partner i qartë për website-in tuaj",
   "Pyetjet e shpeshta",
   "Gati ta nisim projektin tuaj?",
 ];
@@ -18,13 +18,13 @@ function showcase(page: Page) {
 test.describe("home page content", () => {
   test("renders the hero and all sections in order", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Uebfaqe profesionale që punojnë për biznesin tuaj");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Website profesional që punon për biznesin tuaj");
     await expect(page.locator("main h2")).toHaveText(sectionTitles);
   });
 
   test("hero CTAs lead to the contact and projects pages", async ({ page }) => {
     await page.goto("/");
-    const hero = page.getByRole("region", { name: /Uebfaqe profesionale/ });
+    const hero = page.getByRole("region", { name: /Website profesional/ });
     await expect(hero.getByRole("link", { name: "Merr një ofertë" })).toHaveAttribute("href", routes.contact);
     await hero.getByRole("link", { name: "Shiko projektet" }).click();
     await expect(page).toHaveURL(/\/projektet$/);
@@ -32,7 +32,7 @@ test.describe("home page content", () => {
 
   test("hero states the lowest starting price from the pricing config", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByRole("region", { name: /Uebfaqe profesionale/ })).toContainText("Çmime fillestare nga 199 €");
+    await expect(page.getByRole("region", { name: /Website profesional/ })).toContainText("Çmime fillestare nga 199 €");
   });
 
   test("every project card is labelled as a demonstration", async ({ page }) => {
@@ -53,7 +53,7 @@ test.describe("home page content", () => {
       await expect(section).toContainText(price);
     }
     await expect(section).toContainText("Të gjitha çmimet janë fillestare dhe orientuese");
-    await expect(section.getByRole("link", { name: "Zgjidh paketën: Biznes" })).toHaveAttribute(
+    await expect(section.getByRole("link", { name: "Zgjidh paketën: Business" })).toHaveAttribute(
       "href",
       `${routes.contact}?paketa=business`,
     );
