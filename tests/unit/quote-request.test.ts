@@ -115,7 +115,8 @@ describe("validateQuoteValues", () => {
 
 describe("text cleaning", () => {
   it("removes control, zero-width and bidi-override characters", () => {
-    expect(cleanLine("Ar\u0000ta​ ‮Krasniqi‬")).toBe("Arta Krasniqi");
+    const [zeroWidth, rtlOverride, popDirection] = [0x200b, 0x202e, 0x202c].map((c) => String.fromCharCode(c));
+    expect(cleanLine(`Ar\u0000ta${zeroWidth} ${rtlOverride}Krasniqi${popDirection}`)).toBe("Arta Krasniqi");
     expect(cleanLine("Line one\r\nBcc: someone")).toBe("Line one Bcc: someone");
     expect(cleanLine(123)).toBe("");
   });

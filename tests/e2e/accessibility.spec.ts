@@ -22,7 +22,7 @@ async function revealWholePage(page: Page) {
   await page.waitForTimeout(800); // longer than the 0.7s reveal and 0.5s crossfade transitions
 }
 
-const pages = ["/", "/sherbimet", "/rreth-nesh", "/cmimet", "/llogarit-cmimin", "/projektet", "/projektet/klinike-dentare", "/kontakt", "/kontakt?paketa=business&faqe=7&shtesa=blog&projekti=klinike-dentare", "/nuk-ekziston"];
+const pages = ["/", "/sherbimet", "/rreth-nesh", "/cmimet", "/llogarit-cmimin", "/projektet", "/projektet/klinike-dentare", "/kontakt", "/kontakt?paketa=business&faqe=7&shtesa=blog&projekti=klinike-dentare", "/pyetje-te-shpeshta", "/nuk-ekziston"];
 const viewports = [
   { name: "mobile", width: 390, height: 844 },
   { name: "desktop", width: 1280, height: 800 },

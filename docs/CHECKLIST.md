@@ -20,7 +20,7 @@ Legend: `[x]` done · `[ ]` open · `[~]` partial / placeholder
 - [x] Header with desktop nav (`aria-current`) and accessible mobile menu (native `<dialog>`)
 - [x] Footer (no invented contact details)
 - [x] Albanian 404 page
-- [x] Placeholder pages for all main routes (`noindex`)
+- [x] Placeholder pages for all main routes (`noindex`); all replaced by real pages by Sprint 8
 - [x] Favicon / apple icon (replaced with official assets, see Brand assets)
 - [x] Typed content dictionary (`src/content/sq`), ready for English later
 - [x] Reduced-motion support and global focus styles
@@ -124,12 +124,19 @@ Legend: `[x]` done · `[ ]` open · `[~]` partial / placeholder
 - [ ] **Needs owner input:** Resend API key, receiving address and a verified sending domain (production shows "temporarily unavailable" until then)
 - [ ] **Needs owner review:** privacy line under the form ("Të dhënat tuaja përdoren vetëm për t'iu përgjigjur kësaj kërkese") and budget ranges in `src/content/sq/contact-page.ts`
 
-## Sprint 8: FAQ, SEO and deployment docs
+## Sprint 8: FAQ, SEO and deployment docs ✅
 
-- [ ] FAQ page
-- [ ] Per-page metadata, canonical URLs, Open Graph images, JSON-LD
-- [ ] `sitemap.ts`, `robots.ts`
-- [ ] `docs/DEPLOYMENT.md` (Vercel)
+- [x] FAQ page (`/pyetje-te-shpeshta`): 19 questions in four topics (Çmimet dhe oferta, Procesi dhe afatet, Website-i dhe funksionalitetet, Pas publikimit) with topic navigation, native `<details>` answers and the shared CTA. The five questions already shown on other pages are reused word for word; prices are filled from the pricing config. Shared `FaqList` component
+- [x] Answers state only established facts; payment terms, domain/hosting and changes after launch are described as agreed in the offer (no terms promised)
+- [x] Per-page metadata via `seoMetadata()`: canonical URL (never with query parameters), Open Graph (site name, `sq_AL`, URL, title, description) and X `summary_large_image`, on every page incl. project pages
+- [x] Shared social image `opengraph-image.tsx` (1200×630, brand colors and official app icon, prerendered at build time), referenced explicitly on every page (Next.js merges `openGraph` shallowly)
+- [x] JSON-LD (escaped serializer): Organization + WebSite on the home page (only configured contact details), FAQPage on the FAQ page
+- [x] `sitemap.ts` (all routes and projects, absolute URLs, no invented dates) and `robots.ts`; Vercel preview/development deployments get `Disallow: /` and `noindex`
+- [x] Placeholder system removed (no page is "Në përgatitje" any more)
+- [x] `docs/DEPLOYMENT.md`: Vercel setup, environment variables per environment, domain, Resend activation and verification, search engines, go-live checklist, operations, self-hosting
+- [x] Fix: sanitizer regex and a unit test contained literal invisible characters (zero-width/bidi) where escapes were intended; now built from code points
+- [x] Tests: indexing rules, page metadata, sitemap/robots, JSON-LD escaping and content, FAQ placeholders, reuse, process consistency and no unconfirmed promises (unit); FAQ page topics, anchors, keyboard, canonical/OG/X tags on every page, canonical without query parameters, OG image size, robots, sitemap (every URL returns 200), JSON-LD (e2e); axe and CLS on the FAQ page
+- [ ] **Needs owner review:** FAQ answers on payment, domain/hosting and changes after launch (`src/content/sq/faq-page.ts`)
 
 ## Sprint 9: Quality pass
 

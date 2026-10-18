@@ -1,4 +1,5 @@
 import type { AddOnId } from "@/config/estimator";
+import type { FaqCategoryId } from "@/config/faq";
 import type { PackageId } from "@/config/pricing";
 import type { ProjectCategory, ProjectSlug } from "@/config/projects";
 import type { BudgetId, ProjectTypeId, TimelineId } from "@/config/quote";
@@ -16,6 +17,11 @@ export interface SectionIntro {
   eyebrow: string;
   title: string;
   description: string;
+}
+
+export interface FaqItem {
+  question: string;
+  answer: string;
 }
 
 /** Intro block at the top of inner pages. */
@@ -69,6 +75,12 @@ export interface Dictionary {
   meta: {
     defaultTitle: string;
     description: string;
+    /** Text on the shared social preview image (src/app/opengraph-image.tsx). */
+    ogImage: {
+      headline: string;
+      subline: string;
+      alt: string;
+    };
   };
   a11y: {
     skipToContent: string;
@@ -162,7 +174,7 @@ export interface Dictionary {
   };
   faq: SectionIntro & {
     /** Answers may use {price}. */
-    items: Array<{ question: string; answer: string }>;
+    items: FaqItem[];
     viewAll: string;
   };
   cta: {
@@ -312,6 +324,17 @@ export interface Dictionary {
       metaDescription: string;
     };
   };
+  faqPage: {
+    intro: {
+      eyebrow: string;
+      title: string;
+      lead: string;
+    };
+    /** Label of the in-page topic navigation. */
+    onThisPage: string;
+    /** Answers may use {price}, {multilingualPrice} and {ecommercePrice}. */
+    categories: Record<FaqCategoryId, { title: string; items: FaqItem[] }>;
+  };
   contactPage: {
     intro: {
       eyebrow: string;
@@ -406,11 +429,6 @@ export interface Dictionary {
       reference: string;
       replyHint: string;
     };
-  };
-  placeholder: {
-    badge: string;
-    text: string;
-    backHome: string;
   };
   notFound: {
     eyebrow: string;

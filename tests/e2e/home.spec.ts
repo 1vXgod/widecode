@@ -161,7 +161,7 @@ test.describe("stability", () => {
     expect(problems).toEqual([]);
   });
 
-  for (const [path, viewport] of ["/", "/sherbimet", "/rreth-nesh", "/cmimet", "/llogarit-cmimin", "/projektet", "/projektet/klinike-dentare", "/kontakt", "/kontakt?paketa=business&faqe=7&shtesa=blog"].flatMap((p) =>
+  for (const [path, viewport] of ["/", "/sherbimet", "/rreth-nesh", "/cmimet", "/llogarit-cmimin", "/projektet", "/projektet/klinike-dentare", "/kontakt", "/kontakt?paketa=business&faqe=7&shtesa=blog", "/pyetje-te-shpeshta"].flatMap((p) =>
     [
       { name: "mobile", width: 390, height: 844 },
       { name: "desktop", width: 1280, height: 800 },

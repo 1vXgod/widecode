@@ -10,10 +10,11 @@ import { Card } from "@/components/ui/card";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { formatPrice, getPackage } from "@/config/pricing";
-import { findProject, projectSlugs, relatedProjects } from "@/config/projects";
+import { findProject, projectHref, projectSlugs, relatedProjects } from "@/config/projects";
 import { routes } from "@/config/routes";
 import { serviceHref } from "@/config/services";
 import { getDictionary } from "@/content";
+import { seoMetadata } from "@/lib/metadata";
 import { estimatorHref, quoteHref } from "@/lib/quote";
 import { fill } from "@/lib/template";
 
@@ -28,10 +29,11 @@ export async function generateMetadata({ params }: PageProps<"/projektet/[slug]"
   if (!project) return {};
   const dict = getDictionary();
   const item = dict.projects.items[project.slug];
-  return {
+  return seoMetadata({
     title: fill(dict.projectsPage.detail.metaTitle, { title: item.title }),
     description: fill(dict.projectsPage.detail.metaDescription, { summary: item.summary }),
-  };
+    path: projectHref(project.slug),
+  });
 }
 
 export default async function ProjectPage({ params }: PageProps<"/projektet/[slug]">) {

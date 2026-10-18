@@ -7,6 +7,8 @@ import { MAIN_CONTENT_ID, SkipLink } from "@/components/layout/skip-link";
 import { siteConfig } from "@/config/site";
 import { getDictionary } from "@/content";
 import { localeMeta } from "@/i18n/config";
+import { baseOpenGraph } from "@/lib/metadata";
+import { isIndexable } from "@/lib/seo";
 import "./globals.css";
 
 // Both fonts include the Latin-1 range, which covers Albanian ë and ç.
@@ -34,15 +36,15 @@ export const metadata: Metadata = {
   description: dict.meta.description,
   applicationName: siteConfig.name,
   openGraph: {
-    type: "website",
-    siteName: siteConfig.name,
-    locale: locale.ogLocale,
+    ...baseOpenGraph(),
     title: dict.meta.defaultTitle,
     description: dict.meta.description,
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
   },
+  // Vercel preview deployments stay out of search results (see also robots.ts).
+  ...(isIndexable() ? {} : { robots: { index: false, follow: false } }),
   formatDetection: {
     telephone: false,
     email: false,

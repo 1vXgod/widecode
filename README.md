@@ -78,22 +78,24 @@ Protection: the same validation runs in the browser and on the server ([`src/lib
 
 ```
 src/
-  app/                 Routes (App Router), root layout, icons, 404
+  app/                 Routes (App Router), root layout, icons, 404, sitemap.ts, robots.ts, opengraph-image.tsx
   components/
     brand/             Logo
     layout/            Header, footer, navigation, mobile menu, skip link
-    sections/          Page-level building blocks
+    quote/             Quote request form
+    sections/          Page-level building blocks (intro, CTA, FAQ list)
+    seo/               JSON-LD structured data
     ui/                Primitives: Button, Container, Section, SectionHeading, Badge, Card
   config/              Site config and routes (single source of truth)
   content/<locale>/    All user-facing copy, typed by src/types/content.ts
   i18n/                Locale configuration
-  lib/                 Utilities (cn, site URL resolution)
+  lib/                 Logic and utilities (estimator, quote form, SEO metadata, site URL, ...)
   styles/theme.css     Design tokens (colors, type scale, spacing, layout widths, motion)
   types/               Shared TypeScript types
 tests/
   unit/                Vitest tests
   e2e/                 Playwright tests (routes, keyboard, accessibility, responsive)
-docs/                  Project checklist and documentation
+docs/                  Checklist, deployment guide, image credits
 ```
 
 ## Design system
@@ -169,4 +171,11 @@ Public contact details (`email`, `phone`, `location`) and social profile URLs ar
 
 ## Deployment
 
-Vercel is the intended host. Nothing is deployed yet, and deployment needs explicit approval. Full deployment documentation will be added in a later sprint.
+Vercel is the intended host. Nothing is deployed yet, and deployment needs explicit approval. Step-by-step instructions (project setup, environment variables, domain, Resend, search engines and a go-live checklist) are in [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
+
+### SEO
+
+- Page metadata comes from the dictionary through `pageMetadata()` / `seoMetadata()` in [`src/lib/metadata.ts`](src/lib/metadata.ts): title, description, canonical URL (always without query parameters), Open Graph and X cards with the shared image from [`src/app/opengraph-image.tsx`](src/app/opengraph-image.tsx). Pages that set `openGraph` themselves must spread `baseOpenGraph()`, because Next.js merges metadata shallowly.
+- [`src/app/sitemap.ts`](src/app/sitemap.ts) lists every route in `src/config/routes.ts` and every project; [`src/app/robots.ts`](src/app/robots.ts) points to it. Vercel previews are kept out of search results (`isIndexable()` in [`src/lib/seo.ts`](src/lib/seo.ts)).
+- Structured data (JSON-LD via `<JsonLd>`): Organization and WebSite on the home page, FAQPage on the FAQ page. Configured contact details and social profiles are added automatically; nothing else is.
+- FAQ: the full page uses `src/content/sq/faq-page.ts` (topics keyed by `src/config/faq.ts`); the questions shown on other pages come from `src/content/sq/faq.ts` and are reused word for word. Prices in answers are placeholders filled from the pricing config (`src/lib/faq.ts`).

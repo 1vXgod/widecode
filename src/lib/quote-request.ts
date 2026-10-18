@@ -96,7 +96,20 @@ export const emptyQuoteValues: QuoteFormValues = {
 
 // Control characters (except tab and newline, handled per field), zero-width
 // characters and bidirectional overrides, which can disguise text in emails.
-const UNSAFE_CHARS = /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F​-‏‪-‮⁠-⁤⁦-⁩﻿]/g;
+// Built from code points so the source never contains invisible characters.
+const UNSAFE_RANGES: ReadonlyArray<[number, number]> = [
+  [0x00, 0x08],
+  [0x0b, 0x0c],
+  [0x0e, 0x1f],
+  [0x7f, 0x9f],
+  [0x200b, 0x200f],
+  [0x202a, 0x202e],
+  [0x2060, 0x2064],
+  [0x2066, 0x2069],
+  [0xfeff, 0xfeff],
+];
+const codePoint = (code: number) => `${String.fromCharCode(92)}u${code.toString(16).padStart(4, "0")}`;
+const UNSAFE_CHARS = new RegExp(`[${UNSAFE_RANGES.map(([from, to]) => `${codePoint(from)}-${codePoint(to)}`).join("")}]`, "g");
 
 // Deliberately stricter than RFC 5322: no spaces, quotes, commas, angle
 // brackets or semicolons, so one value can never become several recipients.

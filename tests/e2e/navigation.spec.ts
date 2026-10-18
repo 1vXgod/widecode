@@ -32,9 +32,12 @@ test.describe("routes", () => {
     await expect(page.getByRole("heading", { level: 1, name: "Faqja nuk u gjet" })).toBeVisible();
   });
 
-  test("placeholder pages are excluded from search indexing", async ({ page }) => {
-    await page.goto(routes.faq);
-    await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
+  test("no page is a placeholder or excluded from indexing any more", async ({ page }) => {
+    for (const path of Object.values(routes)) {
+      await page.goto(path);
+      await expect(page.getByText("Në përgatitje"), path).toHaveCount(0);
+      await expect(page.locator('meta[name="robots"]'), path).toHaveCount(0);
+    }
   });
 });
 

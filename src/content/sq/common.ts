@@ -3,6 +3,7 @@ import { aboutPage } from "./about-page";
 import { contactPage } from "./contact-page";
 import { estimator } from "./estimator";
 import { faq } from "./faq";
+import { faqPage } from "./faq-page";
 import { cta as ctaSection, home, processCopy, why } from "./home";
 import { pricing } from "./pricing";
 import { pricingPage } from "./pricing-page";
@@ -18,6 +19,11 @@ export const sq = {
     defaultTitle: "WideCode — Website, Online Shop dhe Custom Development",
     description:
       "WideCode ndërton website dhe online shop me porosi për bizneset në Kosovë, me dizajn modern për çdo pajisje dhe çmime fillestare transparente.",
+    ogImage: {
+      headline: "Website dhe online shop me porosi",
+      subline: "Për bizneset në Kosovë · Çmime fillestare transparente",
+      alt: "WideCode: website dhe online shop me porosi për bizneset në Kosovë",
+    },
   },
   a11y: {
     skipToContent: "Kalo te përmbajtja kryesore",
@@ -67,7 +73,8 @@ export const sq = {
     },
     faq: {
       title: "Pyetjet e shpeshta",
-      description: "Përgjigje për pyetjet më të shpeshta rreth procesit, afateve dhe çmimeve.",
+      description:
+        "Përgjigje për pyetjet më të shpeshta rreth çmimeve, procesit, afateve dhe funksionaliteteve të website-it tuaj.",
     },
     contact: {
       title: "Kontakti",
@@ -119,12 +126,8 @@ export const sq = {
   pricingPage,
   estimator,
   projectsPage,
+  faqPage,
   contactPage,
-  placeholder: {
-    badge: "Në përgatitje",
-    text: "Kjo faqe është në përgatitje dhe do të publikohet së shpejti.",
-    backHome: "Kthehu në ballinë",
-  },
   notFound: {
     eyebrow: "Gabim 404",
     title: "Faqja nuk u gjet",
