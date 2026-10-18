@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
-import { ButtonLink } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { footerNav, routes, type FooterNavGroup } from "@/config/routes";
 import { siteConfig } from "@/config/site";
@@ -21,26 +20,8 @@ export async function SiteFooter({ dict }: { dict: Dictionary }) {
 
   return (
     <footer className="border-t border-border bg-surface">
-      {/* Call to action */}
-      <Container className="py-14 sm:py-16">
-        <div className="relative isolate flex flex-col items-start gap-6 overflow-hidden rounded-card border border-border bg-surface-raised p-8 sm:p-10 md:flex-row md:items-center md:justify-between">
-          <div
-            aria-hidden="true"
-            className="absolute -top-24 -right-24 -z-10 size-72 rounded-full bg-accent/25 blur-[90px]"
-          />
-          <div className="max-w-xl">
-            <h2 className="text-heading font-semibold text-fg">{dict.footer.ctaTitle}</h2>
-            <p className="mt-2 text-fg-muted">{dict.footer.ctaText}</p>
-          </div>
-          <ButtonLink href={routes.contact} size="lg" className="group">
-            {dict.header.cta}
-            <ArrowRight aria-hidden="true" className="transition-transform duration-200 group-hover:translate-x-0.5" />
-          </ButtonLink>
-        </div>
-      </Container>
-
-      {/* Columns */}
-      <Container className="grid gap-12 pb-14 sm:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr_1.3fr]">
+      {/* Columns (the page-level CTA lives in components/sections/cta-section.tsx) */}
+      <Container className="grid gap-12 py-14 sm:grid-cols-2 sm:py-16 lg:grid-cols-[1.6fr_1fr_1fr_1.3fr]">
         <div className="flex max-w-sm flex-col gap-5 sm:col-span-2 lg:col-span-1">
           <Link href={routes.home} aria-label={dict.a11y.homeLinkLabel} className="self-start rounded-lg">
             <Logo height={52} />

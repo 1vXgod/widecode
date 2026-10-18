@@ -58,15 +58,25 @@ test.describe("header", () => {
 });
 
 test.describe("footer", () => {
-  test("shows navigation groups, CTA and current-year copyright", async ({ page }) => {
+  test("shows navigation groups, contact link and current-year copyright", async ({ page }) => {
     await page.goto("/");
     const footer = page.getByRole("contentinfo");
     const nav = footer.getByRole("navigation", { name: "Navigimi në fund të faqes" });
     for (const label of ["Ballina", "Shërbimet", "Projektet", "Çmimet", "Rreth nesh", "Kontakti", "Llogarit çmimin", "Pyetjet e shpeshta"]) {
       await expect(nav.getByRole("link", { name: label, exact: true })).toBeVisible();
     }
-    await expect(footer.getByRole("link", { name: "Merr një ofertë" })).toBeVisible();
+    await expect(footer.getByRole("link", { name: "Shko te kontakti" })).toBeVisible();
     await expect(footer).toContainText(`© ${new Date().getFullYear()} WideCode.`);
+  });
+
+  test("inner pages end with the shared call to action, except the contact page", async ({ page }) => {
+    await page.goto(routes.services);
+    const cta = page.getByRole("region", { name: "Gati ta nisim projektin tuaj?" });
+    await expect(cta.getByRole("link", { name: "Merr një ofertë" })).toHaveAttribute("href", routes.contact);
+    await expect(cta.getByRole("link", { name: "Llogarit çmimin" })).toHaveAttribute("href", routes.estimator);
+
+    await page.goto(routes.contact);
+    await expect(page.getByRole("region", { name: "Gati ta nisim projektin tuaj?" })).toHaveCount(0);
   });
 
   test("does not invent contact details or social profiles", async ({ page }) => {

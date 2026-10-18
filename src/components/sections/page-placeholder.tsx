@@ -5,6 +5,7 @@ import { Section } from "@/components/ui/section";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { routes, type RouteKey } from "@/config/routes";
 import { getDictionary } from "@/content";
+import { CtaSection } from "./cta-section";
 
 type PlaceholderKey = Exclude<RouteKey, "home">;
 
@@ -20,13 +21,16 @@ export function PagePlaceholder({ page }: { page: PlaceholderKey }) {
   const { title, description } = dict.pages[page];
 
   return (
-    <Section className="min-h-[60vh]">
-      <SectionHeading as="h1" size="title" eyebrow={dict.placeholder.badge} title={title} description={description} />
-      <p className="mt-6 max-w-narrow text-fg-muted">{dict.placeholder.text}</p>
-      <ButtonLink href={routes.home} variant="secondary" className="mt-10">
-        <ArrowLeft aria-hidden="true" />
-        {dict.placeholder.backHome}
-      </ButtonLink>
-    </Section>
+    <>
+      <Section className="min-h-[50vh]">
+        <SectionHeading as="h1" size="title" eyebrow={dict.placeholder.badge} title={title} description={description} />
+        <p className="mt-6 max-w-narrow text-fg-muted">{dict.placeholder.text}</p>
+        <ButtonLink href={routes.home} variant="secondary" className="mt-10">
+          <ArrowLeft aria-hidden="true" />
+          {dict.placeholder.backHome}
+        </ButtonLink>
+      </Section>
+      {page === "contact" ? null : <CtaSection />}
+    </>
   );
 }

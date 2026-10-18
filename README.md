@@ -108,6 +108,11 @@ All copy lives in `src/content/sq/` and must satisfy the `Dictionary` type. To a
 
 Content rules: natural Kosovo Albanian with correct **ë** and **ç**; no invented clients, testimonials, statistics or contact details; prices are indicative starting prices only.
 
+### Prices and projects
+
+- **Prices:** [`src/config/pricing.ts`](src/config/pricing.ts) holds every starting price (whole euros; `null` = custom quote) and the recommended package. Package names, summaries and feature lists are in `src/content/sq/pricing.ts`. Prices are formatted with the Albanian locale (`199 €`). All prices are indicative starting prices, and the disclaimer must stay next to them.
+- **Projects:** [`src/config/projects.ts`](src/config/projects.ts) lists portfolio entries. Every current entry is a **demonstration** (`demo: true`) and is shown with a "Projekt demonstrues" badge. Never present them as client work.
+
 ### Contact details and social links
 
 Public contact details (`email`, `phone`, `location`) and social profile URLs are configured in [`src/config/site.ts`](src/config/site.ts). They are empty by default:

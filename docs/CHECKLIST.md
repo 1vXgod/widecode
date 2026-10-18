@@ -50,11 +50,18 @@ Legend: `[x]` done · `[ ]` open · `[~]` partial / placeholder
 - [x] Tests: logo aspect ratio (unit); logo loads in header, menu and footer without stretching, and icons are served as PNGs (e2e)
 - [ ] Not used yet (light-background versions): `wide-code-primary.png`, `wide-code-horizontal.png`, `wide-code-divider-tagline.png`, `wide-code-stacked.png`, `wide-code-app-icon-light.png`, `wide-code-app-icon-dark.png`, `wide-code-w-symbol.png`. Candidates for future light contexts (e.g. Open Graph images, documents).
 
-## Sprint 3: Home page and interactive hero
+## Sprint 3: Home page ✅
 
-- [ ] Original interactive hero (reduced-motion fallback)
-- [ ] Services overview, process, pricing teaser, CTA sections
-- [ ] Decide on Motion library usage
+- [x] Hero: headline, supporting text, "Merr një ofertë" and "Shiko projektet" CTAs, lowest starting price from config
+- [x] Interactive showcase (Dizajni → Kodi → Gati): ARIA tabs, auto-advance with pause/play, pauses on hover/focus, no auto-advance with reduced motion, fixed aspect ratio (no layout shift)
+- [x] Services overview (4 services)
+- [x] Demo projects (3), each labelled "Projekt demonstrues"; CSS-only previews, no stock imagery (`src/config/projects.ts`)
+- [x] Pricing preview from the central config (`src/config/pricing.ts`), with the "indicative prices" disclaimer
+- [x] Process (5 steps, anchor `#procesi`), "Pse WideCode" (no fabricated claims), FAQ preview (native `<details>`)
+- [x] Shared closing CTA section (moved out of the footer); compact use on inner pages
+- [x] Motion: CSS scroll-driven reveals only where supported and motion is allowed. Decision: **no Motion/Framer Motion dependency**, as CSS covers the needs with zero JS cost
+- [x] Tests: pricing config and formatting (unit); home sections, CTAs, demo labels, prices, FAQ keyboard, showcase keyboard/autoplay/pause/reduced motion, zero console errors on all routes, CLS < 0.1 on mobile and desktop (e2e)
+- [ ] **Needs review by owner:** package feature lists in `src/content/sq/pricing.ts` (e.g. "Deri në 5 faqe") are proposed defaults
 
 ## Sprint 4: Services and About
 

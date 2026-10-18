@@ -68,6 +68,35 @@
   }
 }
 
+/*
+ * Scroll reveal: pure CSS (scroll-driven animations), so there is no JavaScript
+ * cost and content stays fully visible in browsers without support or when the
+ * visitor prefers reduced motion. Only opacity and transform change, so it
+ * cannot cause layout shift.
+ */
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@layer components {
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .reveal {
+        animation: reveal-up linear both;
+        animation-timeline: view();
+        animation-range: entry 0% entry 40%;
+      }
+    }
+  }
+}
+
 /* Subtle background texture used behind hero/feature areas. */
 @utility bg-grid {
   background-image:
@@ -78,7 +107,7 @@
 }
 
 @utility text-gradient {
-  background-image: linear-gradient(110deg, var(--color-fg) 20%, var(--color-accent-text) 60%, var(--color-accent-2));
+  background-image: linear-gradient(110deg, var(--color-accent-text), var(--color-accent-2));
   background-clip: text;
   color: transparent;
 }

@@ -1,4 +1,9 @@
 import type { Dictionary } from "@/types/content";
+import { faq } from "./faq";
+import { cta as ctaSection, home, processCopy, why } from "./home";
+import { pricing } from "./pricing";
+import { projects } from "./projects";
+import { services } from "./services";
 
 const cta = "Merr një ofertë";
 
@@ -78,8 +83,6 @@ export const sq = {
     x: "X",
   },
   footer: {
-    ctaTitle: "Keni një projekt në mendje?",
-    ctaText: "Na tregoni çfarë ju nevojitet dhe ju përgatisim një ofertë pa asnjë obligim.",
     tagline:
       "Uebfaqe dhe dyqane online të ndërtuara me porosi — me dizajn modern, performancë të lartë dhe çmime të qarta.",
     groups: {
@@ -92,14 +95,14 @@ export const sq = {
     socialHeading: "Na ndiqni",
     rights: "Të gjitha të drejtat e rezervuara.",
   },
-  home: {
-    eyebrow: "Zhvillim uebi në Kosovë",
-    title: "Uebfaqe profesionale që punojnë për biznesin tuaj",
-    lead: "Ndërtojmë uebfaqe dhe dyqane online me porosi — të shpejta, të sigurta dhe të përshtatura për çdo pajisje, me çmime fillestare të qarta.",
-    primaryCta: "Shiko çmimet",
-    secondaryCta: cta,
-    note: "Faqja e plotë po ndërtohet. Së shpejti: shërbimet, projektet dhe llogaritësi i çmimit.",
-  },
+  home,
+  services,
+  projects,
+  pricing,
+  process: processCopy,
+  why,
+  faq,
+  cta: ctaSection,
   placeholder: {
     badge: "Në përgatitje",
     text: "Kjo faqe është në përgatitje dhe do të publikohet së shpejti.",
