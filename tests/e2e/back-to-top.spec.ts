@@ -33,6 +33,9 @@ function overlaps(a: { x: number; y: number; width: number; height: number }, b:
 test.describe("back-to-top button", () => {
   for (const [path, label] of Object.entries(labels)) {
     test(`${path}: hidden at the top, shown after scrolling, and back to the top on click`, async ({ page }) => {
+      // Many waits in sequence (transitions, scrolling) on the heaviest page: under a busy
+      // machine every step takes seconds, so the default 30s is too tight (seen in traces).
+      test.slow();
       const errors: string[] = [];
       page.on("pageerror", (error) => errors.push(error.message));
       await page.goto(path);

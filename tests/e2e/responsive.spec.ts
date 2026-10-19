@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 import { routes } from "../../src/config/routes";
 
 const widths = [360, 768, 1024, 1280];
@@ -83,6 +83,78 @@ test.describe("service cards keep their text inside", () => {
       }
       // Every page's problems at once, so a failure shows the whole picture.
       expect(problems, `at ${width}px`).toEqual([]);
+    });
+  }
+});
+
+/**
+ * The price calculator's summary buttons on narrow phones. Their labels are
+ * long ("Angebot mit dieser Schätzung anfordern"), so they wrap inside the
+ * panel instead of widening the page; both stay usable.
+ */
+test.describe("price calculator buttons on narrow screens", () => {
+  const calculators = [
+    { path: "/llogarit-cmimin", cta: "Kërko ofertë me këtë vlerësim", reset: "Rifillo", contact: "/kontakt", total: "399 €" },
+    { path: "/en/price-calculator", cta: "Request a quote with this estimate", reset: "Start over", contact: "/en/contact", total: "€399" },
+    { path: "/de/preisrechner", cta: "Angebot mit dieser Schätzung anfordern", reset: "Neu beginnen", contact: "/de/kontakt", total: "399 €" },
+  ];
+  const query = "?paketa=professional&faqe=12&shtesa=booking";
+  const total = async (page: Page) => (await page.getByTestId("estimate-total").first().textContent())?.replace(/\s/g, " ").trim();
+
+  for (const calculator of calculators) {
+    test(`${calculator.path} fits a 320px screen, and both buttons work`, async ({ page }) => {
+      await page.setViewportSize({ width: 320, height: 740 });
+      await page.goto(`${calculator.path}${query}`);
+      await page.waitForLoadState("networkidle");
+
+      // No sideways scrolling.
+      expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(0);
+
+      const summary = page.locator("aside").filter({ has: page.getByTestId("estimate-total") }).first();
+      const cta = summary.getByRole("link", { name: calculator.cta });
+      const reset = summary.getByRole("button", { name: calculator.reset });
+      const panel = (await summary.boundingBox())!;
+      for (const button of [cta, reset]) {
+        await button.scrollIntoViewIfNeeded();
+        await expect(button).toBeVisible();
+        const box = (await button.boundingBox())!;
+        // Inside the panel and the screen, with a comfortable touch target and the whole label shown.
+        expect(box.x).toBeGreaterThanOrEqual(panel.x);
+        expect(box.x + box.width).toBeLessThanOrEqual(panel.x + panel.width);
+        expect(box.x + box.width).toBeLessThanOrEqual(320);
+        expect(box.height).toBeGreaterThanOrEqual(44);
+        expect(await button.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
+      }
+
+      // The quote link carries the estimate; Start over restores the default package.
+      await expect(cta).toHaveAttribute("href", `${calculator.contact}?paketa=professional&faqe=12&shtesa=booking&vleresim=1`);
+      await reset.click();
+      await expect(page.getByRole("radio", { name: /Business/ })).toBeChecked();
+      await expect.poll(() => total(page)).toBe(calculator.total);
+      await expect(cta).toHaveAttribute("href", `${calculator.contact}?paketa=business&faqe=5&vleresim=1`);
+
+      // Keyboard focus is visible on the wrapped button.
+      await cta.focus();
+      await page.keyboard.press("Shift+Tab");
+      await page.keyboard.press("Tab");
+      await expect(cta).toBeFocused();
+      await expect(cta).toHaveCSS("outline-style", "solid");
+
+      await cta.click();
+      await expect(page).toHaveURL(new RegExp(`${calculator.contact}\\?paketa=business&faqe=5&vleresim=1$`));
+    });
+  }
+
+  for (const width of [320, 360, 375, 390, 768, 1024, 1440]) {
+    test(`no calculator in any language widens the page at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 800 });
+      for (const { path } of calculators) {
+        for (const packageQuery of ["", "?paketa=custom"]) {
+          await page.goto(`${path}${packageQuery}`);
+          const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+          expect(overflow, `${path}${packageQuery}`).toBeLessThanOrEqual(0);
+        }
+      }
     });
   }
 });

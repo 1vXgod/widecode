@@ -346,12 +346,25 @@ export function Estimator({ initialInput, copy, pricing }: EstimatorProps) {
             </p>
           ) : null}
 
-          <div className="mt-6 grid gap-3">
-            <ButtonLink href={quoteHrefForEstimate(input)} size="lg" className="group w-full">
+          {/*
+            One column no wider than the panel (grid-cols-1 = minmax(0, 1fr)), and labels that may wrap
+            on narrow phones (the quote label is a whole sentence, longest in German): the buttons grow
+            in height from their usual size instead of pushing the page sideways.
+          */}
+          <div className="mt-6 grid grid-cols-1 gap-3">
+            <ButtonLink
+              href={quoteHrefForEstimate(input)}
+              size="lg"
+              className="group h-auto min-h-12 w-full py-3 text-center leading-snug text-balance whitespace-normal"
+            >
               {estimate.kind === "estimate" ? copy.summary.cta : copy.summary.quoteCta}
               <ArrowRight aria-hidden="true" className="transition-transform group-hover:translate-x-0.5" />
             </ButtonLink>
-            <button type="button" onClick={reset} className={buttonClasses({ variant: "ghost", className: "w-full" })}>
+            <button
+              type="button"
+              onClick={reset}
+              className={buttonClasses({ variant: "ghost", className: "h-auto min-h-11 w-full py-2.5 text-center whitespace-normal" })}
+            >
               <RotateCcw aria-hidden="true" />
               {copy.summary.reset}
             </button>
