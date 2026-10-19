@@ -1,13 +1,10 @@
 import type { MetadataRoute } from "next";
-import { absoluteUrl, isIndexable } from "@/lib/seo";
+import { robotsRules } from "@/lib/seo";
 
-/** Production allows crawling and points to the sitemap; Vercel previews are blocked. */
+/**
+ * Production on the configured domain allows crawling and points to the
+ * sitemap; previews, local builds and deployments without a domain are blocked.
+ */
 export default function robots(): MetadataRoute.Robots {
-  if (!isIndexable()) {
-    return { rules: { userAgent: "*", disallow: "/" } };
-  }
-  return {
-    rules: { userAgent: "*", allow: "/" },
-    sitemap: absoluteUrl("/sitemap.xml"),
-  };
+  return robotsRules();
 }

@@ -18,7 +18,7 @@ Decisions and inputs that only the owner can provide (also tracked in [`CHECKLIS
 
 | Item | Where it goes | Without it |
 | --- | --- | --- |
-| Production domain | `NEXT_PUBLIC_SITE_URL` + Vercel domain settings | Canonical URLs, sitemap and social previews use the `*.vercel.app` address |
+| Production domain | `NEXT_PUBLIC_SITE_URL` + Vercel domain settings | The site works on its `*.vercel.app` address but stays out of search results: no canonical URLs, an empty sitemap and `noindex` (see section 6) |
 | Resend API key, receiving address, verified sending domain | `RESEND_API_KEY`, `QUOTE_TO_EMAIL`, `QUOTE_FROM_EMAIL` | The contact page shows "Formulari është përkohësisht i padisponueshëm" instead of the form |
 | Public email, phone, location, social profiles | [`src/config/site.ts`](../src/config/site.ts) (then update `tests/unit/contact.test.ts`) | Footer says contact details follow soon; nothing is shown |
 | Review of proposed copy | Package features, FAQ answers on payment, domain/hosting and changes after launch, budget ranges, privacy line under the form | Proposed wording stays live |
@@ -44,7 +44,7 @@ Set them in **Settings → Environment Variables**. Values are secrets: never pu
 
 | Variable | Production | Preview | Notes |
 | --- | --- | --- | --- |
-| `NEXT_PUBLIC_SITE_URL` | `https://<your-domain>` | leave unset | Inlined at build time. Without it, production falls back to the Vercel production URL. No trailing slash |
+| `NEXT_PUBLIC_SITE_URL` | `https://<your-domain>` | leave unset | Inlined at build time. Must be a public `https://` domain. Without it the site still runs (assets use the Vercel URL), but it is not indexed and publishes no canonical URLs. No trailing slash |
 | `RESEND_API_KEY` | Resend key | optional | Server-only. A key restricted to sending from your domain is enough |
 | `QUOTE_TO_EMAIL` | receiving address | optional | One address, or up to 5 comma-separated |
 | `QUOTE_FROM_EMAIL` | `WideCode <ofertat@<your-domain>>` | optional | Must be on the domain verified in Resend |
@@ -57,7 +57,7 @@ If the three Resend variables are missing on a preview, the preview simply shows
 
 1. **Settings → Domains → Add** your domain (for example `example.com` and `www.example.com`).
 2. Add the DNS records Vercel shows at your domain registrar. Choose one primary host and let Vercel redirect the other (`www` → apex or the reverse). HTTPS certificates are issued automatically.
-3. Set `NEXT_PUBLIC_SITE_URL` to the primary host (for example `https://example.com`) for **Production**, then redeploy. Canonical URLs, `sitemap.xml`, `robots.txt` and social previews all use it.
+3. Set `NEXT_PUBLIC_SITE_URL` to the primary host (for example `https://example.com`) for **Production**, then redeploy. This switches on indexing: canonical URLs, `sitemap.xml`, `robots.txt` and structured data all use it. Then follow the Search Console steps in section 6.
 
 ## 5. Activate the quote form (Resend)
 
@@ -78,16 +78,48 @@ Before the domain is verified, Resend allows `QUOTE_FROM_EMAIL=WideCode <onboard
 
 ## 6. Search engines
 
-- **Production is indexable; previews are not.** On Vercel preview and development deployments, `robots.txt` disallows everything and every page carries `noindex` ([`src/lib/seo.ts`](../src/lib/seo.ts)).
-- `/sitemap.xml` lists every page and website concept; `/robots.txt` points to it.
-- Each page has a canonical URL without query parameters, Open Graph and X metadata, and the shared social image `/opengraph-image` (1200×630, generated at build time).
-- Structured data: Organization and WebSite on the home page, FAQPage on `/pyetje-te-shpeshta`. Contact details and social profiles appear there only once configured.
+### When the site is indexable
 
-After the domain is live:
+Indexing starts only when **both** are true ([`src/lib/seo.ts`](../src/lib/seo.ts)):
 
-1. Add the domain in **Google Search Console** (DNS verification) and submit `https://<your-domain>/sitemap.xml`. Optionally do the same in **Bing Webmaster Tools**.
-2. Check a page with the [Rich Results Test](https://search.google.com/test/rich-results) or the [Schema Markup Validator](https://validator.schema.org/).
-3. Check the social preview by sharing the home page link in a messaging app, or with the Facebook Sharing Debugger.
+1. it is a production deployment (Vercel Production, or self-hosted), and
+2. `NEXT_PUBLIC_SITE_URL` is set to a public `https://` domain (not `localhost`, not `http://`).
+
+| Deployment | `robots.txt` | Pages | `sitemap.xml` | Canonical URLs |
+| --- | --- | --- | --- | --- |
+| Production with `NEXT_PUBLIC_SITE_URL=https://<your-domain>` | `Allow: /` + sitemap | indexable | every page and concept on your domain | `https://<your-domain>/…` |
+| Production **without** a domain (only `*.vercel.app`) | `Disallow: /` | `noindex` | empty | none |
+| Vercel Preview / Development | `Disallow: /` | `noindex` | empty or unused | none |
+| Local (`next dev`, local builds) | `Disallow: /` | `noindex` | empty | none |
+
+So a deployment can go live on the `*.vercel.app` address to be reviewed before the domain exists, without search engines indexing a temporary address. Nothing that crawlers read ever contains `localhost`.
+
+### What is in place
+
+- **Titles and descriptions:** unique Albanian titles (with " | WideCode") and meta descriptions for every page, from `pages` and `meta` in [`src/content/sq/common.ts`](../src/content/sq/common.ts); project pages use their concept's name and summary.
+- **Canonical URLs** without query parameters (pre-fill, filter and estimate parameters never create separate indexable URLs).
+- **Open Graph and X** metadata on every page, with the shared social image `/opengraph-image` (1200×630, generated at build time).
+- **Structured data** (JSON-LD), only facts that are configured: Organization and WebSite on the home page, Service (with the published starting prices) on `/sherbimet`, FAQPage on `/pyetje-te-shpeshta`. No address, phone number, ratings, reviews or awards. Email, phone and social profiles are added automatically once set in `src/config/site.ts`.
+- **No private routes:** the site has no admin, login or account pages; every public page is in the sitemap. The 404 page is always `noindex`.
+
+### Google Search Console (after the domain is live)
+
+1. **Prerequisites:** the domain points to Vercel (section 4), `NEXT_PUBLIC_SITE_URL=https://<your-domain>` is set for Production, and a production deployment has been made after setting it. Check that `https://<your-domain>/robots.txt` shows `Allow: /` and `Sitemap: https://<your-domain>/sitemap.xml`.
+2. Open [Google Search Console](https://search.google.com/search-console) with the Google account that should own the site, choose **Add property** and pick **Domain** (covers `https://`, `http://`, `www` and every subdomain).
+3. Enter the bare domain (`example.com`, without `https://`). Google shows a **TXT record** (`google-site-verification=…`).
+4. At your domain registrar or DNS provider, add that TXT record to the root of the domain (host `@`). Keep it there permanently; removing it removes the verification.
+5. Back in Search Console, click **Verify**. DNS changes can take from a few minutes up to a day; retry if it is not found yet.
+   *Alternative:* a **URL prefix** property (`https://example.com/`) can be verified with an HTML meta tag; that would need a small code change (`metadata.verification.google`), so the Domain property is simpler.
+6. Go to **Indexing → Sitemaps**, enter `sitemap.xml` and click **Submit**. The status should become **Success** with 14 discovered URLs today (8 pages and 6 website concepts; the number grows as concepts or client projects are added).
+7. Use **URL inspection** on the home page, then **Request indexing**, to speed up the first crawl. Repeat for the most important pages (services, pricing, contact) if you like.
+8. Over the next days, check **Indexing → Pages** for errors and **Enhancements** for the FAQ and structured data reports.
+9. **Bing Webmaster Tools** (optional, also feeds other search engines): sign in and choose **Import from Google Search Console**. This adds the site and its sitemap without another DNS record.
+
+### Other checks after launch
+
+- Validate structured data with the [Rich Results Test](https://search.google.com/test/rich-results) or the [Schema Markup Validator](https://validator.schema.org/).
+- Check the social preview by sharing the home page link in a messaging app, or with the Facebook Sharing Debugger.
+- If the domain ever changes, update `NEXT_PUBLIC_SITE_URL`, redeploy, add the new domain in Search Console and use its **Change of address** tool.
 
 ## 7. Check the live site
 
@@ -117,4 +149,4 @@ NEXT_PUBLIC_SITE_URL=https://<your-domain> npm start   # port 3000 by default
 
 - Set the same environment variables as in section 3 (`NEXT_PUBLIC_SITE_URL` must be present at **build** time).
 - Run behind a reverse proxy that terminates HTTPS and sets `X-Forwarded-For` to the real client address (the quote form's rate limit relies on it), and does not pass through client-supplied values.
-- Without `VERCEL_ENV`, the site is treated as production and is indexable.
+- Without `VERCEL_ENV`, the site is treated as production: it is indexable as soon as `NEXT_PUBLIC_SITE_URL` is a public `https://` domain.

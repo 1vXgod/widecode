@@ -270,6 +270,19 @@ describe("resolveDeliveryConfig", () => {
     );
   });
 
+  it("with only the API key and receiving address set, never sends and names only the missing sender", () => {
+    const partial = { RESEND_API_KEY: "re_123", QUOTE_TO_EMAIL: "owner@example.com" };
+    expect(resolveDeliveryConfig({ ...partial, NODE_ENV: "development" })).toEqual({ mode: "log" });
+    expect(resolveDeliveryConfig({ ...partial, NODE_ENV: "production" })).toEqual({
+      mode: "disabled",
+      problems: ["QUOTE_FROM_EMAIL is not set"],
+    });
+    // Resend's own test sender completes the configuration (it delivers only to the Resend account's address).
+    expect(
+      resolveDeliveryConfig({ ...partial, NODE_ENV: "production", QUOTE_FROM_EMAIL: "WideCode <onboarding@resend.dev>" }).mode,
+    ).toBe("resend");
+  });
+
   it("only logs (internally) in local development without Resend", () => {
     expect(resolveDeliveryConfig({ NODE_ENV: "development" })).toEqual({ mode: "log" });
   });

@@ -1,4 +1,5 @@
 import { defineConfig, devices } from "@playwright/test";
+import { E2E_SITE_URL } from "./tests/e2e/e2e-site";
 
 const PORT = Number(process.env.E2E_PORT ?? 3100);
 const baseURL = `http://localhost:${PORT}`;
@@ -6,8 +7,10 @@ const MOCK_RESEND_PORT = Number(process.env.MOCK_RESEND_PORT ?? 3199);
 const MOCK_RESEND_URL = `http://127.0.0.1:${MOCK_RESEND_PORT}`;
 
 /**
- * E2E tests run against the production build. Run `npm run build` first
- * (`npm run check` does this automatically).
+ * E2E tests build and run their own production build in .next-e2e, configured
+ * like a live deployment (production domain set, quote form connected to a
+ * mock Resend API), so the regular build in .next is never touched. The
+ * not-yet-configured state (no domain) is covered by the unit tests.
  */
 export default defineConfig({
   testDir: "./tests/e2e",
@@ -44,12 +47,14 @@ export default defineConfig({
       timeout: 30_000,
     },
     {
-      command: `npm run start -- --port ${PORT}`,
+      command: `npm run build && npm run start -- --port ${PORT}`,
       url: baseURL,
       // Placeholder credentials and the loopback-only RESEND_API_URL send every
       // quote request to the mock above. Process variables take precedence over
       // .env.local, so real credentials there are never used by the tests.
       env: {
+        NEXT_DIST_DIR: ".next-e2e",
+        NEXT_PUBLIC_SITE_URL: E2E_SITE_URL,
         RESEND_API_KEY: "e2e-placeholder-key",
         QUOTE_TO_EMAIL: "quotes@example.test",
         QUOTE_FROM_EMAIL: "WideCode <noreply@example.test>",
@@ -57,7 +62,8 @@ export default defineConfig({
         QUOTE_DELIVERY: "resend",
       },
       reuseExistingServer: !process.env.CI,
-      timeout: 120_000,
+      // Includes the production build.
+      timeout: 300_000,
     },
   ],
 });

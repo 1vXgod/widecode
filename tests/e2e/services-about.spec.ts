@@ -19,7 +19,7 @@ async function expectClearOfHeader(page: Page, target: Locator) {
 test.describe("services page", () => {
   test("is a complete, indexable page", async ({ page }) => {
     await page.goto(routes.services);
-    await expect(page).toHaveTitle("Shërbimet | WideCode");
+    await expect(page).toHaveTitle("Website, online shop dhe aplikacione web me porosi | WideCode");
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(
       "Website dhe zgjidhje digjitale, të ndërtuara me porosi",
     );
@@ -95,7 +95,7 @@ test.describe("home service cards", () => {
 test.describe("about page", () => {
   test("is a complete, indexable page with the official logo", async ({ page }) => {
     await page.goto(routes.about);
-    await expect(page).toHaveTitle("Rreth nesh | WideCode");
+    await expect(page).toHaveTitle("Rreth nesh: website me porosi për bizneset në Kosovë | WideCode");
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(
       "Ndërtojmë website me kujdes, qartësi dhe çmime të ndershme",
     );

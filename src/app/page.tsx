@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { FaqPreview } from "@/components/home/faq-preview";
 import { Hero } from "@/components/home/hero";
 import { PricingPreview } from "@/components/home/pricing-preview";
@@ -8,25 +7,21 @@ import { ServicesSection } from "@/components/home/services-section";
 import { WhySection } from "@/components/home/why-section";
 import { CtaSection } from "@/components/sections/cta-section";
 import { JsonLd } from "@/components/seo/json-ld";
-import { routes } from "@/config/routes";
+import { siteConfig } from "@/config/site";
 import { getDictionary } from "@/content";
-import { baseOpenGraph } from "@/lib/metadata";
+import { homeMetadata } from "@/lib/metadata";
 import { siteJsonLd } from "@/lib/seo";
 
-const { meta } = getDictionary();
-
-// The title comes from the layout's default; only the canonical URL is page-specific.
-export const metadata: Metadata = {
-  alternates: { canonical: routes.home },
-  openGraph: { ...baseOpenGraph(), title: meta.defaultTitle, description: meta.description, url: routes.home },
-};
+// The title comes from the layout's default; canonical and social fields are page-specific.
+export const metadata = homeMetadata();
 
 export default function HomePage() {
   const dict = getDictionary();
 
   return (
     <>
-      <JsonLd data={siteJsonLd(dict.meta.description)} />
+      {/* Structured data needs absolute URLs, so it waits for the production domain. */}
+      {siteConfig.canonicalUrl ? <JsonLd data={siteJsonLd(dict.meta.description, siteConfig.canonicalUrl)} /> : null}
       <Hero copy={dict.home} />
       <ServicesSection copy={dict.services} />
       <ProjectsSection copy={dict.projects} />

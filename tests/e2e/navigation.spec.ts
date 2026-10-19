@@ -33,8 +33,9 @@ test.describe("routes", () => {
   });
 
   test("no page is a placeholder or excluded from indexing any more", async ({ page }) => {
+    test.setTimeout(90_000); // visits every page
     for (const path of Object.values(routes)) {
-      await page.goto(path);
+      await page.goto(path, { waitUntil: "domcontentloaded" });
       await expect(page.getByText("Në përgatitje"), path).toHaveCount(0);
       await expect(page.locator('meta[name="robots"]'), path).toHaveCount(0);
     }

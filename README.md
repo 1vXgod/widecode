@@ -40,7 +40,7 @@ npm run dev                       # http://localhost:3000
 | `npm run typecheck`  | Generate route types and run `tsc --noEmit`                         |
 | `npm test`           | Unit tests (Vitest)                                                 |
 | `npm run test:watch` | Unit tests in watch mode                                            |
-| `npm run test:e2e`   | End-to-end tests (Playwright) against the production build. Run `npm run build` first. |
+| `npm run test:e2e`   | End-to-end tests (Playwright). Builds its own production build in `.next-e2e`, configured like a live site (test domain `https://widecode.example`, quote form on a mock Resend API), then runs it. |
 | `npm run check`      | lint, typecheck, unit tests, build and e2e tests, in that order     |
 
 ## Environment variables
@@ -175,7 +175,9 @@ Vercel is the intended host. Nothing is deployed yet, and deployment needs expli
 
 ### SEO
 
-- Page metadata comes from the dictionary through `pageMetadata()` / `seoMetadata()` in [`src/lib/metadata.ts`](src/lib/metadata.ts): title, description, canonical URL (always without query parameters), Open Graph and X cards with the shared image from [`src/app/opengraph-image.tsx`](src/app/opengraph-image.tsx). Pages that set `openGraph` themselves must spread `baseOpenGraph()`, because Next.js merges metadata shallowly.
-- [`src/app/sitemap.ts`](src/app/sitemap.ts) lists every route in `src/config/routes.ts` and every project; [`src/app/robots.ts`](src/app/robots.ts) points to it. Vercel previews are kept out of search results (`isIndexable()` in [`src/lib/seo.ts`](src/lib/seo.ts)).
-- Structured data (JSON-LD via `<JsonLd>`): Organization and WebSite on the home page, FAQPage on the FAQ page. Configured contact details and social profiles are added automatically; nothing else is.
+- **Production domain:** canonical URLs, `og:url`, the sitemap, `robots.txt` and structured data with URLs use only `NEXT_PUBLIC_SITE_URL`, and only when it is a public `https://` domain (`resolveCanonicalOrigin()` in [`src/lib/site-url.ts`](src/lib/site-url.ts)). Until then the site is `noindex`, `robots.txt` disallows crawling, the sitemap is empty and no canonical URL is published, so `localhost` or a temporary `*.vercel.app` address is never indexed. Vercel previews are never indexed (`isIndexable()` in [`src/lib/seo.ts`](src/lib/seo.ts)).
+- Page metadata comes from the dictionary through `pageMetadata()` / `seoMetadata()` / `homeMetadata()` in [`src/lib/metadata.ts`](src/lib/metadata.ts): title, description, canonical URL (always without query parameters), Open Graph and X cards with the shared image from [`src/app/opengraph-image.tsx`](src/app/opengraph-image.tsx). Pages that set `openGraph` themselves must spread `baseOpenGraph()`, because Next.js merges metadata shallowly. Search titles and descriptions live in `pages` / `meta` of `src/content/sq/common.ts` (only used in metadata); tests keep them unique and of a sensible length.
+- [`src/app/sitemap.ts`](src/app/sitemap.ts) lists every route in `src/config/routes.ts` and every project; [`src/app/robots.ts`](src/app/robots.ts) points to it. There are no admin, login or private routes to exclude.
+- Structured data (JSON-LD via `<JsonLd>`): Organization and WebSite on the home page, Service entries (with published starting prices) on the services page, FAQPage on the FAQ page. Configured contact details and social profiles are added automatically; no address, ratings, reviews or other facts are.
+- Google Search Console and Bing setup: [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md#6-search-engines).
 - FAQ: the full page uses `src/content/sq/faq-page.ts` (topics keyed by `src/config/faq.ts`); the questions shown on other pages come from `src/content/sq/faq.ts` and are reused word for word. Prices in answers are placeholders filled from the pricing config (`src/lib/faq.ts`).

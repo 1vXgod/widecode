@@ -29,6 +29,8 @@ test.describe("mobile menu", () => {
 
   test("opens from the keyboard, traps focus, closes with Escape and restores focus", async ({ page }) => {
     await page.goto("/");
+    // A key press before hydration reaches a button without its handler yet.
+    await page.waitForLoadState("networkidle");
     const trigger = page.getByRole("button", { name: "Hap menynë" });
     await expect(page.getByRole("navigation", { name: "Navigimi kryesor" })).toBeHidden();
 

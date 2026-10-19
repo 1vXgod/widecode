@@ -1,6 +1,6 @@
 import { defaultLocale } from "@/i18n/config";
 import type { ContactConfig, SocialConfig } from "@/lib/contact";
-import { resolveSiteUrl } from "@/lib/site-url";
+import { resolveCanonicalOrigin, resolveSiteUrl } from "@/lib/site-url";
 
 /**
  * Public contact details. Leave a field undefined until the real value is
@@ -22,7 +22,10 @@ const social: SocialConfig = {};
 export const siteConfig = {
   name: "WideCode",
   locale: defaultLocale,
+  /** Where the site runs (for absolute asset URLs); may be localhost or *.vercel.app. */
   url: resolveSiteUrl(),
+  /** The public production origin, or null until NEXT_PUBLIC_SITE_URL is set (see resolveCanonicalOrigin). */
+  canonicalUrl: resolveCanonicalOrigin(),
   /** Matches --wc-bg in src/styles/theme.css; used for the browser UI color. */
   themeColor: "#07070a",
   contact,

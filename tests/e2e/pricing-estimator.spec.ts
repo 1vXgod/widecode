@@ -28,7 +28,7 @@ async function openEstimator(page: Page, query = "") {
 test.describe("pricing page", () => {
   test("is a complete, indexable page", async ({ page }) => {
     await page.goto(routes.pricing);
-    await expect(page).toHaveTitle("Çmimet | WideCode");
+    await expect(page).toHaveTitle("Çmimet për website dhe online shop në Kosovë | WideCode");
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Paketa me çmime transparente");
     await expect(page.locator('meta[name="robots"]')).toHaveCount(0);
     await expect(page.locator("main")).toContainText("Të gjitha çmimet janë fillestare dhe orientuese");

@@ -74,7 +74,7 @@ async function waitForMinFillTime(page: Page, openedAt: number) {
 test.describe("contact page", () => {
   test("is a complete, indexable page without invented contact details", async ({ page }) => {
     await openContact(page);
-    await expect(page).toHaveTitle("Kontakti | WideCode");
+    await expect(page).toHaveTitle("Kërko ofertë për website ose online shop | WideCode");
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Na tregoni për projektin tuaj");
     await expect(page.locator('meta[name="robots"]')).toHaveCount(0);
     await expect(page.getByRole("form", { name: "Kërkesë për ofertë" })).toBeVisible();

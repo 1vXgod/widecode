@@ -24,23 +24,53 @@ export function baseOpenGraph() {
 }
 
 /**
+ * Canonical URL and og:url for a path, as absolute URLs on the production
+ * domain. Empty until NEXT_PUBLIC_SITE_URL is configured, so neither localhost
+ * nor a temporary address is ever published as canonical.
+ */
+export function canonicalFields(path: string, origin: URL | null = siteConfig.canonicalUrl) {
+  if (!origin) return { alternates: undefined, url: undefined };
+  const url = new URL(path, origin).href;
+  return { alternates: { canonical: url }, url };
+}
+
+/**
  * Title, description, canonical URL and social preview metadata for a page.
  * `path` is the canonical path, without query parameters (pre-fill, filter
  * or estimate parameters never create separate indexable URLs).
  */
-export function seoMetadata({ title, description, path }: { title: string; description: string; path: string }): Metadata {
+export function seoMetadata(
+  { title, description, path }: { title: string; description: string; path: string },
+  origin: URL | null = siteConfig.canonicalUrl,
+): Metadata {
   const socialTitle = `${title} | ${siteConfig.name}`;
+  const canonical = canonicalFields(path, origin);
   return {
     title,
     description,
-    alternates: { canonical: path },
-    openGraph: { ...baseOpenGraph(), title: socialTitle, description, url: path },
+    ...(canonical.alternates ? { alternates: canonical.alternates } : {}),
+    openGraph: { ...baseOpenGraph(), title: socialTitle, description, ...(canonical.url ? { url: canonical.url } : {}) },
     twitter: { card: "summary_large_image", title: socialTitle, description, images: [socialImage()] },
   };
 }
 
 /** Metadata for a page with copy in the dictionary's `pages` section. */
-export function pageMetadata(page: Exclude<RouteKey, "home">): Metadata {
+export function pageMetadata(page: Exclude<RouteKey, "home">, origin: URL | null = siteConfig.canonicalUrl): Metadata {
   const { title, description } = getDictionary().pages[page];
-  return seoMetadata({ title, description, path: routes[page] });
+  return seoMetadata({ title, description, path: routes[page] }, origin);
+}
+
+/** Metadata for the home page: the layout's default title, plus canonical and social fields. */
+export function homeMetadata(origin: URL | null = siteConfig.canonicalUrl): Metadata {
+  const { meta } = getDictionary();
+  const canonical = canonicalFields(routes.home, origin);
+  return {
+    ...(canonical.alternates ? { alternates: canonical.alternates } : {}),
+    openGraph: {
+      ...baseOpenGraph(),
+      title: meta.defaultTitle,
+      description: meta.description,
+      ...(canonical.url ? { url: canonical.url } : {}),
+    },
+  };
 }

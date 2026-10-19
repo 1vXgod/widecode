@@ -2,17 +2,21 @@ import Link from "next/link";
 import { Accessibility, ArrowRight, CodeXml, Gauge, Info, Search, ShieldCheck, Smartphone, type LucideIcon } from "lucide-react";
 import { FaqPreview } from "@/components/home/faq-preview";
 import { CtaSection } from "@/components/sections/cta-section";
+import { JsonLd } from "@/components/seo/json-ld";
 import { PageIntro } from "@/components/sections/page-intro";
 import { SectionHeader } from "@/components/sections/section-header";
 import { ServiceDetail } from "@/components/services/service-detail";
 import { ButtonLink } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
+import { getPackage } from "@/config/pricing";
 import { routes } from "@/config/routes";
-import { services } from "@/config/services";
+import { serviceHref, services } from "@/config/services";
+import { siteConfig } from "@/config/site";
 import { getDictionary } from "@/content";
 import { pageMetadata } from "@/lib/metadata";
 import { quoteHref } from "@/lib/quote";
+import { servicesJsonLd } from "@/lib/seo";
 import { standardIds, type StandardId } from "@/types/content";
 
 export const metadata = pageMetadata("services");
@@ -35,6 +39,26 @@ export default function ServicesPage() {
 
   return (
     <>
+      {/* Structured data needs absolute URLs, so it waits for the production domain. */}
+      {siteConfig.canonicalUrl ? (
+        <JsonLd
+          data={servicesJsonLd(
+            services.map((service) => {
+              const prices = service.packages.flatMap((id) => {
+                const price = getPackage(id).startingPrice;
+                return price === null ? [] : [price];
+              });
+              return {
+                name: dict.services.items[service.id].title,
+                description: dict.services.items[service.id].summary,
+                path: serviceHref(service.id),
+                startingPrice: prices.length > 0 ? Math.min(...prices) : null,
+              };
+            }),
+            siteConfig.canonicalUrl,
+          )}
+        />
+      ) : null}
       <PageIntro
         headingId="services-page-title"
         eyebrow={page.intro.eyebrow}

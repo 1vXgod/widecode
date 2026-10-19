@@ -16,7 +16,7 @@ async function openProjects(page: Page, query = "") {
 test.describe("projects page", () => {
   test("is complete, indexable and presents every project as a website concept", async ({ page }) => {
     await openProjects(page);
-    await expect(page).toHaveTitle("Projektet | WideCode");
+    await expect(page).toHaveTitle("Projektet: koncepte website dhe online shop | WideCode");
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Koncepte website");
     await expect(page.locator('meta[name="robots"]')).toHaveCount(0);
     await expect(cards(page)).toHaveCount(ALL);

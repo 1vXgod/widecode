@@ -16,7 +16,7 @@ const cta = "Merr një ofertë";
 
 export const sq = {
   meta: {
-    defaultTitle: "WideCode — Website, Online Shop dhe Custom Development",
+    defaultTitle: "Website dhe online shop me porosi në Kosovë | WideCode",
     description:
       "WideCode ndërton website dhe online shop me porosi për bizneset në Kosovë, me dizajn modern për çdo pajisje dhe çmime fillestare transparente.",
     ogImage: {
@@ -46,40 +46,47 @@ export const sq = {
     faq: "Pyetjet e shpeshta",
     contact: "Kontakti",
   },
+  /**
+   * Search titles (shown with " | WideCode") and meta descriptions. Only used in
+   * metadata, not on the pages. Keep titles short (the full title ≈ 60
+   * characters), descriptions ≈ 120–160 characters, every one unique, with one
+   * natural search phrase each: no keyword lists.
+   */
   pages: {
     services: {
-      title: "Shërbimet",
+      title: "Website, online shop dhe aplikacione web me porosi",
       description:
-        "Website prezantues, website biznesi, online shop dhe custom development për bizneset në Kosovë, me çmime fillestare transparente.",
+        "Website prezantues, website biznesi, online shop dhe Custom Development për bizneset në Kosovë. Shihni çfarë përfshin çdo shërbim dhe çmimet fillestare.",
     },
     projects: {
-      title: "Projektet",
+      title: "Projektet: koncepte website dhe online shop",
       description:
-        "Koncepte website nga WideCode: website prezantues, online shop dhe web aplikacione që tregojnë qasjen tonë ndaj dizajnit dhe zhvillimit.",
+        "Koncepte website nga WideCode për restorante, klinika, dyqane, fotografë dhe palestra, që tregojnë dizajnin dhe funksionalitetet që ndërtojmë.",
     },
     pricing: {
-      title: "Çmimet",
+      title: "Çmimet për website dhe online shop në Kosovë",
       description:
-        "Paketat e WideCode me çmime fillestare transparente në euro: Starter, Business, Professional, E-commerce dhe Custom.",
+        "Paketa me çmime fillestare transparente në euro për website dhe online shop: Starter, Business, Professional, E-commerce dhe Custom me ofertë.",
     },
     estimator: {
-      title: "Llogarit çmimin",
-      description: "Llogaritni një vlerësim orientues për projektin tuaj në pak hapa, pa obligim.",
+      title: "Llogaritësi i çmimit për website dhe online shop",
+      description:
+        "Zgjidhni paketën, numrin e faqeve dhe funksionalitetet shtesë, dhe shihni menjëherë një vlerësim orientues për projektin tuaj, pa obligim.",
     },
     about: {
-      title: "Rreth nesh",
+      title: "Rreth nesh: website me porosi për bizneset në Kosovë",
       description:
-        "Njihuni me WideCode: misioni, vlerat dhe mënyra si ndërtojmë website dhe online shop me porosi.",
+        "Njihuni me WideCode: misioni, vlerat dhe mënyra si ndërtojmë website, online shop dhe aplikacione web me porosi për bizneset në Kosovë.",
     },
     faq: {
-      title: "Pyetjet e shpeshta",
+      title: "Pyetjet e shpeshta: çmimet, procesi dhe website-i",
       description:
-        "Përgjigje për pyetjet më të shpeshta rreth çmimeve, procesit, afateve dhe funksionaliteteve të website-it tuaj.",
+        "Përgjigje për pyetjet më të shpeshta rreth çmimeve, procesit, afateve dhe funksionaliteteve të website-it ose online shop-it tuaj.",
     },
     contact: {
-      title: "Kontakti",
+      title: "Kërko ofertë për website ose online shop",
       description:
-        "Kërkoni ofertë për website, online shop ose custom development. Na tregoni për projektin dhe ju dërgojmë një ofertë të qartë, pa obligim.",
+        "Kërkoni ofertë për website, online shop ose Custom Development. Na tregoni për projektin dhe ju dërgojmë një ofertë të qartë, pa obligim.",
     },
   },
   header: {

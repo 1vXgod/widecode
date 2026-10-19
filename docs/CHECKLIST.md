@@ -138,10 +138,22 @@ Legend: `[x]` done · `[ ]` open · `[~]` partial / placeholder
 - [x] Tests: indexing rules, page metadata, sitemap/robots, JSON-LD escaping and content, FAQ placeholders, reuse, process consistency and no unconfirmed promises (unit); FAQ page topics, anchors, keyboard, canonical/OG/X tags on every page, canonical without query parameters, OG image size, robots, sitemap (every URL returns 200), JSON-LD (e2e); axe and CLS on the FAQ page
 - [ ] **Needs owner review:** FAQ answers on payment, domain/hosting and changes after launch (`src/content/sq/faq-page.ts`)
 
+### Sprint 8 extension: complete SEO setup ✅
+
+- [x] Unique Albanian search titles and descriptions for every page (home, services, projects, pricing, estimator, about, FAQ, contact), each with one natural search phrase (website, online shop, aplikacione web, Kosovë); no keyword stuffing (tested)
+- [x] Indexing only on the real domain: canonical URLs, `og:url`, sitemap, `robots.txt` and JSON-LD URLs come only from a public `https://` `NEXT_PUBLIC_SITE_URL`. Without it (today): `noindex`, `Disallow: /`, empty sitemap, no canonical; never `localhost` or `*.vercel.app` (verified on the real build)
+- [x] Service JSON-LD on `/sherbimet` with the published starting prices (Custom without price); no address, phone, ratings, reviews or awards
+- [x] Audit: one `h1` and no skipped heading levels on every page incl. 404, alt text on every image, unique titles/descriptions, internal links (existing crawler), indexability; all passed without content changes (now covered by e2e tests)
+- [x] Mobile lab measurement (412 px, 4× CPU, Slow 4G, on a busy machine): CLS 0.000 on every page; LCP 1.1–2.2 s except `/projektet` 3.1 s; ≈ 160–190 kB JS per page. See Sprint 9 for the follow-up
+- [x] E2E tests now build their own production build in `.next-e2e` with the test domain `https://widecode.example` (reserved), so they test the configured state without touching `.next`
+- [x] Fix: the mobile-menu keyboard test pressed Enter before hydration (rare flake); multi-page SEO tests got longer timeouts
+- [x] `docs/DEPLOYMENT.md`: indexing rules per deployment and step-by-step Google Search Console (Domain property, DNS TXT verification, sitemap submission, URL inspection) and Bing import
+- [ ] **Needs a real domain:** set `NEXT_PUBLIC_SITE_URL`, then Search Console verification and sitemap submission
+
 ## Sprint 9: Quality pass
 
 - [ ] Accessibility and keyboard audit across all pages
-- [ ] Lighthouse / performance review
+- [ ] Lighthouse / performance review (start with: `fetchPriority="high"` for the first concept preview image, the LCP element on `/projektet` and the home page; total blocking time under throttling)
 - [ ] Security headers (CSP etc.)
 - [ ] Full e2e journeys
 
