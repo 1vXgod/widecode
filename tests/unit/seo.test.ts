@@ -145,6 +145,15 @@ describe("structured data", () => {
   });
 
   it("describes services with published starting prices only, no ratings or reviews", () => {
+    // Soft hyphens (line-break hints in German titles) never reach structured data.
+    const SHY = String.fromCharCode(0xad);
+    const [german] = servicesJsonLd(
+      [{ name: `Unter${SHY}nehmens${SHY}website`, description: `Text${SHY}teil`, path: "/de/leistungen#website-biznesi", startingPrice: 399 }],
+      ORIGIN,
+      "de",
+    )["@graph"];
+    expect(german).toMatchObject({ name: "Unternehmenswebsite", serviceType: "Unternehmenswebsite", description: "Textteil" });
+
     const data = servicesJsonLd(
       [
         { name: "Online Shop", description: "D", path: "/sherbimet#online-shop", startingPrice: 999 },

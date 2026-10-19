@@ -103,6 +103,26 @@ describe("German copy", () => {
     }
   });
 
+  it("marks where long service names may break, without changing the words", () => {
+    const SHY = String.fromCharCode(0xad);
+    const plain = (text: string) => text.replaceAll(SHY, "");
+    expect(Object.values(de.services.items).map((item) => plain(item.title))).toEqual([
+      "Visitenkarten-Website",
+      "Unternehmenswebsite",
+      "Onlineshop",
+      "Individualentwicklung",
+    ]);
+    expect(plain(de.services.items.platform.points[0]!)).toBe("Anforderungsanalyse");
+    for (const [key, text] of strings(de)) {
+      // Only inside a word (between two letters), never doubled or at an edge.
+      for (const match of text.matchAll(new RegExp(SHY, "g"))) {
+        expect(/\p{L}/u.test(text[match.index - 1] ?? "") && /\p{L}/u.test(text[match.index + 1] ?? ""), key).toBe(true);
+      }
+    }
+    // The other languages have no long compounds that need it.
+    for (const dict of [sq, en]) for (const [key, text] of strings(dict)) expect(text.includes(SHY), key).toBe(false);
+  });
+
   it("promises no languages of communication the owner has not confirmed", () => {
     // The Albanian original only says "we speak Albanian" (sq: why.items.communication); see aboutPage.
     for (const dict of [en, de]) {

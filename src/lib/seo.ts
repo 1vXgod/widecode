@@ -106,6 +106,13 @@ export type ServiceJsonLdInput = {
   startingPrice: number | null;
 };
 
+const SOFT_HYPHEN = String.fromCharCode(0xad);
+
+/** Text without soft hyphens (line-break hints in on-page copy, see src/content/de/services.ts). */
+function plainText(text: string): string {
+  return text.replaceAll(SOFT_HYPHEN, "");
+}
+
 /** schema.org Service entries for the services page, with the published starting prices only. */
 export function servicesJsonLd(services: readonly ServiceJsonLdInput[], origin: URL, locale: Locale = defaultLocale) {
   return {
@@ -113,9 +120,9 @@ export function servicesJsonLd(services: readonly ServiceJsonLdInput[], origin: 
     "@graph": services.map((service) => ({
       "@type": "Service",
       "@id": new URL(service.path, origin).href,
-      name: service.name,
-      serviceType: service.name,
-      description: service.description,
+      name: plainText(service.name),
+      serviceType: plainText(service.name),
+      description: plainText(service.description),
       url: new URL(service.path, origin).href,
       areaServed: areaServed(locale),
       provider: organizationReference(origin),

@@ -19,6 +19,74 @@ for (const width of widths) {
   });
 }
 
+/**
+ * Service cards (home page and about page) in every language: every text line
+ * stays inside its card, and long words (German compounds such as
+ * "Unternehmenswebsite") break only at a space or a hyphen, including the soft
+ * hyphens in the copy, never in the middle of a word.
+ */
+test.describe("service cards keep their text inside", () => {
+  const cardLists = [
+    ["/", "#sherbimet ul"],
+    ["/en", "#sherbimet ul"],
+    ["/de", "#sherbimet ul"],
+    ["/rreth-nesh", 'section[aria-labelledby="about-services-title"] ul'],
+    ["/en/about", 'section[aria-labelledby="about-services-title"] ul'],
+    ["/de/ueber-uns", 'section[aria-labelledby="about-services-title"] ul'],
+  ] as const;
+
+  for (const width of [320, 390, 640, 768, 1024, 1280, 1440]) {
+    test(`at ${width}px`, async ({ page }) => {
+      test.slow(); // six pages
+      await page.setViewportSize({ width, height: 900 });
+      const problems: string[] = [];
+      for (const [path, list] of cardLists) {
+        await page.goto(path);
+        const found = await page.locator(list).first().evaluate((ul) => {
+          const SHY = String.fromCharCode(0xad);
+          const found: string[] = [];
+          for (const card of ul.querySelectorAll(":scope > li > *")) {
+            const box = card.getBoundingClientRect();
+            const style = getComputedStyle(card);
+            const left = box.left + parseFloat(style.paddingLeft) - 0.5;
+            const right = box.right - parseFloat(style.paddingRight) + 0.5;
+            const walker = document.createTreeWalker(card, NodeFilter.SHOW_TEXT);
+            while (walker.nextNode()) {
+              const node = walker.currentNode as Text;
+              const text = node.data;
+              if (!text.trim()) continue;
+              const range = document.createRange();
+              let lineTop: number | null = null;
+              for (let i = 0; i < text.length; i++) {
+                range.setStart(node, i);
+                range.setEnd(node, i + 1);
+                // The first character of a wrapped line can also report a box at the end of the
+                // previous line; its own box is the last one.
+                const rect = [...range.getClientRects()].filter((r) => r.width > 0).at(-1);
+                if (!rect) continue;
+                if (rect.left < left || rect.right > right) {
+                  found.push(`"${text.trim()}" leaves its card (${Math.round(rect.right - right)}px)`);
+                  break;
+                }
+                // A new line starts at this character: the previous one must allow a break.
+                if (lineTop !== null && rect.top > lineTop + rect.height / 2 && !/[\s-]/.test(text[i - 1]!) && text[i - 1] !== SHY && text[i] !== " ") {
+                  found.push(`"${text.trim()}" breaks inside a word, before "${text.slice(i, i + 6)}"`);
+                  break;
+                }
+                lineTop = rect.top;
+              }
+            }
+          }
+          return found;
+        });
+        problems.push(...found.map((problem) => `${path}: ${problem}`));
+      }
+      // Every page's problems at once, so a failure shows the whole picture.
+      expect(problems, `at ${width}px`).toEqual([]);
+    });
+  }
+});
+
 test.describe("navigation layout per breakpoint", () => {
   test("mobile shows the menu button, not the desktop nav", async ({ page }) => {
     await page.setViewportSize({ width: 360, height: 800 });
