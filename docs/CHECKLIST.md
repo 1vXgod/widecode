@@ -238,7 +238,7 @@ Approved decisions (2026-10-19): localized English and German slugs (Albanian UR
 - [x] Light-theme logo: `public/brand/wide-code-logo-light.png`, from `WIDE_CODE_LOGO_PACK/wide-code-horizontal.png` with only the transparent margin removed (pixel-identical, verified)
 - [x] Browser UI color per system setting (`theme-color` with media), `color-scheme` per theme; social image stays dark, now in the blue palette
 - [x] Tests: contrast for both themes, logo variants (unit); default from the system, live system changes, toggle and persistence in all three languages, saved choice over system, client-side navigation, language switch, 404, keyboard, phone header, no `<html>`/`<body>` changes, no page errors, no horizontal overflow at 320/390/768/1280 px on 20 pages, axe on 7 pages × 2 viewports, calculator and quote form in the light theme (e2e). The rest of the suite runs in the dark theme (`colorScheme: "dark"` in playwright.config.ts)
-- [ ] Known (pre-existing, not changed): in `next dev`, client-side navigation logs Next's notice that `<html>` has `scroll-behavior: smooth` without `data-scroll-behavior="smooth"` (from the smooth-scrolling rule in globals.css)
+- [x] ~~Known: in `next dev`, client-side navigation logs Next's notice about `scroll-behavior: smooth` on `<html>`~~ Resolved in Phase D
 - [ ] Without JavaScript the dark theme is always shown; the browser UI color follows the system setting, not an explicit choice on the site
 
 ### Logo review (both themes) ✅
@@ -249,6 +249,16 @@ Approved decisions (2026-10-19): localized English and German slugs (Albanian UR
 - [x] Same logo size in both themes (26 px header/menu, 32 px footer/About; the symbol matches the previous size); the dark header logo is 31 px narrower, which also eases the 1024 px header
 - [x] Blues: the logo's blue is the palette's `#1034f8`; concept previews untouched
 - [x] Tests: same height in both themes and file aspect ratios (unit); logos per theme in header, footer and mobile menu, not stretched; logo files transparent around the artwork, no baked-in box (e2e)
+
+### Phase D: QA and docs ✅
+
+- [x] Dev-mode hydration sweep: every page in every language (14 per language, plus 404s and query-string variants: 49 URLs), dark and light theme, phone (390 px) and desktop (1280 px), each in a clean browser with a scroll through the page and a client-side navigation: 196 loads, **0 hydration warnings or errors**
+- [x] Fix found by the sweep: Next.js 16 no longer turns off CSS smooth scrolling during page navigations, so every link click animated a scroll to the top of the new page (and `next dev` logged a notice). `<html data-scroll-behavior="smooth">` in the root layout, the global 404 and the global error page: navigations jump to the top again; in-page anchors and the back-to-top button stay smooth. Tests: the attribute in every document shell, and a navigation from the bottom of a page records no intermediate scroll positions (fails without the fix: 35)
+- [x] Accessibility sweep (axe, WCAG 2.2 A/AA): every page in every language, both themes, phone and desktop: 180 scans. The site's own interface: **no violations**. One finding inside a concept preview (see below)
+- [x] Docs: README (structure, languages, themes), DEPLOYMENT (three languages: SEO, post-launch checks, error pages), this checklist; [CONTENT_REVIEW.md](CONTENT_REVIEW.md): every statement about WideCode, the privacy line, budget ranges, the German copy and other strings for the owner to confirm, with the current text in all three languages
+- [ ] **Owner decision (performance, not an error):** `next dev` reports on every project detail page that the page reads its `[slug]` outside `<Suspense>`, so client-side navigation into a project page is not instant: the prefetched route shell cannot contain the project's content. Measured on the production build (localhost): ~330 ms from click to the new heading, against ~220 ms for an instantly prefetched page; on a real network one round trip more. Options: a loading skeleton for project pages (`<Suspense>`), full prefetching of project links (`prefetch`, more data on the projects page), or accepting it (`instant = false` turns the check off)
+- [ ] **Owner decision (concept preview):** in the "Local products online shop" concept, the small amber eyebrow (`#b07a12` on cream) is below 4.5:1 contrast (axe: that page in every language, theme and viewport, 12 scans). It is text inside a picture of a fictional brand's website (`role="img"` with a description), which WCAG 1.4.3 exempts, and the concept previews keep their own branding, so it was left unchanged. A slightly darker amber would satisfy axe
+- [ ] Owner review of [CONTENT_REVIEW.md](CONTENT_REVIEW.md)
 
 ## Open decisions and inputs needed
 

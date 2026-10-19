@@ -78,11 +78,11 @@ Protection: the same validation runs in the browser and on the server ([`src/lib
 
 ```
 src/
-  app/                 Icons, global 404 and error pages, sitemap.ts, robots.ts, opengraph-image.tsx, fonts
-    [lang]/            Every page and the root layout, once per language (see URLs and languages)
+  app/                 Icons, global 404 and error pages, sitemap.ts, robots.ts, fonts
+    [lang]/            Every page, the root layout and the social image, once per language (see URLs and languages)
   components/
     brand/             Logo
-    layout/            Header, footer, navigation, mobile menu, skip link
+    layout/            Header, footer, navigation, mobile menu, language switcher, theme toggle, back-to-top, skip link
     quote/             Quote request form
     sections/          Page-level building blocks (intro, CTA, FAQ list)
     seo/               JSON-LD structured data
@@ -90,13 +90,13 @@ src/
   config/              Site config and routes (single source of truth)
   content/<locale>/    All user-facing copy, typed by src/types/content.ts
   i18n/                Locale configuration and the public URL ↔ route mapping (routing.ts)
-  lib/                 Logic and utilities (estimator, quote form, SEO metadata, site URL, ...)
+  lib/                 Logic and utilities (estimator, quote form, SEO metadata, theme, site URL, ...)
   styles/theme.css     Design tokens (colors, type scale, spacing, layout widths, motion)
   types/               Shared TypeScript types
 tests/
   unit/                Vitest tests
-  e2e/                 Playwright tests (routes, keyboard, accessibility, responsive)
-docs/                  Checklist, deployment guide, image credits
+  e2e/                 Playwright tests (routes, languages, themes, keyboard, accessibility, responsive)
+docs/                  Checklist, deployment guide, image credits, content for owner review
 ```
 
 ## Design system
@@ -145,7 +145,7 @@ The site is published in **Albanian** (default), **English** and **German** (see
 - Anything that is not a page (unknown paths, project slugs or languages) is sent to a path without a route, which Next.js answers with [`src/app/global-not-found.tsx`](src/app/global-not-found.tsx): the complete 404 page, status 404 (`experimental.globalNotFound`; a `notFound()` thrown inside the prerendered app would only give a client-rendered error shell with Cache Components). It has no route params, so the proxy passes the URL's language in a request header (`x-widecode-locale`, always overwritten) and the page renders on the server per request (`export const instant = false`): complete HTML in the URL's language (`/en/...` English, `/de/...` German, anything else Albanian), with its own `<html lang>`, also without JavaScript. It is the only page that is not prerendered; it is not cached (`private, no-store`).
 - **SEO per language:** titles, descriptions, canonical URL, `hreflang` alternates (all languages + `x-default` = Albanian), `og:locale` (+ alternates), social image and JSON-LD (`inLanguage`) come from the page's language; the sitemap lists every page in every language with its alternates. As before, all of this is published only on the configured production domain.
 
-Content rules: natural Kosovo Albanian with correct **ë** and **ç**; no invented clients, testimonials, statistics or contact details; prices are indicative starting prices only.
+Content rules: natural Kosovo Albanian with correct **ë** and **ç**; no invented clients, testimonials, statistics or contact details; prices are indicative starting prices only. Statements about WideCode (languages spoken, market, privacy) and the German copy are listed for the owner's review in [docs/CONTENT_REVIEW.md](docs/CONTENT_REVIEW.md).
 
 **Terminology:** use modern wording that businesses in Kosovo actually use, not literal translations. `tests/unit/content.test.ts` guards the most common slips.
 

@@ -101,3 +101,38 @@ test.describe("mobile navigation", () => {
     await expect(page).toHaveURL(/\/kontakt$/);
   });
 });
+
+/**
+ * globals.css scrolls smoothly for in-page anchors; data-scroll-behavior="smooth"
+ * on <html> tells Next.js to jump instead during page navigations (Next.js 16
+ * no longer does this by default), so a new page never animates up from where
+ * the previous one was scrolled to.
+ */
+test.describe("scrolling on page navigation", () => {
+  test("every document shell marks <html> with data-scroll-behavior", async ({ request }) => {
+    for (const path of ["/", "/en/services", "/de/preise", "/nuk-ekziston", "/de/gibt-es-nicht"]) {
+      const html = await (await request.get(path, { maxRedirects: 0 })).text();
+      expect(html.match(/<html[^>]*>/)?.[0], path).toContain('data-scroll-behavior="smooth"');
+    }
+  });
+
+  test("a page navigation jumps to the top instead of scrolling there", async ({ page }) => {
+    await page.goto(routes.pricing);
+    // A click before hydration reaches the link without its handler yet.
+    await page.waitForLoadState("networkidle");
+    const start = await page.evaluate(() => document.documentElement.scrollHeight - window.innerHeight);
+    await page.evaluate((top) => window.scrollTo({ top, behavior: "instant" }), start);
+    await page.evaluate(() => {
+      const positions: number[] = [];
+      (window as unknown as { __positions: number[] }).__positions = positions;
+      window.addEventListener("scroll", () => positions.push(window.scrollY), { passive: true });
+    });
+    await page.getByRole("contentinfo").getByRole("link", { name: "Shërbimet" }).click();
+    await expect(page).toHaveURL(/\/sherbimet$/);
+    await expect.poll(() => page.evaluate(() => window.scrollY)).toBeLessThanOrEqual(400);
+    await page.waitForTimeout(500);
+    const positions = await page.evaluate(() => (window as unknown as { __positions: number[] }).__positions);
+    // No animation frames between the old position and the top of the new page.
+    expect(positions.filter((y) => y > 400 && y < start - 1)).toEqual([]);
+  });
+});

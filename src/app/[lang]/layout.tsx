@@ -39,7 +39,8 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[la
   if (!isLocale(lang)) notFound();
 
   return (
-    <html lang={localeMeta[lang].htmlLang} className={htmlClassName}>
+    // data-scroll-behavior: page navigations jump to the top instantly; globals.css keeps smooth scrolling for in-page anchors.
+    <html lang={localeMeta[lang].htmlLang} className={htmlClassName} data-scroll-behavior="smooth">
       <head>
         <ThemeScript />
       </head>

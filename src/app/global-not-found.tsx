@@ -46,7 +46,7 @@ export default async function GlobalNotFound() {
   const locale = await requestLocale();
   const dict = getDictionary(locale);
   return (
-    <html lang={localeMeta[locale].htmlLang} className={htmlClassName}>
+    <html lang={localeMeta[locale].htmlLang} className={htmlClassName} data-scroll-behavior="smooth">
       <head>
         <ThemeScript />
       </head>

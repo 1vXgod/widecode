@@ -14,7 +14,7 @@ export default function GlobalError({ retry }: { error: unknown; retry: () => vo
   const locale = useLocale();
   const errorPage = errorPages[locale];
   return (
-    <html lang={localeMeta[locale].htmlLang}>
+    <html lang={localeMeta[locale].htmlLang} data-scroll-behavior="smooth">
       <body className="grid min-h-dvh place-items-center px-6">
         <title>{errorPage.title}</title>
         <main className="max-w-narrow">

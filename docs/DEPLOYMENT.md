@@ -96,10 +96,11 @@ So a deployment can go live on the `*.vercel.app` address to be reviewed before 
 
 ### What is in place
 
-- **Titles and descriptions:** unique Albanian titles (with " | WideCode") and meta descriptions for every page, from `pages` and `meta` in [`src/content/sq/common.ts`](../src/content/sq/common.ts); project pages use their concept's name and summary.
+- **Titles and descriptions:** unique titles (with " | WideCode") and meta descriptions for every page in every language, from `pages` and `meta` in `src/content/<sq|en|de>/common.ts`; project pages use their concept's name and summary.
+- **Languages:** Albanian at the unprefixed URLs (default), English under `/en`, German under `/de`, each with its own slugs. Every page lists all three versions with `hreflang` (plus `x-default` = Albanian) in its `<head>` and in the sitemap, and has `<html lang>` and `og:locale` for its language. Nothing redirects by browser language or location; visitors choose with the language switcher.
 - **Canonical URLs** without query parameters (pre-fill, filter and estimate parameters never create separate indexable URLs).
 - **Open Graph and X** metadata on every page, with a social image per language: `/opengraph-image`, `/en/opengraph-image`, `/de/opengraph-image` (1200×630, generated at build time).
-- **Structured data** (JSON-LD), only facts that are configured: Organization and WebSite on the home page, Service (with the published starting prices) on `/sherbimet`, FAQPage on `/pyetje-te-shpeshta`. No address, phone number, ratings, reviews or awards. Email, phone and social profiles are added automatically once set in `src/config/site.ts`.
+- **Structured data** (JSON-LD), only facts that are configured: Organization and WebSite on the home page, Service (with the published starting prices) on `/sherbimet`, FAQPage on `/pyetje-te-shpeshta` (and their English and German versions, in that language). No address, phone number, ratings, reviews or awards. Email, phone and social profiles are added automatically once set in `src/config/site.ts`.
 - **No private routes:** the site has no admin, login or account pages; every public page is in the sitemap. The 404 page is always `noindex`.
 
 ### Google Search Console (after the domain is live)
@@ -123,7 +124,9 @@ So a deployment can go live on the `*.vercel.app` address to be reviewed before 
 
 ## 7. Check the live site
 
-- [ ] Every page in the main navigation loads; `/nuk-ekziston` and `/projektet/nuk-ekziston` return the Albanian 404 page with status 404
+- [ ] Every page in the main navigation loads, in all three languages (`/`, `/en`, `/de` and their pages)
+- [ ] `/nuk-ekziston` and `/projektet/nuk-ekziston` return the Albanian 404 page with status 404; `/en/does-not-exist` the English one and `/de/gibt-es-nicht` the German one
+- [ ] The language switcher opens the same page in the other language; the theme toggle switches between dark and light and the choice stays after a reload
 - [ ] `https://<your-domain>/robots.txt` shows `Allow: /` and the sitemap on **your domain** (not `localhost` or `vercel.app`)
 - [ ] `https://<your-domain>/sitemap.xml` lists only URLs on your domain
 - [ ] Page source has `<link rel="canonical" href="https://<your-domain>/…">`
@@ -138,7 +141,7 @@ So a deployment can go live on the `*.vercel.app` address to be reviewed before 
 - **Rollback:** in **Deployments**, promote a previous deployment (Instant Rollback) if a release misbehaves.
 - **Server Actions encryption key:** not needed on Vercel. When self-hosting on several instances, set the same `NEXT_SERVER_ACTIONS_ENCRYPTION_KEY` everywhere.
 - **Security headers** are set for every response in [`next.config.ts`](../next.config.ts): a Content Security Policy that allows only the site's own origin (`'unsafe-inline'` scripts are needed by Next.js's prerendered pages; nonces would disable prerendering), `X-Content-Type-Options: nosniff`, `Referrer-Policy`, `X-Frame-Options: DENY`, a restrictive `Permissions-Policy` and HSTS (without `includeSubDomains`, so other subdomains are not forced to HTTPS). Check them after go-live with `curl -I https://<your-domain>/`. Adding analytics, embedded maps/videos or other third-party scripts requires extending the CSP first, otherwise the browser blocks them. The Vercel toolbar on preview deployments is blocked by the CSP too; this does not affect the site.
-- **Errors:** an unexpected error shows the Albanian page "Diçka shkoi keq" with a retry button and an error code; the same code appears in Vercel's **Runtime Logs**, never the error details.
+- **Errors:** an unexpected error shows an error page in the visitor's language (Albanian "Diçka shkoi keq") with a retry button and an error code; the same code appears in Vercel's **Runtime Logs**, never the error details.
 
 ## 9. Self-hosting instead of Vercel
 
