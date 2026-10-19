@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, useSyncExternalStore, useTransition, type FormEvent, type ReactNode } from "react";
 import Link from "next/link";
 import { AlertCircle, ArrowRight, Calculator, CheckCircle2, ChevronDown, Clock, Info, Loader2, X } from "lucide-react";
-import { submitQuoteRequest } from "@/app/kontakt/actions";
+import { submitQuoteRequest } from "@/app/[lang]/kontakt/actions";
 import { buttonClasses, ButtonLink } from "@/components/ui/button";
 import { formatPrice } from "@/config/pricing";
 import { type ProjectSlug } from "@/config/projects";

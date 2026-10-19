@@ -7,7 +7,7 @@ import { getDictionary } from "@/content";
 import { emptyQuotePrefill, parseQuotePrefill, type QuotePrefill } from "@/lib/quote-request";
 
 const submitQuoteRequest = vi.fn();
-vi.mock("@/app/kontakt/actions", () => ({ submitQuoteRequest: (...args: unknown[]) => submitQuoteRequest(...args) }));
+vi.mock("@/app/[lang]/kontakt/actions", () => ({ submitQuoteRequest: (...args: unknown[]) => submitQuoteRequest(...args) }));
 
 const dict = getDictionary();
 const copy = { contactPage: dict.contactPage, pricing: dict.pricing, estimator: dict.estimator };

@@ -42,6 +42,11 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
   poweredByHeader: false,
+  experimental: {
+    // The root layout lives in app/[lang]; unmatched URLs are served from
+    // app/global-not-found.tsx (complete page, status 404). See src/i18n/routing.ts.
+    globalNotFound: true,
+  },
   images: {
     // 90 is used for the logo (src/components/brand/logo.tsx) to keep the wordmark crisp.
     qualities: [75, 90],

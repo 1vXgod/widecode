@@ -177,6 +177,21 @@ Legend: `[x]` done · `[ ]` open · `[~]` partial / placeholder
 - [x] Fix: the reveal now uses the Web Animations API (a paused fade-up per element below the fold, played when it scrolls into view) and never changes classes or attributes. Same timing, easing and offset; nothing hidden without JavaScript or with reduced motion; the CSS rules for `.reveal-ready` are gone
 - [x] Tests: the reveal never changes server-rendered markup (MutationObserver during load and scroll; fails on the old implementation), elements below the fold start hidden, plus the existing visibility, reduced-motion, no-JS, axe and CLS tests
 
+## Multilingual site (sq / en / de)
+
+Approved decisions (2026-10-19): localized English and German slugs (Albanian URLs unchanged); concept previews stay in Albanian, everything around them is translated; no customer confirmation email yet (owner notification in Albanian with the customer's language); query parameter names identical in all languages.
+
+### Phase A: routing foundation, Albanian only ✅
+
+- [x] Every page and the root layout moved to `src/app/[lang]/` (`git mv`, history kept); `generateStaticParams` per locale; `<html lang>` from the locale; Cache Components and partial prerendering unchanged (all pages still prerendered, `/kontakt` partially)
+- [x] Public URL mapping in `src/i18n/routing.ts`, applied by `src/proxy.ts`: Albanian URLs unchanged (rewritten to `/sq/...`), `/sq/...` redirects (308), unknown paths, project slugs and locales go to a path without a route
+- [x] 404: `src/app/global-not-found.tsx` (`experimental.globalNotFound`) renders the same frame and content as before, complete HTML with status 404. Reason: with the root layout in `[lang]`, a `notFound()` inside the prerendered app produced only a client-rendered error shell (`__next_error__`, no `lang`, no title)
+- [x] Shared `SiteShell`, fonts and `NotFoundContent`, so layout and global 404 render identical markup
+- [x] Fix found by the existing "no console errors" test: pages are prerendered at their internal path (`/sq/sherbimet`), so the navigation's current-page marker (`usePathname()`) was missing from the server HTML while the browser set it: React hydration error #418 on every page in the main navigation (production only; `next dev` renders per request). The navigation now uses `usePublicPathname()` (`src/i18n/use-public-pathname.ts`), so server HTML and browser agree; covered by a raw-HTML test and a page-error test
+- [x] Verified against the `e911c6d` build: 28 URLs (all pages, project details, query strings, anchors, 404s, robots, sitemap, icons, social image) identical in status, redirects, `lang`, title, head tags, text, links, form values, security headers and prerender header. Dev server: 0 hydration messages in 36 clean-browser loads
+- [x] Tests: routing table (unit); Albanian URLs prerendered with `lang="sq"` and no `/sq` links, query strings, anchors, client navigation, redirects, complete 404 pages without JavaScript for unknown paths, slugs and locales, missing files (e2e)
+- [ ] Known: the build prints a `metadataBase` warning for Next.js's internal global-error document (outside the `[lang]` layout; it renders no social tags, output unchanged). It goes away when the social image moves into `[lang]` in Phase B
+
 ## Open decisions and inputs needed
 
 - [x] Official logo and brand assets (WIDE_CODE_LOGO_PACK, integrated)

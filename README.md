@@ -60,7 +60,7 @@ The production domain has not been decided, so no domain is hardcoded.
 
 ### Quote form delivery
 
-The quote form on `/kontakt` sends requests through a Server Action ([`src/app/kontakt/actions.ts`](src/app/kontakt/actions.ts)). The delivery mode is decided from server-side variables only ([`src/lib/quote-delivery.ts`](src/lib/quote-delivery.ts)), and the form always tells visitors the truth about it:
+The quote form on `/kontakt` sends requests through a Server Action ([`src/app/[lang]/kontakt/actions.ts`](src/app/[lang]/kontakt/actions.ts)). The delivery mode is decided from server-side variables only ([`src/lib/quote-delivery.ts`](src/lib/quote-delivery.ts)), and the form always tells visitors the truth about it:
 
 | Situation | Mode | What visitors see |
 | --- | --- | --- |
@@ -78,7 +78,8 @@ Protection: the same validation runs in the browser and on the server ([`src/lib
 
 ```
 src/
-  app/                 Routes (App Router), root layout, icons, 404, sitemap.ts, robots.ts, opengraph-image.tsx
+  app/                 Icons, global 404 and error pages, sitemap.ts, robots.ts, opengraph-image.tsx, fonts
+    [lang]/            Every page and the root layout, once per language (see URLs and languages)
   components/
     brand/             Logo
     layout/            Header, footer, navigation, mobile menu, skip link
@@ -88,7 +89,7 @@ src/
     ui/                Primitives: Button, Container, Section, SectionHeading, Badge, Card
   config/              Site config and routes (single source of truth)
   content/<locale>/    All user-facing copy, typed by src/types/content.ts
-  i18n/                Locale configuration
+  i18n/                Locale configuration and the public URL ↔ route mapping (routing.ts)
   lib/                 Logic and utilities (estimator, quote form, SEO metadata, site URL, ...)
   styles/theme.css     Design tokens (colors, type scale, spacing, layout widths, motion)
   types/               Shared TypeScript types
@@ -123,11 +124,13 @@ The official logo comes from the `WIDE_CODE_LOGO_PACK` folder. The original file
 
 ## Content and localization
 
-All copy lives in `src/content/sq/` and must satisfy the `Dictionary` type. To add English later:
+All copy lives in `src/content/sq/` and must satisfy the `Dictionary` type. English and German are being added in phases (routing foundation done; see `docs/CHECKLIST.md`).
 
-1. Add `"en"` to `locales` in `src/i18n/config.ts`.
-2. Create `src/content/en/` that satisfies the same type, and register it in `src/content/index.ts`.
-3. Add locale-aware routing.
+**URLs and languages:** every page lives under `src/app/[lang]/` (folder names are the Albanian slugs), prerendered once per locale in `src/i18n/config.ts`. Public URLs are mapped by [`src/i18n/routing.ts`](src/i18n/routing.ts), applied by [`src/proxy.ts`](src/proxy.ts) on every page request:
+
+- Albanian URLs have no prefix and are unchanged: `/sherbimet` is served by `/sq/sherbimet`; query strings and anchors pass through.
+- `/sq` and `/sq/...` redirect (308) to the unprefixed URL, so every page has one address.
+- Anything that is not a page (unknown paths, project slugs or languages) is sent to a path without a route, which Next.js answers with [`src/app/global-not-found.tsx`](src/app/global-not-found.tsx): the complete Albanian 404 page, status 404 (`experimental.globalNotFound`; a `notFound()` thrown inside the prerendered app would only give a client-rendered error shell with Cache Components).
 
 Content rules: natural Kosovo Albanian with correct **ë** and **ç**; no invented clients, testimonials, statistics or contact details; prices are indicative starting prices only.
 
@@ -152,7 +155,7 @@ Content rules: natural Kosovo Albanian with correct **ë** and **ç**; no invent
 - **Estimate in URLs:** `?paketa=<package>&faqe=<pages>&shtesa=<addon,addon>`, used by the estimator's shareable URL and by `quoteHrefForEstimate()` for the quote link. Parse it with `parseEstimateParams()`, which ignores invalid values.
 - **Projects:** [`src/config/projects.ts`](src/config/projects.ts) lists portfolio entries (category = service, matching package). Every current entry is a **website concept** designed by WideCode (`kind: "concept"`), not client work. The site presents them as "Koncepte website" and labels each one "Koncept website". The brand names inside the previews (Dritëhije, Oxhaku, Aura, ELARA, Bleta & Toka, Ritmi) are fictional. Never claim the concepts were built for real clients, and never add client names, results, ratings or testimonials. A real client project may only be added with the client's explicit approval. Text: `src/content/sq/projects.ts`; text inside the previews: `src/content/sq/concepts.ts`. The filter URL uses readable values (`/projektet?kategoria=online-shop`).
 - **Concept previews:** each concept is a real first-screen homepage design (desktop and mobile) in `src/components/projects/concepts/`. It's designed at a fixed width (1280 / 390) and scaled with its frame by the `.concept-canvas` CSS in `globals.css`, which is pure CSS with no layout shift. Photos are in `public/projects/<concept>/`, with sources and licences in [`docs/IMAGE_CREDITS.md`](docs/IMAGE_CREDITS.md).
-- **Unknown project URLs:** [`src/proxy.ts`](src/proxy.ts) returns a real 404 for slugs not listed in `projectSlugs`. Keep that list in sync when adding projects; the unit tests check it.
+- **Unknown project URLs:** [`src/i18n/routing.ts`](src/i18n/routing.ts) (via `src/proxy.ts`) returns a real 404 for slugs not listed in `projectSlugs`. Keep that list in sync when adding projects; the unit tests check it.
 
 ### Services and quote links
 

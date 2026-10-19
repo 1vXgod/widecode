@@ -1,34 +1,22 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { projectSlugs } from "@/config/projects";
-
-const knownProjects = new Set<string>(projectSlugs);
-
-/** The project slug of a /projektet/<slug> path, or null when its encoding is malformed (e.g. "%E0%A4%A"). */
-function projectSlugFromPath(pathname: string): string | null {
-  try {
-    return decodeURIComponent(pathname.split("/")[2] ?? "");
-  } catch {
-    return null;
-  }
-}
+import { resolvePublicPath } from "@/i18n/routing";
 
 /**
- * Returns a real 404 for unknown project slugs.
- *
- * With Cache Components, /projektet/[slug] streams a prerendered shell for
- * unknown slugs, so a notFound() in the page arrives after the 200 status has
- * been sent (a "soft 404"). Checking here, before rendering, lets Next.js
- * serve the not-found page with a proper 404 status.
+ * Routes public URLs to app/[lang] (see src/i18n/routing.ts): Albanian URLs
+ * stay unprefixed, /sq/... redirects to them, and unknown project slugs get a
+ * real 404 status. The query string is kept as it is.
  */
 export function proxy(request: NextRequest) {
-  const slug = projectSlugFromPath(request.nextUrl.pathname);
-  if (slug === null || !knownProjects.has(slug)) {
-    // A path without a route renders app/not-found.tsx with status 404.
-    return NextResponse.rewrite(new URL("/_projekti-nuk-ekziston", request.url));
-  }
-  return NextResponse.next();
+  const resolution = resolvePublicPath(request.nextUrl.pathname);
+  const url = request.nextUrl.clone();
+  url.pathname = resolution.path;
+  return resolution.type === "redirect" ? NextResponse.redirect(url, 308) : NextResponse.rewrite(url);
 }
 
 export const config = {
-  matcher: "/projektet/:slug",
+  matcher: [
+    // Everything except Next.js internals, files in public/ (brand/*.png, projects/*.jpg) and
+    // metadata routes at the app root (icons, social image, robots.txt, sitemap.xml).
+    "/((?!_next/|__nextjs|_vercel/|brand/[^/]+\\.\\w+$|projects/.+\\.\\w+$|icon\\.png$|apple-icon\\.png$|opengraph-image$|robots\\.txt$|sitemap\\.xml$).*)",
+  ],
 };

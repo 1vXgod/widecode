@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePublicPathname } from "@/i18n/use-public-pathname";
 import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { ArrowRight, Menu, X } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
@@ -36,7 +36,7 @@ export function MobileMenu({ items, cta, labels, extra }: MobileMenuProps) {
   const triggerRef = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState(false);
   const dialogId = useId();
-  const pathname = usePathname();
+  const pathname = usePublicPathname();
 
   function openMenu() {
     dialogRef.current?.showModal();

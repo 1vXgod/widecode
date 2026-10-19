@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePublicPathname } from "@/i18n/use-public-pathname";
 import { cn } from "@/lib/cn";
 import { isActivePath, type NavItem } from "./nav-types";
 
@@ -13,7 +13,7 @@ type MainNavProps = {
 
 /** Desktop navigation with current-page indication. */
 export function MainNav({ items, label, className }: MainNavProps) {
-  const pathname = usePathname();
+  const pathname = usePublicPathname();
 
   return (
     <nav aria-label={label} className={className}>
