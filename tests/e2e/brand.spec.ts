@@ -32,6 +32,8 @@ test.describe("logo", () => {
     await page.goto("/");
     await expectLogoRendered(page.getByRole("banner").getByRole("img", { name: "WideCode" }), 44);
 
+    // A click before hydration reaches the button without its handler yet.
+    await page.waitForLoadState("networkidle");
     await page.getByRole("button", { name: "Hap menynë" }).click();
     await expectLogoRendered(page.getByRole("dialog", { name: "Menyja" }).getByRole("img", { name: "WideCode" }), 44);
   });

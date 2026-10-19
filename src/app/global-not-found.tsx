@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { bodyClassName, SiteShell } from "@/components/layout/site-shell";
+import { ThemeScript } from "@/components/layout/theme-script";
 import { NotFoundContent } from "@/components/sections/not-found-content";
 import { siteConfig } from "@/config/site";
 import { getDictionary } from "@/content";
@@ -46,6 +47,9 @@ export default async function GlobalNotFound() {
   const dict = getDictionary(locale);
   return (
     <html lang={localeMeta[locale].htmlLang} className={htmlClassName}>
+      <head>
+        <ThemeScript />
+      </head>
       <body className={bodyClassName}>
         <SiteShell dict={dict}>
           <NotFoundContent copy={dict.notFound} />

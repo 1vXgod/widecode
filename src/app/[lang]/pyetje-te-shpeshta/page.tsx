@@ -37,7 +37,7 @@ export default async function FaqPage() {
               <li key={category.id}>
                 <Link
                   href={`#${category.id}`}
-                  className="inline-flex rounded-full border border-border-strong px-4 py-2 text-sm text-fg-muted transition-colors hover:border-white/25 hover:text-fg"
+                  className="inline-flex rounded-full border border-border-strong px-4 py-2 text-sm text-fg-muted transition-colors hover:border-fg/25 hover:text-fg"
                 >
                   {category.title}
                 </Link>

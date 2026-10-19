@@ -103,7 +103,8 @@ docs/                  Checklist, deployment guide, image credits
 
 All tokens live in [`src/styles/theme.css`](src/styles/theme.css).
 
-- **Colors:** brand colors are defined once as `--wc-*` custom properties on `:root`, then mapped to Tailwind utilities such as `bg-bg`, `bg-surface`, `text-fg`, `text-fg-muted`, `bg-accent` and `text-accent-text`. Tailwind's default palette is disabled, so only brand colors are available. To re-theme, edit the `--wc-*` values and run `npm test`. `tests/unit/theme-contrast.test.ts` fails if any text color drops below WCAG AA contrast.
+- **Colors:** brand colors are defined once as `--wc-*` custom properties, then mapped to Tailwind utilities such as `bg-bg`, `bg-surface`, `text-fg`, `text-fg-muted`, `bg-accent` and `text-accent-text`. Tailwind's default palette is disabled, so only brand colors are available. The accent is the logo's royal blue `#1034f8` in both themes. Overlays use the text color (`bg-fg/5`, `hover:border-fg/25`) and shadows `shadow-shadow/…`, so they work in both themes; never use fixed colors outside the concept previews. To re-theme, edit the `--wc-*` values of both themes and run `npm test`. `tests/unit/theme-contrast.test.ts` fails if any text color drops below WCAG AA contrast in either theme.
+- **Dark and light theme** ([`src/lib/theme.ts`](src/lib/theme.ts), toggle in the header): the system setting until the visitor chooses, then their choice (saved in `localStorage`). An inline script in `<head>` adds `<meta name="widecode-theme" content="dark|light">` before the first paint, and `theme.css` swaps the tokens from it. `<html>` and every other element React renders stay unchanged, so pages stay prerendered and hydrate cleanly. Use the `light:` variant (e.g. `light:hidden`) for anything else that differs, as the logo does: the dark logo in the dark theme, `wide-code-logo-light.png` in the light one. Without JavaScript, the dark theme is shown. The social image is the same dark brand image in both themes.
 - **Typography:** Geist for body text and Sora for headings, loaded with `next/font`. Both include ë and ç. Fluid sizes: `text-display`, `text-title`, `text-heading`, `text-lead`.
 - **Layout:** `max-w-narrow` (48rem), `max-w-content` (76rem), `max-w-wide` (90rem); spacing `px-gutter`, `py-section`, `h-header`.
 - **Breakpoints:** Tailwind defaults (`sm` 40rem, `md` 48rem, `lg` 64rem, `xl` 80rem, `2xl` 96rem), plus `xs` (30rem).
@@ -117,11 +118,12 @@ The official logo comes from the `WIDE_CODE_LOGO_PACK` folder. The original file
 
 | Site file | Source in pack | Used for |
 | --------- | -------------- | -------- |
-| `public/brand/wide-code-logo-dark.png` (688×174) | `wide-code-dark.png` | Header, mobile menu and footer, rendered by `src/components/brand/logo.tsx` via `next/image` at quality 90 |
+| `public/brand/wide-code-logo-dark.png` (688×174) | `wide-code-dark.png` | Header, mobile menu and footer in the dark theme, rendered by `src/components/brand/logo.tsx` via `next/image` at quality 90 |
+| `public/brand/wide-code-logo-light.png` (694×139) | `wide-code-horizontal.png` | The same places in the light theme (navy "WIDE", blue "CODE"); shown at 60% of the dark logo's height, since it has no pill around it |
 | `src/app/icon.png` (96×96, transparent) | `wide-code-app-icon-gradient.png` | Browser favicon |
 | `src/app/apple-icon.png` (180×180) | `wide-code-app-icon-gradient.png`, on the site background `#07070a` | iOS home-screen icon |
 
-`wide-code-dark.png` is the pack's dark-background version and the only full logo whose "WIDE" wordmark is legible on the near-black theme. The other lockups (`primary`, `horizontal`, `divider-tagline`, `stacked`) use a dark navy wordmark intended for light backgrounds. To change the logo size, pass `height` to `<Logo />`; the width always follows the file's aspect ratio.
+`wide-code-dark.png` is the pack's dark-background version and the only full logo whose "WIDE" wordmark is legible on the near-black theme. The other lockups (`primary`, `horizontal`, `divider-tagline`, `stacked`) use a dark navy wordmark intended for light backgrounds; `horizontal` (transparent, one line) is used in the light theme. To change the logo size, pass `height` to `<Logo />`; the width always follows the file's aspect ratio.
 
 ## Content and localization
 

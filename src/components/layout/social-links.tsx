@@ -25,7 +25,7 @@ export function SocialLinks({ links, labels, navLabel, newTabLabel, className }:
               rel="noopener noreferrer"
               className={cn(
                 "group inline-flex items-center gap-1 rounded-full border border-border-strong px-3 py-1.5 text-xs font-medium text-fg-muted",
-                "transition-colors duration-200 hover:border-white/25 hover:text-fg",
+                "transition-colors duration-200 hover:border-fg/25 hover:text-fg",
               )}
             >
               {labels[link.platform]}{" "}

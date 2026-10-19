@@ -90,15 +90,15 @@ export function HeroShowcase({ copy }: { copy: ShowcaseCopy }) {
         className="absolute -inset-6 -z-10 rounded-[2.5rem] bg-linear-to-tr from-accent/30 via-transparent to-accent-2/25 blur-3xl"
       />
 
-      <div className="overflow-hidden rounded-card border border-border-strong bg-surface shadow-2xl shadow-black/60">
+      <div className="overflow-hidden rounded-card border border-border-strong bg-surface shadow-2xl shadow-shadow/60">
         {/* Browser chrome */}
         <div className="flex items-center gap-3 border-b border-border px-4 py-3">
           <div aria-hidden="true" className="flex gap-1.5">
-            <span className="size-2.5 rounded-full bg-white/15" />
-            <span className="size-2.5 rounded-full bg-white/15" />
-            <span className="size-2.5 rounded-full bg-white/15" />
+            <span className="size-2.5 rounded-full bg-fg/15" />
+            <span className="size-2.5 rounded-full bg-fg/15" />
+            <span className="size-2.5 rounded-full bg-fg/15" />
           </div>
-          <div className="mx-auto flex min-w-0 items-center gap-1.5 rounded-full bg-white/[0.05] px-3 py-1 text-xs text-fg-subtle">
+          <div className="mx-auto flex min-w-0 items-center gap-1.5 rounded-full bg-fg/[0.05] px-3 py-1 text-xs text-fg-subtle">
             <Lock aria-hidden="true" className="size-3 shrink-0" />
             <span className="truncate">{copy.url}</span>
           </div>
@@ -152,7 +152,7 @@ export function HeroShowcase({ copy }: { copy: ShowcaseCopy }) {
                   onKeyDown={onTabKeyDown}
                   className={cn(
                     "relative flex items-center justify-center gap-2 overflow-hidden rounded-lg px-2 py-2.5 text-sm font-medium transition-colors duration-200",
-                    active ? "bg-white/[0.07] text-fg" : "text-fg-muted hover:bg-white/[0.04] hover:text-fg",
+                    active ? "bg-fg/[0.07] text-fg" : "text-fg-muted hover:bg-fg/[0.04] hover:text-fg",
                   )}
                 >
                   <span aria-hidden="true" className="hidden font-mono text-xs text-fg-subtle xs:inline">
@@ -177,7 +177,7 @@ export function HeroShowcase({ copy }: { copy: ShowcaseCopy }) {
               type="button"
               onClick={() => setAutoplay((value) => !value)}
               aria-label={autoplay ? copy.pause : copy.play}
-              className="grid size-10 shrink-0 place-items-center rounded-lg text-fg-muted transition-colors hover:bg-white/[0.05] hover:text-fg"
+              className="grid size-10 shrink-0 place-items-center rounded-lg text-fg-muted transition-colors hover:bg-fg/[0.05] hover:text-fg"
             >
               {autoplay ? <Pause aria-hidden="true" className="size-4" /> : <Play aria-hidden="true" className="size-4" />}
             </button>
@@ -212,18 +212,18 @@ function DesignPanel({ copy }: { copy: ShowcaseCopy }) {
       <div aria-hidden="true" className="absolute inset-0 bg-grid opacity-60" />
       <div className="relative flex h-full flex-col gap-[3.2cqw]">
         <WireBox label={copy.wireframe.header} className="flex h-[9cqw] items-center justify-between px-[3cqw]">
-          <span className="h-[2.6cqw] w-[13cqw] rounded-full bg-white/15" />
+          <span className="h-[2.6cqw] w-[13cqw] rounded-full bg-fg/15" />
           <span className="flex gap-[1.6cqw]">
-            <span className="h-[1.6cqw] w-[7cqw] rounded-full bg-white/10" />
-            <span className="h-[1.6cqw] w-[7cqw] rounded-full bg-white/10" />
-            <span className="h-[1.6cqw] w-[7cqw] rounded-full bg-white/10" />
+            <span className="h-[1.6cqw] w-[7cqw] rounded-full bg-fg/10" />
+            <span className="h-[1.6cqw] w-[7cqw] rounded-full bg-fg/10" />
+            <span className="h-[1.6cqw] w-[7cqw] rounded-full bg-fg/10" />
           </span>
         </WireBox>
 
         <WireBox label={copy.wireframe.hero} className="flex flex-1 flex-col justify-center gap-[2cqw] px-[4cqw]">
-          <span className="h-[3.6cqw] w-3/5 rounded-full bg-white/15" />
-          <span className="h-[3.6cqw] w-2/5 rounded-full bg-white/15" />
-          <span className="h-[1.6cqw] w-1/2 rounded-full bg-white/10" />
+          <span className="h-[3.6cqw] w-3/5 rounded-full bg-fg/15" />
+          <span className="h-[3.6cqw] w-2/5 rounded-full bg-fg/15" />
+          <span className="h-[1.6cqw] w-1/2 rounded-full bg-fg/10" />
           <span className="mt-[1cqw] h-[5cqw] w-[18cqw] rounded-full border border-dashed border-accent-text/60" />
           {/* Selection handles, as in a design tool */}
           <span className="pointer-events-none absolute inset-[1.5cqw] rounded-[0.8cqw] border border-accent-text/70">
@@ -234,7 +234,7 @@ function DesignPanel({ copy }: { copy: ShowcaseCopy }) {
           </span>
           <MousePointer2
             aria-hidden="true"
-            className="absolute right-[18%] bottom-[22%] size-[4cqw] fill-white text-bg"
+            className="absolute right-[18%] bottom-[22%] size-[4cqw] fill-fg text-bg"
           />
         </WireBox>
 
@@ -309,9 +309,9 @@ function CodePanel({ copy }: { copy: ShowcaseCopy }) {
   ];
 
   return (
-    <div className="absolute inset-0 flex flex-col bg-[#0b0b11]">
+    <div className="absolute inset-0 flex flex-col bg-bg">
       <div className="flex items-center gap-[2cqw] border-b border-border px-[3cqw] py-[1.6cqw]">
-        <span className="rounded-[0.6cqw] bg-white/[0.06] px-[1.6cqw] py-[0.6cqw] font-mono text-[1.8cqw] text-fg-muted">
+        <span className="rounded-[0.6cqw] bg-fg/[0.06] px-[1.6cqw] py-[0.6cqw] font-mono text-[1.8cqw] text-fg-muted">
           page.tsx
         </span>
       </div>
@@ -364,10 +364,10 @@ function LivePanel({ copy }: { copy: ShowcaseCopy }) {
 
         <div className="mt-auto grid grid-cols-3 gap-[2.4cqw]">
           {copy.mock.cards.map((card) => (
-            <div key={card} className="rounded-[1.4cqw] border border-border bg-white/[0.04] p-[2cqw] backdrop-blur">
+            <div key={card} className="rounded-[1.4cqw] border border-border bg-fg/[0.04] p-[2cqw] backdrop-blur">
               <span className="block size-[3.4cqw] rounded-[0.8cqw] bg-accent/40" />
               <span className="mt-[1.4cqw] block text-[1.9cqw] font-medium text-fg">{card}</span>
-              <span className="mt-[1cqw] block h-[1cqw] w-4/5 rounded-full bg-white/10" />
+              <span className="mt-[1cqw] block h-[1cqw] w-4/5 rounded-full bg-fg/10" />
             </div>
           ))}
         </div>

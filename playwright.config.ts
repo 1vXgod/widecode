@@ -29,6 +29,10 @@ export default defineConfig({
   use: {
     baseURL,
     trace: "retain-on-failure",
+    // The site follows the system theme until a visitor chooses one, and Playwright emulates a
+    // light system by default. The suite runs in the dark (default brand) theme;
+    // tests/e2e/theme.spec.ts covers the light theme and switching.
+    colorScheme: "dark",
   },
   projects: [
     {

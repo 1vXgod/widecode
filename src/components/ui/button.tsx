@@ -4,8 +4,8 @@ import { cn } from "@/lib/cn";
 
 const variants = {
   primary: "bg-accent text-accent-fg shadow-glow hover:bg-accent-hover",
-  secondary: "border border-border-strong bg-white/[0.03] text-fg hover:border-white/25 hover:bg-white/[0.07]",
-  ghost: "text-fg-muted hover:bg-white/5 hover:text-fg",
+  secondary: "border border-border-strong bg-fg/[0.03] text-fg hover:border-fg/25 hover:bg-fg/[0.07]",
+  ghost: "text-fg-muted hover:bg-fg/5 hover:text-fg",
 } as const;
 
 const sizes = {

@@ -88,7 +88,7 @@ export default async function ServicesPage() {
               <li key={service.id}>
                 <Link
                   href={`#${service.anchor}`}
-                  className="inline-flex rounded-full border border-border-strong px-4 py-2 text-sm text-fg-muted transition-colors hover:border-white/25 hover:text-fg"
+                  className="inline-flex rounded-full border border-border-strong px-4 py-2 text-sm text-fg-muted transition-colors hover:border-fg/25 hover:text-fg"
                 >
                   {dict.services.items[service.id].title}
                 </Link>

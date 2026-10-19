@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 import { bodyClassName, SiteShell } from "@/components/layout/site-shell";
+import { ThemeScript } from "@/components/layout/theme-script";
 import { siteConfig } from "@/config/site";
 import { getDictionary } from "@/content";
 import { isLocale, localeMeta, locales } from "@/i18n/config";
@@ -16,8 +17,12 @@ export async function generateMetadata({ params }: LayoutProps<"/[lang]">): Prom
 }
 
 export const viewport: Viewport = {
-  themeColor: siteConfig.themeColor,
-  colorScheme: "dark",
+  // Browser UI color per system setting (an explicit choice on the site itself is applied by CSS).
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: siteConfig.themeColor.light },
+    { media: "(prefers-color-scheme: dark)", color: siteConfig.themeColor.dark },
+  ],
+  colorScheme: "dark light",
 };
 
 /**
@@ -35,6 +40,9 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[la
 
   return (
     <html lang={localeMeta[lang].htmlLang} className={htmlClassName}>
+      <head>
+        <ThemeScript />
+      </head>
       <body className={bodyClassName}>
         <SiteShell dict={getDictionary(lang)}>{children}</SiteShell>
       </body>

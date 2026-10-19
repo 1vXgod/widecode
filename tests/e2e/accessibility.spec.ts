@@ -57,6 +57,8 @@ test.describe("axe with mobile menu open", () => {
 
   test("open menu has no detectable violations", async ({ page }) => {
     await page.goto("/");
+    // A click before hydration reaches the button without its handler yet.
+    await page.waitForLoadState("networkidle");
     await page.getByRole("button", { name: "Hap menynë" }).click();
     await expect(page.getByRole("dialog", { name: "Menyja" })).toBeVisible();
     const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();

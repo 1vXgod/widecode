@@ -49,7 +49,7 @@ export function BackToTop({ label }: { label: string }) {
       inert={!visible}
       onClick={scrollToTop}
       className={cn(
-        "back-to-top group fixed z-30 grid size-11 place-items-center rounded-full border border-border-strong bg-surface-raised/90 text-fg shadow-lg shadow-black/40 backdrop-blur-xl",
+        "back-to-top group fixed z-30 grid size-11 place-items-center rounded-full border border-border-strong bg-surface-raised/90 text-fg shadow-lg shadow-shadow/40 backdrop-blur-xl",
         "transition-[opacity,translate,bottom,background-color,border-color,box-shadow] duration-300 ease-out-expo",
         "hover:border-accent/60 hover:bg-surface-raised hover:shadow-glow active:translate-y-px",
         visible ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0",

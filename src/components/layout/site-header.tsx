@@ -14,6 +14,7 @@ import { LanguageSwitcher } from "./language-switcher";
 import { MainNav } from "./main-nav";
 import { MobileMenu } from "./mobile-menu";
 import { SocialLinks } from "./social-links";
+import { ThemeToggle } from "./theme-toggle";
 
 export function SiteHeader({ dict }: { dict: Dictionary }) {
   // Public paths in the page's language, so the current-page marker can compare them.
@@ -38,7 +39,7 @@ export function SiteHeader({ dict }: { dict: Dictionary }) {
 
   return (
     <HeaderShell>
-      <Container className="flex h-header items-center justify-between gap-6">
+      <Container className="flex h-header items-center justify-between gap-6 lg:gap-4 xl:gap-6">
         <Link href={routes.home} aria-label={dict.a11y.homeLinkLabel} className="shrink-0 rounded-lg">
           <Logo loading="eager" />
         </Link>
@@ -47,9 +48,15 @@ export function SiteHeader({ dict }: { dict: Dictionary }) {
 
         <div className="flex items-center gap-2">
           <LanguageSwitcher variant="compact" labels={languageLabels} className="hidden sm:block" />
+          <ThemeToggle labels={{ toLight: dict.a11y.themeToLight, toDark: dict.a11y.themeToDark }} />
           <ButtonLink href={cta.href} size="sm" className="group hidden shadow-none sm:inline-flex">
             {cta.label}
-            <ArrowRight aria-hidden="true" className="transition-transform duration-200 group-hover:translate-x-0.5" />
+            {/*
+              Between lg and xl the full navigation, language menu, theme toggle and this button share
+              one row (tightest in German at 1024px): the decorative arrow and the switcher's globe are
+              left out there, and the navigation is a little tighter (main-nav.tsx).
+            */}
+            <ArrowRight aria-hidden="true" className="transition-transform duration-200 group-hover:translate-x-0.5 lg:max-xl:hidden" />
           </ButtonLink>
           <MobileMenu
             items={items}

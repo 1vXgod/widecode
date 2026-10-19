@@ -80,6 +80,8 @@ test.describe("mobile navigation", () => {
 
   test("every menu item navigates and closes the menu", async ({ page }) => {
     await page.goto(routes.pricing);
+    // A click before hydration reaches the button without its handler yet.
+    await page.waitForLoadState("networkidle");
     for (const [label, path] of mainNav) {
       await page.getByRole("button", { name: "Hap menynë" }).click();
       const dialog = page.getByRole("dialog", { name: "Menyja" });

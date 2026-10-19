@@ -1,6 +1,13 @@
 @import "tailwindcss";
 @import "../styles/theme.css";
 
+/* Styles for the light theme only, e.g. light:hidden (see src/styles/theme.css and src/lib/theme.ts). */
+@custom-variant light {
+  &:where(:root:has(meta[name="widecode-theme"][content="light"]) *) {
+    @slot;
+  }
+}
+
 @layer base {
   html {
     background-color: var(--color-bg);

@@ -26,10 +26,11 @@ export function MainNav({ items, label, className }: MainNavProps) {
                 href={item.href}
                 aria-current={pathname === item.href ? "page" : undefined}
                 className={cn(
-                  "block rounded-full px-3.5 py-2 text-sm font-medium transition-[color,background-color,box-shadow] duration-200",
+                  // Tighter between lg and xl, where the full navigation shares the row with the language menu, theme toggle and CTA.
+                  "block rounded-full px-2.5 py-2 text-sm font-medium whitespace-nowrap xl:px-3.5 transition-[color,background-color,box-shadow] duration-200",
                   active
-                    ? "bg-white/[0.07] text-fg shadow-[inset_0_0_0_1px_var(--color-border)]"
-                    : "text-fg-muted hover:bg-white/[0.04] hover:text-fg",
+                    ? "bg-fg/[0.07] text-fg shadow-[inset_0_0_0_1px_var(--color-border)]"
+                    : "text-fg-muted hover:bg-fg/[0.04] hover:text-fg",
                 )}
               >
                 {item.label}

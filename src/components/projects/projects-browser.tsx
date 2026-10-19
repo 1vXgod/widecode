@@ -60,7 +60,7 @@ export function ProjectsBrowser({ initialCategory, cards, categoryLabels, filter
                 "inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-colors duration-200",
                 active
                   ? "border-accent/70 bg-accent/15 text-fg"
-                  : "border-border-strong text-fg-muted hover:border-white/25 hover:text-fg",
+                  : "border-border-strong text-fg-muted hover:border-fg/25 hover:text-fg",
               )}
             >
               {option.label}
@@ -68,7 +68,7 @@ export function ProjectsBrowser({ initialCategory, cards, categoryLabels, filter
                 aria-hidden="true"
                 className={cn(
                   "rounded-full px-1.5 text-xs",
-                  active ? "bg-accent text-accent-fg" : "bg-white/[0.08] text-fg-muted",
+                  active ? "bg-accent text-accent-fg" : "bg-fg/[0.08] text-fg-muted",
                 )}
               >
                 {option.count}

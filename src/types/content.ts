@@ -103,6 +103,9 @@ export interface Dictionary {
     languageButton: string;
     /** Accessible name of the floating button that scrolls back to the top of the page. */
     backToTop: string;
+    /** Accessible names of the theme toggle: the action it performs from the dark / the light theme. */
+    themeToLight: string;
+    themeToDark: string;
   };
   /** Short labels used in navigation. */
   nav: Record<RouteKey, string>;

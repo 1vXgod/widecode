@@ -26,8 +26,8 @@ export const siteConfig = {
   url: resolveSiteUrl(),
   /** The public production origin, or null until NEXT_PUBLIC_SITE_URL is set (see resolveCanonicalOrigin). */
   canonicalUrl: resolveCanonicalOrigin(),
-  /** Matches --wc-bg in src/styles/theme.css; used for the browser UI color. */
-  themeColor: "#07070a",
+  /** Matches --wc-bg of each theme in src/styles/theme.css; used for the browser UI color. */
+  themeColor: { dark: "#05070f", light: "#f4f6fb" },
   contact,
   social,
 } as const;

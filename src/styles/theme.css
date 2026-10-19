@@ -6,37 +6,87 @@
  * them to Tailwind utilities, e.g. bg-bg, text-fg-muted, border-border,
  * bg-accent, text-display, max-w-content, py-section, rounded-card.
  *
- * Text/background pairs must meet WCAG AA (4.5:1). This is enforced by
- * tests/unit/theme-contrast.test.ts, so run `npm test` after changing colors.
+ * Two themes from the official logo (WIDE_CODE_LOGO_PACK): its royal blue
+ * (#1034f8) is the accent in both, its navy the text of the light theme.
+ * - Dark (default, also without JavaScript): the first :root block.
+ * - Light: the block below it, active while <head> holds
+ *   <meta name="widecode-theme" content="light">. That tag is written before
+ *   the first paint by the inline script in src/lib/theme.ts (saved choice,
+ *   otherwise the system setting) and by the theme toggle, so React's markup
+ *   (including <html>) never changes. The `light:` variant (globals.css) uses
+ *   the same condition, e.g. for the logo.
+ * Use the tokens, never fixed colors: overlays are fg-based (bg-fg/5), shadows
+ * use shadow-shadow/…; the concept previews (fixed designs) are the exception.
+ *
+ * Text/background pairs must meet WCAG AA (4.5:1) in both themes. This is
+ * enforced by tests/unit/theme-contrast.test.ts, so run `npm test` after
+ * changing colors.
  */
 
 :root {
-  /* Surfaces */
-  --wc-bg: #07070a;
-  --wc-surface: #0e0e13;
-  --wc-surface-raised: #15151c;
+  /* Surfaces: near-black with the logo's navy tint */
+  --wc-bg: #05070f;
+  --wc-surface: #0b0f1d;
+  --wc-surface-raised: #121729;
   --wc-border: rgb(255 255 255 / 0.08);
   --wc-border-strong: rgb(255 255 255 / 0.16);
 
   /* Text */
-  --wc-fg: #f5f5f7;
-  --wc-fg-muted: #a1a1aa;
-  --wc-fg-subtle: #8a8a93;
+  --wc-fg: #f4f6fc;
+  --wc-fg-muted: #a3aac2;
+  --wc-fg-subtle: #8a91ab;
 
-  /* Brand accent: restrained violet, with a blue companion for gradients */
-  --wc-accent: #5b4ff0;
-  --wc-accent-hover: #6457f2;
+  /* Brand accent: the logo's royal blue, with a sky-blue companion for gradients */
+  --wc-accent: #1034f8;
+  --wc-accent-hover: #2747ff;
   --wc-accent-fg: #ffffff;
-  --wc-accent-text: #a99fff;
-  --wc-accent-2: #4f8cff;
-  --wc-ring: #8f86ff;
+  --wc-accent-text: #8ba0ff;
+  --wc-accent-2: #4fa8ff;
+  --wc-ring: #7690ff;
 
   /* Feedback */
   --wc-success: #34d399;
   --wc-warning: #fbbf24;
   --wc-danger: #f87171;
 
+  /* Depth: shadow color (used with an opacity, e.g. shadow-shadow/50) and the accent glow */
+  --wc-shadow: #000000;
+  --wc-glow: 0 0 0 1px rgb(118 144 255 / 0.28), 0 12px 40px -12px rgb(16 52 248 / 0.6);
+
   color-scheme: dark;
+}
+
+:root:has(meta[name="widecode-theme"][content="light"]) {
+  /* Surfaces: cool off-white page, white cards */
+  --wc-bg: #f4f6fb;
+  --wc-surface: #ffffff;
+  --wc-surface-raised: #ffffff;
+  --wc-border: rgb(11 16 48 / 0.1);
+  --wc-border-strong: rgb(11 16 48 / 0.18);
+
+  /* Text: the logo's navy */
+  --wc-fg: #0b1030;
+  --wc-fg-muted: #454c68;
+  --wc-fg-subtle: #5a6180;
+
+  /* Brand accent */
+  --wc-accent: #1034f8;
+  --wc-accent-hover: #0a28d4;
+  --wc-accent-fg: #ffffff;
+  --wc-accent-text: #1531e0;
+  --wc-accent-2: #0a63d1;
+  --wc-ring: #1034f8;
+
+  /* Feedback, dark enough for text on light surfaces */
+  --wc-success: #047857;
+  --wc-warning: #a15c07;
+  --wc-danger: #c62828;
+
+  /* Depth: soft navy shadows */
+  --wc-shadow: #1b2a6b;
+  --wc-glow: 0 0 0 1px rgb(16 52 248 / 0.18), 0 12px 32px -14px rgb(16 52 248 / 0.45);
+
+  color-scheme: light;
 }
 
 @theme {
@@ -63,6 +113,7 @@
   --color-success: var(--wc-success);
   --color-warning: var(--wc-warning);
   --color-danger: var(--wc-danger);
+  --color-shadow: var(--wc-shadow);
 
   /* Typography (font variables are set by next/font in the root layout) */
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
@@ -92,7 +143,7 @@
 
   /* Shape and depth */
   --radius-card: 1.25rem;
-  --shadow-glow: 0 0 0 1px rgb(143 134 255 / 0.25), 0 12px 40px -12px rgb(91 79 240 / 0.55);
+  --shadow-glow: var(--wc-glow);
 
   /* Motion */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);

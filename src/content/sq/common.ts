@@ -41,6 +41,8 @@ export const sq = {
     language: "Gjuha",
     languageButton: "Ndrysho gjuhën (tani: {language})",
     backToTop: "Kthehu në krye",
+    themeToLight: "Kalo në temën e çelët",
+    themeToDark: "Kalo në temën e errët",
   },
   nav: {
     home: "Ballina",

@@ -7,7 +7,7 @@ import { defaultLocale, isLocale, locales } from "@/i18n/config";
 
 /**
  * Social preview image (Open Graph and X) per language, generated at build time
- * in the site's colors with the official app icon. Public URLs: /opengraph-image
+ * in the site's dark brand colors (the same in both themes) with the official app icon. Public URLs: /opengraph-image
  * (Albanian), /en/opengraph-image and /de/opengraph-image (see src/i18n/routing.ts). Pages reference
  * it explicitly through baseOpenGraph() in src/lib/metadata.ts, with a localized alt.
  */
@@ -36,10 +36,10 @@ export default async function OpengraphImage({ params }: { params: Promise<{ lan
           flexDirection: "column",
           justifyContent: "space-between",
           padding: "72px 80px",
-          backgroundColor: siteConfig.themeColor,
+          backgroundColor: siteConfig.themeColor.dark,
           backgroundImage:
-            "radial-gradient(circle at 18% 0%, rgba(91, 79, 240, 0.45), transparent 55%), radial-gradient(circle at 100% 100%, rgba(79, 140, 255, 0.22), transparent 50%)",
-          color: "#f5f5f7",
+            "radial-gradient(circle at 18% 0%, rgba(16, 52, 248, 0.5), transparent 55%), radial-gradient(circle at 100% 100%, rgba(79, 168, 255, 0.22), transparent 50%)",
+          color: "#f4f6fc",
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 22 }}>
@@ -52,7 +52,7 @@ export default async function OpengraphImage({ params }: { params: Promise<{ lan
           <div style={{ fontSize: 76, fontWeight: 700, lineHeight: 1.06, letterSpacing: -2, maxWidth: 940 }}>
             {meta.ogImage.headline}
           </div>
-          <div style={{ fontSize: 32, color: "#a1a1aa" }}>{meta.ogImage.subline}</div>
+          <div style={{ fontSize: 32, color: "#a3aac2" }}>{meta.ogImage.subline}</div>
         </div>
 
         <div
@@ -61,7 +61,7 @@ export default async function OpengraphImage({ params }: { params: Promise<{ lan
             width: 180,
             height: 6,
             borderRadius: 3,
-            backgroundImage: "linear-gradient(90deg, #5b4ff0, #4f8cff)",
+            backgroundImage: "linear-gradient(90deg, #1034f8, #4fa8ff)",
           }}
         />
       </div>

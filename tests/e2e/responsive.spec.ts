@@ -107,16 +107,24 @@ test.describe("price calculator buttons on narrow screens", () => {
       await page.goto(`${calculator.path}${query}`);
       await page.waitForLoadState("networkidle");
 
-      // No sideways scrolling.
-      expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(0);
-
       const summary = page.locator("aside").filter({ has: page.getByTestId("estimate-total") }).first();
       const cta = summary.getByRole("link", { name: calculator.cta });
       const reset = summary.getByRole("button", { name: calculator.reset });
-      const panel = (await summary.boundingBox())!;
+      // The page is partially prerendered: the calculator for the URL's choices streams in and replaces
+      // the static default, which on a busy machine can be after networkidle. Measure only once it is
+      // on screen (its quote link carries the choices) and hydrated (React has attached its handlers).
+      await expect(cta).toHaveAttribute("href", /paketa=professional&faqe=12/);
+      await expect.poll(() => reset.evaluate((el) => Object.keys(el).some((key) => key.startsWith("__reactProps")))).toBe(true);
+
+      // No sideways scrolling.
+      expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(0);
+
       for (const button of [cta, reset]) {
         await button.scrollIntoViewIfNeeded();
+        await expect(summary).toBeVisible();
         await expect(button).toBeVisible();
+        // boundingBox() does not wait (null until laid out), so measure only after the checks above.
+        const panel = (await summary.boundingBox())!;
         const box = (await button.boundingBox())!;
         // Inside the panel and the screen, with a comfortable touch target and the whole label shown.
         expect(box.x).toBeGreaterThanOrEqual(panel.x);

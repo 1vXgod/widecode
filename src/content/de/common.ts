@@ -49,6 +49,8 @@ export const de = {
     language: "Sprache",
     languageButton: "Sprache wechseln (aktuell: {language})",
     backToTop: "Zurück nach oben",
+    themeToLight: "Zum hellen Design wechseln",
+    themeToDark: "Zum dunklen Design wechseln",
   },
   nav: {
     home: "Startseite",

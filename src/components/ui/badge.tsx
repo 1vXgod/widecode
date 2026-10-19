@@ -2,7 +2,7 @@ import type { ComponentPropsWithoutRef } from "react";
 import { cn } from "@/lib/cn";
 
 const variants = {
-  default: "border-border-strong bg-white/[0.04] text-fg-muted",
+  default: "border-border-strong bg-fg/[0.04] text-fg-muted",
   accent: "border-accent/40 bg-accent/10 text-accent-text",
   outline: "border-border-strong bg-transparent text-fg-muted",
 } as const;

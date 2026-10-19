@@ -84,7 +84,7 @@ export default async function ProjectPage({ params }: PageProps<"/[lang]/projekt
             <p className="mt-5 text-lead text-fg-muted">{item.summary}</p>
             <ul className="mt-6 flex flex-wrap gap-2">
               {item.tags.map((tag) => (
-                <li key={tag} className="rounded-full bg-white/[0.06] px-3 py-1 text-sm text-fg-muted">
+                <li key={tag} className="rounded-full bg-fg/[0.06] px-3 py-1 text-sm text-fg-muted">
                   {tag}
                 </li>
               ))}

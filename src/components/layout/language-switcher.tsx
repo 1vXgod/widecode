@@ -87,7 +87,7 @@ export function LanguageSwitcher({ labels, variant, onSelect, className }: Langu
             variant === "compact"
               ? "flex items-center justify-between gap-4 rounded-lg px-3 py-2.5 text-sm transition-colors duration-200"
               : "flex min-h-11 items-center justify-center gap-2 rounded-full border px-4 text-sm font-medium transition-colors duration-200",
-            variant === "compact" && (active ? "bg-white/[0.07] text-fg" : "text-fg-muted hover:bg-white/5 hover:text-fg"),
+            variant === "compact" && (active ? "bg-fg/[0.07] text-fg" : "text-fg-muted hover:bg-fg/5 hover:text-fg"),
             variant === "inline" &&
               (active ? "border-accent/70 bg-accent/15 text-fg" : "border-border-strong text-fg-muted hover:text-fg"),
           )}
@@ -121,9 +121,10 @@ export function LanguageSwitcher({ labels, variant, onSelect, className }: Langu
         aria-expanded={open}
         aria-controls={listId}
         onClick={() => setOpen((value) => !value)}
-        className="inline-flex h-9 items-center gap-1.5 rounded-full px-3 text-sm font-medium text-fg-muted transition-colors duration-200 hover:bg-white/5 hover:text-fg aria-expanded:bg-white/[0.07] aria-expanded:text-fg"
+        className="inline-flex h-9 items-center gap-1.5 rounded-full px-3 text-sm font-medium text-fg-muted transition-colors duration-200 hover:bg-fg/5 hover:text-fg aria-expanded:bg-fg/[0.07] aria-expanded:text-fg"
       >
-        <Globe aria-hidden="true" className="size-4" />
+        {/* Decorative; left out between lg and xl, where the header row is tightest (see site-header.tsx). */}
+        <Globe aria-hidden="true" className="size-4 lg:max-xl:hidden" />
         {/* The visible code starts the accessible name (WCAG 2.5.3), e.g. "SQ Ndrysho gjuhën (tani: Shqip)". */}
         <span>{localeMeta[current].short}</span>
         <span className="sr-only"> {fill(labels.languageButton, { language: localeMeta[current].name })}</span>
@@ -132,7 +133,7 @@ export function LanguageSwitcher({ labels, variant, onSelect, className }: Langu
       <div
         id={listId}
         hidden={!open}
-        className="absolute top-full right-0 z-50 mt-2 min-w-44 rounded-xl border border-border-strong bg-surface-raised p-1.5 shadow-2xl shadow-black/50"
+        className="absolute top-full right-0 z-50 mt-2 min-w-44 rounded-xl border border-border-strong bg-surface-raised p-1.5 shadow-2xl shadow-shadow/50"
       >
         <nav aria-label={labels.language}>
           <ul className="grid gap-0.5">{links}</ul>

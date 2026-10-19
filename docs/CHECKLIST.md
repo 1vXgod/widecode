@@ -223,6 +223,24 @@ Approved decisions (2026-10-19): localized English and German slugs (Albanian UR
 - [x] Tests: German dictionary, formatting, routing, equivalents, metadata, sitemap, JSON-LD, email row, back-to-top component (unit); German pages prerendered and in German, nav state in HTML, headings, concept previews, redirects, refresh, prices, calculator, switcher (keyboard, desktop, mobile, estimator state through three languages, anchor, filter, form draft), German validation and submission, German 404 (raw HTML, header spoofing), canonical/hreflang/og, sitemap, social image, JSON-LD, scroll reveal; back-to-top visibility, smooth and reduced-motion scrolling, keyboard, client-side navigation, 404, axe, position on phone/tablet/desktop, calculator bar and mobile menu; axe on 10 German pages and the German language menu (e2e)
 - [ ] **Needs owner review:** the German copy (ideally by a native speaker), in particular the FAQ, the privacy line and the service names ("Visitenkarten-Website", "Individualentwicklung"). The calculator's two-language example says "Deutsch und Englisch" in German. Whether WideCode can communicate with clients in English or German: if so, it can be added to the "Direct communication" and "Clear communication" texts
 
+### Follow-up fixes ✅
+
+- [x] German service names overflowed their cards (`e4a697e`): soft hyphens at the compounds' natural boundaries; regression test for every language at 320–1440 px
+- [x] Price calculator buttons widened narrow phones (`b01821d`): one column no wider than the panel, wrapping labels; regression tests at 320–1440 px in every language
+
+### Blue brand palette and dark/light theme ✅
+
+- [x] Palette from the official logo: accent = its royal blue `#1034f8` in both themes (previously violet `#5b4ff0`), sky-blue companion for gradients; dark surfaces near-black with the logo's navy tint; light theme with the logo's navy text on a cool off-white page and white cards. Every text pair WCAG AA (≥ 4.5:1) and focus ring ≥ 3:1 in both themes (unit test)
+- [x] Theme: the system setting until the visitor chooses; the choice persists (`localStorage`), applies before the first paint (inline `<head>` script writing `<meta name="widecode-theme">`), follows system changes and other tabs, and survives reloads, client-side navigation, language switches and the 404 page. `<html>` and all React-rendered markup unchanged, so pages stay prerendered and hydration is clean (0 messages in a dev sweep of 13 pages × 2 themes, incl. toggling and navigation)
+- [x] Toggle in the header at every width (44 px touch target on phones), localized name for its action (sq/en/de), keyboard focus visible; both states in the markup, shown by CSS, so the server HTML is right before hydration
+- [x] Header between lg and xl (1024–1279 px), where the full navigation, language menu, toggle and CTA share one row: navigation items slightly tighter, and the decorative globe and CTA arrow left out, so it fits on one line in every language and both themes (German was 31 px too wide at 1024 px with the toggle; "Über uns" also wrapped). Unchanged on phones, tablets and from 1280 px
+- [x] Hard-coded `white/…` overlays and `black/…` shadows replaced by theme tokens (`fg/…`, `shadow-shadow/…`); the hero's code panel follows the theme; concept previews unchanged (fixed designs)
+- [x] Light-theme logo: `public/brand/wide-code-logo-light.png`, from `WIDE_CODE_LOGO_PACK/wide-code-horizontal.png` with only the transparent margin removed (pixel-identical, verified)
+- [x] Browser UI color per system setting (`theme-color` with media), `color-scheme` per theme; social image stays dark, now in the blue palette
+- [x] Tests: contrast for both themes, logo variants (unit); default from the system, live system changes, toggle and persistence in all three languages, saved choice over system, client-side navigation, language switch, 404, keyboard, phone header, no `<html>`/`<body>` changes, no page errors, no horizontal overflow at 320/390/768/1280 px on 20 pages, axe on 7 pages × 2 viewports, calculator and quote form in the light theme (e2e). The rest of the suite runs in the dark theme (`colorScheme: "dark"` in playwright.config.ts)
+- [ ] Known (pre-existing, not changed): in `next dev`, client-side navigation logs Next's notice that `<html>` has `scroll-behavior: smooth` without `data-scroll-behavior="smooth"` (from the smooth-scrolling rule in globals.css)
+- [ ] Without JavaScript the dark theme is always shown; the browser UI color follows the system setting, not an explicit choice on the site
+
 ## Open decisions and inputs needed
 
 - [x] Official logo and brand assets (WIDE_CODE_LOGO_PACK, integrated)

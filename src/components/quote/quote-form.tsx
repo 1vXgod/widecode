@@ -586,7 +586,7 @@ function AttachedCard({
         <button
           type="button"
           onClick={onRemove}
-          className="-m-1.5 inline-flex shrink-0 items-center gap-1 rounded-md p-1.5 text-xs text-fg-muted transition-colors hover:bg-white/5 hover:text-fg"
+          className="-m-1.5 inline-flex shrink-0 items-center gap-1 rounded-md p-1.5 text-xs text-fg-muted transition-colors hover:bg-fg/5 hover:text-fg"
         >
           <X aria-hidden="true" className="size-3.5" />
           {removeLabel}
@@ -608,7 +608,7 @@ type BaseFieldProps = {
 const controlClasses = (invalid: boolean) =>
   cn(
     "w-full rounded-lg border bg-bg px-3.5 text-[0.9375rem] text-fg transition-colors placeholder:text-fg-subtle",
-    "hover:border-white/25 disabled:cursor-not-allowed disabled:opacity-60",
+    "hover:border-fg/25 disabled:cursor-not-allowed disabled:opacity-60",
     invalid ? "border-danger" : "border-border-strong",
   );
 
