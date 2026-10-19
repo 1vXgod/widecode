@@ -63,6 +63,10 @@ export const contactPage = {
       text: "Ky vlerësim orientues dërgohet bashkë me kërkesën. Çmimin përfundimtar e konfirmojmë në ofertë.",
       edit: "Ndrysho vlerësimin",
       remove: "Hiq vlerësimin",
+      pages: "Numri i faqeve",
+      pagesValue: "{count} faqe",
+      pagesWithIncluded: "{count} faqe ({included} të përfshira në paketë)",
+      includedFeatures: "Të përfshira në paketë",
     },
     project: {
       title: "Koncepti që ju interesoi",

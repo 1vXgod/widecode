@@ -189,6 +189,28 @@ describe("handleQuoteSubmission", () => {
     expect(text).toContain("Klinikë dentare (http://localhost:3000/projektet/klinike-dentare)");
   });
 
+  it("emails the complete estimator configuration, rebuilt from the configured rules", async () => {
+    const { fetchImpl, context } = setup();
+    const values = { ...submission().values, packageId: "professional" };
+    // A tampered request: too many pages, an add-on the package already includes, unknown ids, a fake total.
+    const tampered = { pages: 500, addOns: ["multilingual", "booking", "blog", "free-shop"], total: 0 } as unknown as QuoteSubmission["estimate"];
+    await handleQuoteSubmission(submission({ values, estimate: tampered }), context);
+    const { body } = sentBody(fetchImpl);
+    const text = String(body.text).replace(/\s/g, " ");
+    expect(text).toContain("Vlerësimi orientues nga llogaritësi:");
+    expect(text).toContain("Numri i faqeve: 40 faqe (10 të përfshira në paketë)");
+    expect(text).toContain("Të përfshira në paketë: Blog / lajme dhe Analitikë");
+    expect(text).toContain("Paketa Professional: 699 €");
+    expect(text).toContain("30 faqe shtesë × 30 €: 900 €");
+    expect(text).toContain("Website në dy gjuhë: 150 €");
+    expect(text).toContain("Rezervime ose takime: 200 €");
+    expect(text).toContain("Totali orientues: nga 1949 €");
+    expect(text).not.toContain("free-shop");
+    // The HTML version carries the same configuration.
+    expect(String(body.html)).toContain("Numri i faqeve");
+    expect(String(body.html)).toContain("1949");
+  });
+
   it("drops unknown project references and replaces malformed submission ids", async () => {
     const { fetchImpl, context } = setup();
     await handleQuoteSubmission(submission({ projectSlug: "../admin", submissionId: "bad id\r\nX: y" }), context);

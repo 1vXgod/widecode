@@ -366,6 +366,12 @@ export interface Dictionary {
         text: string;
         edit: string;
         remove: string;
+        pages: string;
+        /** Uses {count}. */
+        pagesValue: string;
+        /** Uses {count} and {included}. */
+        pagesWithIncluded: string;
+        includedFeatures: string;
       };
       project: {
         title: string;

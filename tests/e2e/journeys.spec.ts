@@ -54,7 +54,7 @@ test.describe("visitor journeys", () => {
     await expect(page).toHaveURL(/shtesa=payments/);
 
     await page.getByRole("link", { name: "Kërko ofertë me këtë vlerësim" }).click();
-    await expect(page).toHaveURL(/\/kontakt\?paketa=ecommerce&shtesa=payments$/);
+    await expect(page).toHaveURL(/\/kontakt\?paketa=ecommerce&shtesa=payments&vleresim=1$/);
     await page.waitForLoadState("networkidle");
     const openedAt = Date.now();
     const form = page.getByRole("form", { name: "Kërkesë për ofertë" });

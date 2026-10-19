@@ -17,7 +17,7 @@ const projectTitles = Object.fromEntries(projectSlugs.map((s) => [s, dict.projec
 >;
 
 function renderForm(prefill: QuotePrefill = emptyQuotePrefill, available: boolean | null = true) {
-  return render(<QuoteForm prefill={prefill} available={available} copy={copy} projectTitles={projectTitles} />);
+  return render(<QuoteForm prefill={prefill} available={available} keepDraft copy={copy} projectTitles={projectTitles} />);
 }
 
 async function fillValid(user: ReturnType<typeof userEvent.setup>) {
@@ -32,6 +32,8 @@ async function fillValid(user: ReturnType<typeof userEvent.setup>) {
 
 beforeEach(() => {
   submitQuoteRequest.mockReset();
+  // The form keeps a draft in sessionStorage; every test starts without one.
+  window.sessionStorage.clear();
   Element.prototype.scrollIntoView = vi.fn();
 });
 
@@ -167,6 +169,76 @@ describe("QuoteForm", () => {
       estimate: { pages: 7, addOns: ["blog"] },
       projectSlug: "klinike-dentare",
     });
+  });
+
+  it("shows the complete configuration: pages, included features, add-ons and the estimated total", () => {
+    renderForm(parseQuotePrefill(new URLSearchParams("paketa=professional&faqe=12&shtesa=multilingual,booking&vleresim=1")));
+    const card = screen.getByText("Vlerësimi juaj nga llogaritësi").parentElement!.parentElement!;
+    const text = card.textContent!.replace(/\s/g, " ");
+    expect(text).toContain("Numri i faqeve12 faqe (10 të përfshira në paketë)");
+    expect(text).toContain("Të përfshira në paketëBlog / lajme dhe Analitikë");
+    expect(text).toContain("Website në dy gjuhë");
+    expect(text).toContain("Rezervime ose takime");
+    expect(screen.getByTestId("quote-estimate-total").textContent?.replace(/\s/g, " ")).toBe("nga 1109 €");
+    expect(text).toContain("Çmimin përfundimtar e konfirmojmë në ofertë.");
+    expect(screen.getByRole("link", { name: "Ndrysho vlerësimin" })).toHaveAttribute(
+      "href",
+      "/llogarit-cmimin?paketa=professional&faqe=12&shtesa=multilingual%2Cbooking",
+    );
+  });
+
+  it("takes a changed estimate from the URL without losing what the visitor typed", async () => {
+    const user = userEvent.setup();
+    const props = { available: true, keepDraft: true, copy, projectTitles };
+    const { rerender } = render(
+      <QuoteForm {...props} prefill={parseQuotePrefill(new URLSearchParams("paketa=business&faqe=7&shtesa=analytics"))} />,
+    );
+    await user.type(screen.getByLabelText("Emri dhe mbiemri"), "Arta Krasniqi");
+    expect(screen.getByTestId("quote-estimate-total").textContent?.replace(/\s/g, " ")).toBe("nga 499 €");
+
+    // Back from the estimator with more pages and booking: the same form instance gets a new URL.
+    rerender(
+      <QuoteForm
+        {...props}
+        prefill={parseQuotePrefill(new URLSearchParams("paketa=business&faqe=8&shtesa=booking,analytics&vleresim=1"))}
+      />,
+    );
+    expect(screen.getByTestId("quote-estimate-total").textContent?.replace(/\s/g, " ")).toBe("nga 729 €");
+    expect(screen.getByText("Rezervime ose takime")).toBeInTheDocument();
+    expect(screen.getByLabelText("Emri dhe mbiemri")).toHaveValue("Arta Krasniqi");
+  });
+
+  it("restores an unsent draft after a refresh and clears it once the request is sent", async () => {
+    submitQuoteRequest.mockResolvedValue({ status: "sent" });
+    const user = userEvent.setup();
+    const prefill = parseQuotePrefill(new URLSearchParams("paketa=business&faqe=7&vleresim=1"));
+    const first = renderForm(prefill);
+    await user.type(screen.getByLabelText("Emri dhe mbiemri"), "Arta Krasniqi");
+    await user.type(screen.getByLabelText("Email"), "arta@example.com");
+    first.unmount();
+
+    // A fresh form (refresh) opened from the same link.
+    renderForm(prefill);
+    expect(screen.getByLabelText("Emri dhe mbiemri")).toHaveValue("Arta Krasniqi");
+    expect(screen.getByLabelText("Email")).toHaveValue("arta@example.com");
+    expect(screen.getByTestId("quote-estimate-total").textContent?.replace(/\s/g, " ")).toBe("nga 459 €");
+
+    await user.selectOptions(screen.getByLabelText("Buxheti i përafërt"), "300-600");
+    await user.selectOptions(screen.getByLabelText("Afati i dëshiruar"), "flexible");
+    await user.type(screen.getByLabelText("Përshkrimi i projektit"), "Website për restorantin me menu dhe rezervime.");
+    await user.click(screen.getByRole("button", { name: "Dërgo kërkesën" }));
+    await screen.findByRole("heading", { name: "Faleminderit, kërkesa juaj u dërgua!" });
+    expect(window.sessionStorage.getItem("widecode:quote-draft")).toBeNull();
+  });
+
+  it("the prerendered placeholder form never reads or overwrites the visitor's draft", async () => {
+    const user = userEvent.setup();
+    const stored = JSON.stringify({ values: { name: "Arta Krasniqi" }, estimate: null, projectSlug: null });
+    window.sessionStorage.setItem("widecode:quote-draft", stored);
+    render(<QuoteForm prefill={emptyQuotePrefill} available={null} copy={copy} projectTitles={projectTitles} />);
+    expect(screen.getByLabelText("Emri dhe mbiemri")).toHaveValue("");
+    await user.type(screen.getByLabelText("Email"), "x@example.com");
+    expect(window.sessionStorage.getItem("widecode:quote-draft")).toBe(stored);
   });
 
   it("drops the estimate when another package is chosen or it is removed", async () => {

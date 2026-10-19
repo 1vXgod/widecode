@@ -173,7 +173,7 @@ test.describe("price estimator", () => {
     await expect(page).toHaveURL(/\/llogarit-cmimin\?paketa=business&faqe=6&shtesa=analytics$/);
     await expect(page.getByRole("link", { name: "Kërko ofertë me këtë vlerësim" })).toHaveAttribute(
       "href",
-      `${routes.contact}?paketa=business&faqe=6&shtesa=analytics`,
+      `${routes.contact}?paketa=business&faqe=6&shtesa=analytics&vleresim=1`,
     );
   });
 

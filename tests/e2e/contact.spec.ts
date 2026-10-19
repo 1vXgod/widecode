@@ -115,7 +115,7 @@ test.describe("quote form pre-fill", () => {
     await page.goto(`${routes.estimator}?paketa=business&faqe=7&shtesa=blog`);
     await page.waitForLoadState("networkidle");
     await page.getByRole("link", { name: "Kërko ofertë me këtë vlerësim" }).click();
-    await expect(page).toHaveURL(/\/kontakt\?paketa=business&faqe=7&shtesa=blog$/);
+    await expect(page).toHaveURL(/\/kontakt\?paketa=business&faqe=7&shtesa=blog&vleresim=1$/);
 
     const form = quoteForm(page);
     await expect(form.getByLabel("Paketa")).toHaveValue("business");

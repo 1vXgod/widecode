@@ -127,8 +127,11 @@ describe("URL parameters", () => {
     expect(estimatorHref("ecommerce")).toBe("/llogarit-cmimin?paketa=ecommerce");
     expect(estimatorHref()).toBe("/llogarit-cmimin");
     expect(quoteHrefForEstimate(normalizeInput({ packageId: "professional", pages: 12, addOns: ["booking"] }))).toBe(
-      "/kontakt?paketa=professional&faqe=12&shtesa=booking",
+      "/kontakt?paketa=professional&faqe=12&shtesa=booking&vleresim=1",
     );
+    // Marked as an estimate even without pages or add-ons in the URL; Custom has no estimate to mark.
+    expect(quoteHrefForEstimate(normalizeInput({ packageId: "ecommerce" }))).toBe("/kontakt?paketa=ecommerce&vleresim=1");
+    expect(quoteHrefForEstimate(normalizeInput({ packageId: "custom" }))).toBe("/kontakt?paketa=custom");
   });
 });
 

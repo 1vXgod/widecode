@@ -162,6 +162,15 @@ Legend: `[x]` done · `[ ]` open · `[~]` partial / placeholder
 - [x] Full visitor journeys (e2e): home → pricing → estimator → quote request with the estimate; on a phone: menu → projects filter → concept → quote request about that concept; both verified in the email received by the mock Resend API. Security headers checked on pages and the 404
 - [ ] Not changed (judged not worth it): hero showcase and estimator stay client components (they are interactive); fonts were already self-hosted with `display: swap`, images already served through `next/image`
 
+### Fix: estimator → contact flow ✅ (after Sprint 9)
+
+- [x] Root cause 1: the form read its pre-fill only when it was first created. Next.js keeps visited pages alive, so after "Ndrysho vlerësimin" and new choices in the estimator, the form kept (and would have sent) the old estimate. New URL choices now update package and estimate; contact details stay as typed
+- [x] Root cause 2: the pre-fill came from the server at request time, behind a fallback that was an empty, editable form. After the estimator's link, visitors saw an empty form until the server answered (seconds in `next dev`, a cold start or a slow connection), and anything typed in it was discarded. The URL is now read in the browser (`QuoteFormFromUrl`): the form is complete at once; only delivery availability streams from the server, without remounting the form
+- [x] Root cause 3: estimates without pages or add-ons in the URL (Starter; E-commerce without add-ons) were not recognised as estimates. Estimator links now carry `vleresim=1`
+- [x] Estimate card and email list the full configuration: total pages (with those included), features already included in the package, each add-on, extra pages and the indicative total, all recalculated from the config on the server
+- [x] Unsent draft kept in `sessionStorage` (this tab only, validated like URL input, cleared once sent), so a refresh or a longer detour (Next.js keeps only 3 pages alive) loses nothing
+- [x] Tests: marker parsing and link round-trip for every package, draft parsing incl. tampered storage, configuration rows, email with a tampered estimate (unit); card content, URL changes keep typed details, draft restore and clearing (component); full flow with refresh and mock email, adjusting the estimate, slow server, Starter/E-commerce, direct visit, unknown package, tampered parameters, Custom (e2e)
+
 ## Open decisions and inputs needed
 
 - [x] Official logo and brand assets (WIDE_CODE_LOGO_PACK, integrated)

@@ -1,4 +1,4 @@
-import type { PackageId } from "@/config/pricing";
+import { getPackage, type PackageId } from "@/config/pricing";
 import type { ProjectSlug } from "@/config/projects";
 import { routes } from "@/config/routes";
 import { ESTIMATE_PARAMS, estimateToSearchParams, type EstimateInput } from "@/lib/estimator";
@@ -21,9 +21,18 @@ export function quoteHref(packageId?: PackageId, projectSlug?: ProjectSlug): str
   return query ? `${routes.contact}?${query}` : routes.contact;
 }
 
+/**
+ * Marks a contact link as coming from the estimator, so the form shows the
+ * estimate even when it has no pages or add-ons in the URL (e.g. Starter or
+ * E-commerce as they are). A pricing card's link to the same package has no marker.
+ */
+export const QUOTE_ESTIMATE_PARAM = "vleresim";
+
 /** Contact link carrying a full estimate (package, pages and add-ons) to the quote form. */
 export function quoteHrefForEstimate(input: EstimateInput): string {
-  return `${routes.contact}?${estimateToSearchParams(input).toString()}`;
+  const params = estimateToSearchParams(input);
+  if (getPackage(input.packageId).startingPrice !== null) params.set(QUOTE_ESTIMATE_PARAM, "1");
+  return `${routes.contact}?${params.toString()}`;
 }
 
 /** Estimator link with a package pre-selected. */

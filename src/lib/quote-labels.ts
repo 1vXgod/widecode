@@ -1,6 +1,8 @@
+import { addOnIds, pageRules } from "@/config/estimator";
 import { formatPrice, getPackage, packageIds, type PackageId } from "@/config/pricing";
 import type { QuotePackageId } from "@/config/quote";
-import type { EstimateLine } from "@/lib/estimator";
+import { addOnStatus, type EstimateInput, type EstimateLine } from "@/lib/estimator";
+import { formatList } from "@/lib/format";
 import { fill } from "@/lib/template";
 import type { Dictionary } from "@/types/content";
 
@@ -22,6 +24,29 @@ export function packageOptionLabel(id: QuotePackageId, dict: QuoteCopy): string 
       ? dict.pricing.customPrice.toLowerCase()
       : `${dict.pricing.from.toLowerCase()} ${formatPrice(startingPrice)}`;
   return `${dict.pricing.packages[packageId].name} (${price})`;
+}
+
+/**
+ * The configuration behind an estimate that its price lines do not show: the
+ * total number of pages and the features the package already includes.
+ * Shared by the form's estimate card and the email.
+ */
+export function estimateDetailRows(input: EstimateInput, dict: QuoteCopy): Array<[string, string]> {
+  const copy = dict.contactPage.form.estimate;
+  const rows: Array<[string, string]> = [];
+  const rule = pageRules[input.packageId];
+  if (rule && input.pages !== null) {
+    const pages =
+      input.pages > rule.included
+        ? fill(copy.pagesWithIncluded, { count: String(input.pages), included: String(rule.included) })
+        : fill(copy.pagesValue, { count: String(input.pages) });
+    rows.push([copy.pages, pages]);
+  }
+  const included = addOnIds.filter((id) => addOnStatus(id, input.packageId) === "included");
+  if (included.length > 0) {
+    rows.push([copy.includedFeatures, formatList(included.map((id) => dict.estimator.addOns[id].label))]);
+  }
+  return rows;
 }
 
 /** Label of one estimator line, worded like the estimator's own summary. */

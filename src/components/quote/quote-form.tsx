@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useTransition, type FormEvent, type ReactNode } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore, useTransition, type FormEvent, type ReactNode } from "react";
 import Link from "next/link";
 import { AlertCircle, ArrowRight, Calculator, CheckCircle2, ChevronDown, Clock, Info, Loader2, X } from "lucide-react";
 import { submitQuoteRequest } from "@/app/kontakt/actions";
@@ -11,7 +11,8 @@ import { budgetIds, projectTypeIds, quoteLimits, quotePackageIds, timelineIds } 
 import { routes } from "@/config/routes";
 import { cn } from "@/lib/cn";
 import { calculateEstimate, estimateToSearchParams, type EstimateInput } from "@/lib/estimator";
-import { estimateLineLabel, packageOptionLabel, type QuoteCopy } from "@/lib/quote-labels";
+import { applyPrefill, clearStoredDraft, mergeDraft, readStoredDraft, storeDraft } from "@/lib/quote-form-state";
+import { estimateDetailRows, estimateLineLabel, packageOptionLabel, type QuoteCopy } from "@/lib/quote-labels";
 import {
   emptyQuoteValues,
   quoteFields,
@@ -35,6 +36,11 @@ type QuoteFormProps = {
    * reaches the browser.
    */
   available: boolean | null;
+  /**
+   * Keep an unsent draft in this tab (sessionStorage) and restore it. Only for
+   * the real form; the prerendered placeholder must never touch the draft.
+   */
+  keepDraft?: boolean;
   copy: QuoteCopy;
   projectTitles: Record<ProjectSlug, string>;
 };
@@ -48,6 +54,8 @@ function newSubmissionId(): string {
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 12)}`;
 }
 
+const subscribeNothing = () => () => undefined;
+
 function initialValues(prefill: QuotePrefill): QuoteFormValues {
   return { ...emptyQuoteValues, packageId: prefill.packageId ?? "", projectType: prefill.projectType ?? "" };
 }
@@ -57,7 +65,7 @@ function initialValues(prefill: QuotePrefill): QuoteFormValues {
  * the Server Action, which validates again and reports honestly whether the
  * request was emailed. Only an email accepted by Resend leads to the confirmation.
  */
-export function QuoteForm({ prefill, available, copy, projectTitles }: QuoteFormProps) {
+export function QuoteForm({ prefill, available, keepDraft = false, copy, projectTitles }: QuoteFormProps) {
   const text = copy.contactPage;
   const [values, setValues] = useState<QuoteFormValues>(() => initialValues(prefill));
   const [estimate, setEstimate] = useState<EstimateInput | null>(prefill.estimate);
@@ -72,6 +80,39 @@ export function QuoteForm({ prefill, available, copy, projectTitles }: QuoteForm
   const mountedAt = useRef(0);
   const submissionId = useRef("");
   const honeypotRef = useRef<HTMLInputElement>(null);
+
+  // A new URL (e.g. back from the estimator with changed choices) updates the
+  // configuration; contact details and description stay as typed.
+  const prefillKey = JSON.stringify(prefill);
+  const [appliedPrefill, setAppliedPrefill] = useState(prefillKey);
+  if (appliedPrefill !== prefillKey) {
+    setAppliedPrefill(prefillKey);
+    const next = applyPrefill({ values, estimate, projectSlug }, prefill);
+    setValues(next.values);
+    setEstimate(next.estimate);
+    setProjectSlug(next.projectSlug);
+  }
+
+  // After a refresh or a longer detour, restore what the visitor had entered
+  // in this tab (see quote-form-state.ts). Storage only exists in the browser,
+  // so this waits for the first client render (right after hydration).
+  const isClient = useSyncExternalStore(subscribeNothing, () => true, () => false);
+  const [draftChecked, setDraftChecked] = useState(false);
+  if (keepDraft && isClient && !draftChecked) {
+    setDraftChecked(true);
+    const draft = readStoredDraft();
+    if (draft) {
+      const merged = mergeDraft({ values, estimate, projectSlug }, draft, prefill);
+      setValues(merged.values);
+      setEstimate(merged.estimate);
+      setProjectSlug(merged.projectSlug);
+    }
+  }
+
+  // Keeps the draft up to date until the request is sent.
+  useEffect(() => {
+    if (keepDraft && draftChecked && !submitted) storeDraft({ values, estimate, projectSlug });
+  }, [keepDraft, draftChecked, values, estimate, projectSlug, submitted]);
 
   useEffect(() => {
     mountedAt.current = performance.now();
@@ -89,6 +130,7 @@ export function QuoteForm({ prefill, available, copy, projectTitles }: QuoteForm
   // The estimate only belongs to the request while its package is still selected.
   const attachedEstimate = estimate && estimate.packageId === values.packageId ? estimate : null;
   const estimateResult = attachedEstimate ? calculateEstimate(attachedEstimate) : null;
+  const estimateDetails = attachedEstimate ? estimateDetailRows(attachedEstimate, copy) : [];
   const errorCount = Object.keys(errors).length;
 
   function update(field: QuoteField, value: string) {
@@ -134,6 +176,7 @@ export function QuoteForm({ prefill, available, copy, projectTitles }: QuoteForm
       }
       setOutcome(result);
       if (result.status === "sent") {
+        if (keepDraft) clearStoredDraft();
         setSubmitted(values);
         setFocusTarget({ id: SUCCESS_ID });
       } else if (result.status === "invalid") {
@@ -305,6 +348,16 @@ export function QuoteForm({ prefill, available, copy, projectTitles }: QuoteForm
               setFocusTarget({ id: fieldId("packageId") });
             }}
           >
+            {estimateDetails.length > 0 ? (
+              <dl className="mb-3 grid gap-2 border-b border-border pb-3 text-sm">
+                {estimateDetails.map(([label, value]) => (
+                  <div key={label} className="flex justify-between gap-4">
+                    <dt className="text-fg-muted">{label}</dt>
+                    <dd className="text-right font-medium text-fg">{value}</dd>
+                  </div>
+                ))}
+              </dl>
+            ) : null}
             <dl className="grid gap-2 text-sm">
               {estimateResult.lines.map((line) => (
                 <div key={line.kind === "addOn" ? line.addOnId : line.kind} className="flex justify-between gap-4">

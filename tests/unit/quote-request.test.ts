@@ -1,10 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { budgetIds, projectTypeIds, quotePackageIds, timelineIds } from "@/config/quote";
 import { getDictionary } from "@/content";
-import { quoteHref } from "@/lib/quote";
+import { normalizeInput } from "@/lib/estimator";
+import { quoteHref, quoteHrefForEstimate } from "@/lib/quote";
 import {
   cleanLine,
   cleanText,
+  emptyQuotePrefill,
   isValidEmail,
   isValidPhone,
   normalizeQuoteEstimate,
@@ -161,6 +163,39 @@ describe("parseQuotePrefill", () => {
 
   it("never estimates Custom", () => {
     expect(parseQuotePrefill(new URLSearchParams("paketa=custom&faqe=5")).estimate).toBeNull();
+    expect(parseQuotePrefill(new URLSearchParams("paketa=custom&vleresim=1")).estimate).toBeNull();
+  });
+
+  it("recognises estimator links without pages or add-ons by their marker", () => {
+    expect(parseQuotePrefill(new URLSearchParams("paketa=ecommerce&vleresim=1")).estimate).toEqual({
+      packageId: "ecommerce",
+      pages: null,
+      addOns: [],
+    });
+    expect(parseQuotePrefill(new URLSearchParams("paketa=starter&vleresim=1")).estimate).toEqual({
+      packageId: "starter",
+      pages: 1,
+      addOns: [],
+    });
+    // A pricing card's link (no marker) pre-selects the package without claiming an estimate.
+    expect(parseQuotePrefill(new URLSearchParams("paketa=ecommerce")).estimate).toBeNull();
+    // Other marker values, or a marker without a valid package, are ignored.
+    expect(parseQuotePrefill(new URLSearchParams("paketa=ecommerce&vleresim=yes")).estimate).toBeNull();
+    expect(parseQuotePrefill(new URLSearchParams("paketa=premium&vleresim=1"))).toEqual(emptyQuotePrefill);
+    expect(parseQuotePrefill(new URLSearchParams("vleresim=1")).estimate).toBeNull();
+  });
+
+  it("round-trips every estimator link, whatever the package", () => {
+    for (const input of [
+      { packageId: "starter" },
+      { packageId: "business", pages: 12, addOns: ["multilingual", "booking", "analytics"] },
+      { packageId: "professional", pages: 15, addOns: ["multilingual"] },
+      { packageId: "ecommerce", addOns: ["payments", "multilingual"] },
+    ] as const) {
+      const normalized = normalizeInput(input);
+      const params = new URL(quoteHrefForEstimate(normalized), "https://example.test").searchParams;
+      expect(parseQuotePrefill(params).estimate, input.packageId).toEqual(normalized);
+    }
   });
 
   it("references a website concept and uses its package and category", () => {

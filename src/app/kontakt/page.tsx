@@ -1,7 +1,9 @@
 import { Suspense } from "react";
+import { connection } from "next/server";
 import { ArrowRight, Calculator } from "lucide-react";
 import { ContactList } from "@/components/layout/contact-list";
 import { QuoteForm } from "@/components/quote/quote-form";
+import { QuoteFormFromUrl } from "@/components/quote/quote-form-from-url";
 import { PageIntro } from "@/components/sections/page-intro";
 import { ButtonLink } from "@/components/ui/button";
 import { Section } from "@/components/ui/section";
@@ -13,32 +15,21 @@ import { getContactChannels } from "@/lib/contact";
 import { pageMetadata } from "@/lib/metadata";
 import { resolveDeliveryConfig } from "@/lib/quote-delivery";
 import type { QuoteCopy } from "@/lib/quote-labels";
-import { emptyQuotePrefill, parseQuotePrefill } from "@/lib/quote-request";
+import { emptyQuotePrefill } from "@/lib/quote-request";
 
 export const metadata = pageMetadata("contact");
 
-type SearchParams = Promise<Record<string, string | string[] | undefined>>;
-
 /**
- * Reads the pre-selections from the URL and the delivery mode from server
- * environment variables at request time. Only "available or not" reaches the
- * browser, never the delivery mode or its configuration.
+ * Whether quote requests can be delivered, from server environment variables
+ * at request time. Only "available or not" reaches the browser, never the
+ * delivery mode or its configuration.
  */
-async function QuoteFormForRequest({
-  searchParams,
-  copy,
-  projectTitles,
-}: {
-  searchParams: SearchParams;
-  copy: QuoteCopy;
-  projectTitles: Record<ProjectSlug, string>;
-}) {
-  const prefill = parseQuotePrefill(await searchParams);
-  const available = resolveDeliveryConfig().mode !== "disabled";
-  return <QuoteForm prefill={prefill} available={available} copy={copy} projectTitles={projectTitles} />;
+async function deliveryAvailability(): Promise<boolean> {
+  await connection();
+  return resolveDeliveryConfig().mode !== "disabled";
 }
 
-export default function ContactPage({ searchParams }: { searchParams: SearchParams }) {
+export default function ContactPage() {
   const dict = getDictionary();
   const page = dict.contactPage;
   const copy: QuoteCopy = { contactPage: page, pricing: dict.pricing, estimator: dict.estimator };
@@ -54,13 +45,17 @@ export default function ContactPage({ searchParams }: { searchParams: SearchPara
       <Section className="pt-0 sm:pt-0">
         <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] lg:gap-12">
           <div className="min-w-0">
-            {/* The fallback is the empty form, so the prerendered HTML has the same layout. */}
+            {/*
+              The fallback (the empty form, same layout) is only part of the prerendered
+              shell; the pre-filled form replaces it while the page loads. On client-side
+              navigations the form renders at once from the URL (see QuoteFormFromUrl).
+            */}
             <Suspense
               fallback={
                 <QuoteForm prefill={emptyQuotePrefill} available={null} copy={copy} projectTitles={projectTitles} />
               }
             >
-              <QuoteFormForRequest searchParams={searchParams} copy={copy} projectTitles={projectTitles} />
+              <QuoteFormFromUrl availability={deliveryAvailability()} copy={copy} projectTitles={projectTitles} />
             </Suspense>
           </div>
 

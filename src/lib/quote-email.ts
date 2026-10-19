@@ -1,7 +1,7 @@
 import { formatPrice } from "@/config/pricing";
 import { projectHref } from "@/config/projects";
 import { calculateEstimate } from "@/lib/estimator";
-import { estimateLineLabel, packageOptionLabel } from "@/lib/quote-labels";
+import { estimateDetailRows, estimateLineLabel, packageOptionLabel } from "@/lib/quote-labels";
 import type { QuoteRequest } from "@/lib/quote-request";
 import { fill } from "@/lib/template";
 import type { Dictionary } from "@/types/content";
@@ -66,6 +66,7 @@ export function buildQuoteEmail(request: QuoteRequest, meta: QuoteEmailMeta, dic
   const estimateRows: Array<[string, string]> =
     estimate?.kind === "estimate"
       ? [
+          ...estimateDetailRows(estimate.input, dict),
           ...estimate.lines.map((line): [string, string] => [estimateLineLabel(line, dict), formatPrice(line.amount)]),
           [copy.email.estimateTotal, `${dict.pricing.from} ${formatPrice(estimate.total)}`],
         ]

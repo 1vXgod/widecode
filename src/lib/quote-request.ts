@@ -14,7 +14,7 @@ import {
 } from "@/config/quote";
 import { services } from "@/config/services";
 import { ESTIMATE_PARAMS, normalizeInput, parseEstimateParams, readParam, type EstimateInput, type ParamSource } from "@/lib/estimator";
-import { QUOTE_PROJECT_PARAM } from "@/lib/quote";
+import { QUOTE_ESTIMATE_PARAM, QUOTE_PROJECT_PARAM } from "@/lib/quote";
 
 /**
  * Quote request data: sanitization and validation shared by the form (client)
@@ -236,16 +236,19 @@ export type QuotePrefill = {
 export const emptyQuotePrefill: QuotePrefill = { packageId: null, projectType: null, estimate: null, projectSlug: null };
 
 /**
- * Reads ?paketa=…&faqe=…&shtesa=…&projekti=… from pricing, project and
- * estimator links. Unknown or malformed values are ignored, never guessed.
+ * Reads ?paketa=…&faqe=…&shtesa=…&vleresim=1&projekti=… from pricing, project
+ * and estimator links. Unknown or malformed values are ignored, never guessed.
  */
 export function parseQuotePrefill(source: ParamSource): QuotePrefill {
   const project = findProject(readParam(source, QUOTE_PROJECT_PARAM)?.trim() ?? "");
   const requested = readParam(source, ESTIMATE_PARAMS.package)?.trim();
   const packageId = isPackageId(requested) ? requested : (project?.packageId ?? null);
 
+  // Estimator links carry the marker; older links (before it existed) are recognised by pages or add-ons.
   const fromEstimator =
-    readParam(source, ESTIMATE_PARAMS.pages) !== undefined || readParam(source, ESTIMATE_PARAMS.addOns) !== undefined;
+    readParam(source, QUOTE_ESTIMATE_PARAM)?.trim() === "1" ||
+    readParam(source, ESTIMATE_PARAMS.pages) !== undefined ||
+    readParam(source, ESTIMATE_PARAMS.addOns) !== undefined;
   // parseEstimateParams clamps pages and drops unknown or unavailable add-ons.
   const estimate =
     packageId && isPackageId(requested) && fromEstimator && hasEstimate(packageId) ? parseEstimateParams(source) : null;
