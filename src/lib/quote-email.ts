@@ -14,9 +14,14 @@ export type QuoteEmail = {
   replyTo: string;
 };
 
+/**
+ * Everything in the email must be the same when the visitor retries an
+ * unchanged request (see quoteIdempotencyKey), so it carries no send time;
+ * the email's own Date header shows when it arrived.
+ */
 export type QuoteEmailMeta = {
+  /** Random id per form fill, shown as the reference. */
   submissionId: string;
-  submittedAt: Date;
   /** Site origin, for links back to referenced pages. */
   siteUrl: URL;
 };
@@ -66,10 +71,7 @@ export function buildQuoteEmail(request: QuoteRequest, meta: QuoteEmailMeta, dic
         ]
       : [];
 
-  const footerRows: Array<[string, string]> = [
-    [copy.email.submittedAt, meta.submittedAt.toISOString().replace("T", " ").slice(0, 16)],
-    [copy.email.reference, meta.submissionId],
-  ];
+  const footerRows: Array<[string, string]> = [[copy.email.reference, meta.submissionId]];
 
   // Subject lines are a single line by construction (cleanLine), but never trust that here.
   const subject = fill(copy.email.subject, {

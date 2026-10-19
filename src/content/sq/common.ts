@@ -1,6 +1,7 @@
 import type { Dictionary } from "@/types/content";
 import { aboutPage } from "./about-page";
 import { contactPage } from "./contact-page";
+import { errorPage } from "./error-page";
 import { estimator } from "./estimator";
 import { faq } from "./faq";
 import { faqPage } from "./faq-page";
@@ -141,4 +142,5 @@ export const sq = {
     text: "Faqja që po kërkoni nuk ekziston ose është zhvendosur.",
     backHome: "Kthehu në ballinë",
   },
+  errorPage,
 } satisfies Dictionary;

@@ -150,12 +150,17 @@ Legend: `[x]` done · `[ ]` open · `[~]` partial / placeholder
 - [x] `docs/DEPLOYMENT.md`: indexing rules per deployment and step-by-step Google Search Console (Domain property, DNS TXT verification, sitemap submission, URL inspection) and Bing import
 - [ ] **Needs a real domain:** set `NEXT_PUBLIC_SITE_URL`, then Search Console verification and sitemap submission
 
-## Sprint 9: Quality pass
+## Sprint 9: Quality, performance and production readiness ✅
 
-- [ ] Accessibility and keyboard audit across all pages
-- [ ] Lighthouse / performance review (start with: `fetchPriority="high"` for the first concept preview image, the LCP element on `/projektet` and the home page; total blocking time under throttling)
-- [ ] Security headers (CSP etc.)
-- [ ] Full e2e journeys
+- [x] Audit of every page (home, services, about, pricing, estimator, projects, project details, contact, FAQ, 404) against the existing automated coverage: axe on every page at mobile and desktop, keyboard flows, focus outlines, reduced motion, overflow at 360/768/1024/1280px, dead links incl. anchors, console errors, CLS, headings, alt texts, metadata. All passed before changes; gaps found and fixed below
+- [x] Fix: malformed project addresses (e.g. `/projektet/%`) caused an HTTP 500 in `src/proxy.ts`; now a 404
+- [x] Fix: quote email idempotency. The key was reused for every retry of a form while the email contained a per-minute timestamp, so a retry after a lost response or a corrected request got Resend's 409 "different payload" error (the visitor saw "not sent" until reloading). The key now combines the form reference with a hash of the exact email; the send time was dropped from the email (its Date header shows it)
+- [x] Albanian error pages: `app/error.tsx` (retry, back home, error code matching the server log, never the error message) and `app/global-error.tsx`; copy in its own small module so the dictionary is not shipped to the browser
+- [x] Security headers for every response (`next.config.ts`): CSP limited to the site's own origin, `nosniff`, `Referrer-Policy`, `X-Frame-Options: DENY`, `Permissions-Policy`, HSTS. Nonce-based CSP rejected: it would disable prerendering
+- [x] Performance: project cards on `/projektet` are now rendered on the server; the client filter only chooses which to show. The six concept previews no longer ship as JavaScript: page JS 203.8 → 195.2 kB gzipped (measured from the build output; the new error boundary adds 1.0 kB to every page). The first preview, the LCP element from 768px up, is no longer lazy-loaded
+- [x] Measured (mobile 412px, 4× CPU, Slow 4G, busy machine): CLS 0.000 on every page before and after; LCP 1.2–2.0 s. Total blocking time varied ±300 ms between identical runs, so no TBT or LCP improvement is claimed. Other pages' LCP elements are text or the eagerly loaded logo
+- [x] Full visitor journeys (e2e): home → pricing → estimator → quote request with the estimate; on a phone: menu → projects filter → concept → quote request about that concept; both verified in the email received by the mock Resend API. Security headers checked on pages and the 404
+- [ ] Not changed (judged not worth it): hero showcase and estimator stay client components (they are interactive); fonts were already self-hosted with `display: swap`, images already served through `next/image`
 
 ## Open decisions and inputs needed
 

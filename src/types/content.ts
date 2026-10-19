@@ -425,7 +425,6 @@ export interface Dictionary {
       estimateTitle: string;
       estimateTotal: string;
       project: string;
-      submittedAt: string;
       reference: string;
       replyHint: string;
     };
@@ -435,5 +434,12 @@ export interface Dictionary {
     title: string;
     text: string;
     backHome: string;
+  };
+  errorPage: {
+    title: string;
+    text: string;
+    retry: string;
+    backHome: string;
+    reference: string;
   };
 }

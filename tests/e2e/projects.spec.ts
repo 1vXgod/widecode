@@ -167,6 +167,13 @@ test.describe("project detail page", () => {
     await expect(page.getByRole("heading", { level: 1, name: "Faqja nuk u gjet" })).toBeVisible();
   });
 
+  test("answers malformed project addresses with a 404, not a server error", async ({ request }) => {
+    for (const slug of ["%", "%E0%A4%A", "%ZZ"]) {
+      const response = await request.get(`${routes.projects}/${slug}`);
+      expect(response.status(), slug).toBe(404);
+    }
+  });
+
   test("has a working back link", async ({ page }) => {
     await page.goto(`${routes.projects}/studio-fotografie`);
     await page.getByRole("link", { name: "Të gjitha projektet" }).click();

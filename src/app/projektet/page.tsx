@@ -1,11 +1,13 @@
-import { Suspense } from "react";
+import { Suspense, type ReactNode } from "react";
 import { ArrowRight, Calculator } from "lucide-react";
+import { ProjectCard } from "@/components/projects/project-card";
 import { ProjectsBrowser } from "@/components/projects/projects-browser";
 import { ProjectsFromUrl } from "@/components/projects/projects-from-url";
 import { CtaSection } from "@/components/sections/cta-section";
 import { PageIntro } from "@/components/sections/page-intro";
 import { ButtonLink } from "@/components/ui/button";
 import { Section } from "@/components/ui/section";
+import { projects, type ProjectSlug } from "@/config/projects";
 import { getDictionary } from "@/content";
 import { pageMetadata } from "@/lib/metadata";
 import { estimatorHref, quoteHref } from "@/lib/quote";
@@ -15,6 +17,18 @@ export const metadata = pageMetadata("projects");
 export default function ProjectsPage() {
   const dict = getDictionary();
   const page = dict.projectsPage;
+  // Server-rendered cards; the client-side filter only chooses which to show.
+  // The first preview is the largest element on screen from tablet width up, so it is not lazy-loaded.
+  const browserProps = {
+    cards: Object.fromEntries(
+      projects.map((project, index) => [
+        project.slug,
+        <ProjectCard key={project.slug} project={project} copy={dict.projects} headingLevel="h2" eager={index === 0} />,
+      ]),
+    ) as Record<ProjectSlug, ReactNode>,
+    categoryLabels: dict.projects.categories,
+    filterCopy: page.filter,
+  };
 
   return (
     <>
@@ -39,8 +53,8 @@ export default function ProjectsPage() {
 
       <Section className="pt-0 sm:pt-0">
         {/* Fallback = all projects, so the prerendered HTML is complete and stable. */}
-        <Suspense fallback={<ProjectsBrowser initialCategory={null} copy={dict.projects} filterCopy={page.filter} />}>
-          <ProjectsFromUrl copy={dict.projects} filterCopy={page.filter} />
+        <Suspense fallback={<ProjectsBrowser initialCategory={null} {...browserProps} />}>
+          <ProjectsFromUrl {...browserProps} />
         </Suspense>
       </Section>
 

@@ -137,7 +137,8 @@ So a deployment can go live on the `*.vercel.app` address to be reviewed before 
 - **Rate limiting** of the quote form is in memory and therefore per server instance on Vercel (best effort). For a strict limit, add a Vercel Firewall rate-limit rule for `POST` requests to `/kontakt`, or back the limiter with a shared store such as Redis.
 - **Rollback:** in **Deployments**, promote a previous deployment (Instant Rollback) if a release misbehaves.
 - **Server Actions encryption key:** not needed on Vercel. When self-hosting on several instances, set the same `NEXT_SERVER_ACTIONS_ENCRYPTION_KEY` everywhere.
-- Security headers (Content Security Policy and others) are planned for the quality sprint (see `CHECKLIST.md`).
+- **Security headers** are set for every response in [`next.config.ts`](../next.config.ts): a Content Security Policy that allows only the site's own origin (`'unsafe-inline'` scripts are needed by Next.js's prerendered pages; nonces would disable prerendering), `X-Content-Type-Options: nosniff`, `Referrer-Policy`, `X-Frame-Options: DENY`, a restrictive `Permissions-Policy` and HSTS (without `includeSubDomains`, so other subdomains are not forced to HTTPS). Check them after go-live with `curl -I https://<your-domain>/`. Adding analytics, embedded maps/videos or other third-party scripts requires extending the CSP first, otherwise the browser blocks them. The Vercel toolbar on preview deployments is blocked by the CSP too; this does not affect the site.
+- **Errors:** an unexpected error shows the Albanian page "Diçka shkoi keq" with a retry button and an error code; the same code appears in Vercel's **Runtime Logs**, never the error details.
 
 ## 9. Self-hosting instead of Vercel
 

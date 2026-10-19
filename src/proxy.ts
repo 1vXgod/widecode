@@ -3,6 +3,15 @@ import { projectSlugs } from "@/config/projects";
 
 const knownProjects = new Set<string>(projectSlugs);
 
+/** The project slug of a /projektet/<slug> path, or null when its encoding is malformed (e.g. "%E0%A4%A"). */
+function projectSlugFromPath(pathname: string): string | null {
+  try {
+    return decodeURIComponent(pathname.split("/")[2] ?? "");
+  } catch {
+    return null;
+  }
+}
+
 /**
  * Returns a real 404 for unknown project slugs.
  *
@@ -12,8 +21,8 @@ const knownProjects = new Set<string>(projectSlugs);
  * serve the not-found page with a proper 404 status.
  */
 export function proxy(request: NextRequest) {
-  const slug = decodeURIComponent(request.nextUrl.pathname.split("/")[2] ?? "");
-  if (!knownProjects.has(slug)) {
+  const slug = projectSlugFromPath(request.nextUrl.pathname);
+  if (slug === null || !knownProjects.has(slug)) {
     // A path without a route renders app/not-found.tsx with status 404.
     return NextResponse.rewrite(new URL("/_projekti-nuk-ekziston", request.url));
   }

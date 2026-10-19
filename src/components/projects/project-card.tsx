@@ -10,10 +10,12 @@ type ProjectCardProps = {
   copy: Dictionary["projects"];
   /** h3 under a section heading (home), h2 directly under the page h1 (projects page). */
   headingLevel?: "h2" | "h3";
+  /** Load the preview image right away: for the first card when it is the largest element on screen. */
+  eager?: boolean;
 };
 
 /** Card for a website concept: live homepage preview, category, title and tags. */
-export function ProjectCard({ project, copy, headingLevel: Heading = "h3" }: ProjectCardProps) {
+export function ProjectCard({ project, copy, headingLevel: Heading = "h3", eager = false }: ProjectCardProps) {
   const item = copy.items[project.slug];
 
   return (
@@ -24,6 +26,7 @@ export function ProjectCard({ project, copy, headingLevel: Heading = "h3" }: Pro
           device="desktop"
           label={fill(copy.desktopPreviewLabel, { title: item.title })}
           sizes="(min-width: 1024px) 380px, (min-width: 768px) 46vw, 92vw"
+          eager={eager}
           className="transition-transform duration-500 ease-out-expo group-hover:-translate-y-1"
         />
       </div>

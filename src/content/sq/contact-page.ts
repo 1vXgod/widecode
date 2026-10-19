@@ -158,7 +158,6 @@ export const contactPage = {
     estimateTitle: "Vlerësimi orientues nga llogaritësi",
     estimateTotal: "Totali orientues",
     project: "Koncepti i referuar",
-    submittedAt: "Dërguar më (UTC)",
     reference: "Referenca",
     replyHint: "Përgjigjuni këtij email-i për t'i shkruar drejtpërdrejt dërguesit.",
   },

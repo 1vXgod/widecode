@@ -1,16 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { projectCategories, type ProjectCategory } from "@/config/projects";
+import { useEffect, useState, type ReactNode } from "react";
+import { projectCategories, type ProjectCategory, type ProjectSlug } from "@/config/projects";
 import { cn } from "@/lib/cn";
 import { CATEGORY_PARAM, categoryToParam, countByCategory, filterProjects } from "@/lib/projects";
 import { fill } from "@/lib/template";
 import type { Dictionary } from "@/types/content";
-import { ProjectCard } from "./project-card";
 
 type ProjectsBrowserProps = {
   initialCategory: ProjectCategory | null;
-  copy: Dictionary["projects"];
+  /**
+   * The project cards, rendered on the server. This component only decides
+   * which ones to show, so the previews never ship as client JavaScript.
+   */
+  cards: Record<ProjectSlug, ReactNode>;
+  categoryLabels: Dictionary["projects"]["categories"];
   filterCopy: Dictionary["projectsPage"]["filter"];
 };
 
@@ -18,7 +22,7 @@ const counts = countByCategory();
 const total = Object.values(counts).reduce((sum, n) => sum + n, 0);
 
 /** Category filter (toggle buttons) and project grid. The choice is kept in ?kategoria=. */
-export function ProjectsBrowser({ initialCategory, copy, filterCopy }: ProjectsBrowserProps) {
+export function ProjectsBrowser({ initialCategory, cards, categoryLabels, filterCopy }: ProjectsBrowserProps) {
   const [category, setCategory] = useState<ProjectCategory | null>(initialCategory);
   const visible = filterProjects(category);
 
@@ -34,7 +38,7 @@ export function ProjectsBrowser({ initialCategory, copy, filterCopy }: ProjectsB
     { value: null, label: filterCopy.all, count: total },
     ...projectCategories
       .filter((c) => counts[c] > 0)
-      .map((c) => ({ value: c, label: copy.categories[c], count: counts[c] })),
+      .map((c) => ({ value: c, label: categoryLabels[c], count: counts[c] })),
   ];
 
   const results = fill(visible.length === 1 ? filterCopy.resultsOne : filterCopy.resultsMany, {
@@ -81,9 +85,7 @@ export function ProjectsBrowser({ initialCategory, copy, filterCopy }: ProjectsB
       {visible.length > 0 ? (
         <ul className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {visible.map((project) => (
-            <li key={project.slug}>
-              <ProjectCard project={project} copy={copy} headingLevel="h2" />
-            </li>
+            <li key={project.slug}>{cards[project.slug]}</li>
           ))}
         </ul>
       ) : (

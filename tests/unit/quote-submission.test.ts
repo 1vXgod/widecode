@@ -66,7 +66,7 @@ describe("handleQuoteSubmission", () => {
     expect(init.method).toBe("POST");
     const headers = init.headers as Record<string, string>;
     expect(headers.Authorization).toBe("Bearer re_test_secret_key");
-    expect(headers["Idempotency-Key"]).toBe("quote-11111111-2222-3333-4444-555555555555");
+    expect(headers["Idempotency-Key"]).toMatch(/^quote-11111111-2222-3333-4444-555555555555-[0-9a-f]{16}$/);
     expect(body).toMatchObject({
       from: "WideCode <quotes@example.com>",
       to: ["owner@example.com"],
@@ -194,7 +194,31 @@ describe("handleQuoteSubmission", () => {
     await handleQuoteSubmission(submission({ projectSlug: "../admin", submissionId: "bad id\r\nX: y" }), context);
     const { init, body } = sentBody(fetchImpl);
     expect(String(body.text)).not.toContain("admin");
-    expect((init.headers as Record<string, string>)["Idempotency-Key"]).toMatch(/^quote-[0-9a-f-]{36}$/);
+    expect((init.headers as Record<string, string>)["Idempotency-Key"]).toMatch(/^quote-[0-9a-f-]{36}-[0-9a-f]{16}$/);
+  });
+
+  it("retries of an unchanged request reuse the key and body, so Resend sends only one email", async () => {
+    const { fetchImpl, context } = setup();
+    await handleQuoteSubmission(submission(), context);
+    // Minutes later (e.g. the first response was lost): Resend needs the same key AND the same body.
+    await handleQuoteSubmission(submission(), { ...context, now: context.now! + 5 * 60_000 });
+    const [first, retry] = fetchImpl.mock.calls.map(([, init]) => init as RequestInit);
+    expect(retry!.body).toBe(first!.body);
+    const key = (init: RequestInit) => (init.headers as Record<string, string>)["Idempotency-Key"];
+    expect(key(retry!)).toBe(key(first!));
+  });
+
+  it("a corrected request gets a new key, so Resend does not reject it as a conflicting repeat", async () => {
+    const { fetchImpl, context } = setup();
+    await handleQuoteSubmission(submission(), context);
+    const corrected = submission();
+    corrected.values.phone = "+383 44 123 456";
+    await handleQuoteSubmission(corrected, context);
+    const [first, second] = fetchImpl.mock.calls.map(([, init]) => (init as RequestInit).headers as Record<string, string>);
+    expect(second!["Idempotency-Key"]).not.toBe(first!["Idempotency-Key"]);
+    // Both keep the form's reference, and stay within Resend's 256-character limit.
+    expect(second!["Idempotency-Key"]).toMatch(/^quote-11111111-2222-3333-4444-555555555555-/);
+    expect(second!["Idempotency-Key"]!.length).toBeLessThanOrEqual(256);
   });
 });
 
@@ -214,7 +238,7 @@ describe("buildQuoteEmail", () => {
   };
   const email = buildQuoteEmail(
     request,
-    { submissionId: "abc12345", submittedAt: new Date("2026-10-19T08:30:00Z"), siteUrl: new URL("https://example.test") },
+    { submissionId: "abc12345", siteUrl: new URL("https://example.test") },
     getDictionary(),
   );
 
@@ -228,7 +252,7 @@ describe("buildQuoteEmail", () => {
   it("has a readable plain-text version with all fields", () => {
     expect(email.text).toContain("Paketa: Ende nuk e di");
     expect(email.text).toContain("Numri i telefonit: Nuk është dhënë");
-    expect(email.text).toContain("Dërguar më (UTC): 2026-10-19 08:30");
+    expect(email.text).toContain("Referenca: abc12345");
     expect(email.replyTo).toBe("arta@example.com");
   });
 

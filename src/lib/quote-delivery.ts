@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import type { QuoteEmail } from "@/lib/quote-email";
 import { isValidEmail } from "@/lib/quote-request";
 
@@ -95,32 +96,43 @@ export function resolveDeliveryConfig(env: Env = process.env): DeliveryConfig {
 type Logger = Pick<Console, "info" | "warn" | "error">;
 
 /**
+ * Idempotency key for one email: the form's submission id plus a hash of the
+ * exact request body. Resend answers a repeat of the same key and body with the
+ * original result (no second email) for 24 hours, but rejects the same key with
+ * a different body (HTTP 409). Hashing the body means a retry of an unchanged
+ * request is deduplicated, while a corrected request is sent as a new email.
+ */
+export function quoteIdempotencyKey(submissionId: string, body: string): string {
+  return `quote-${submissionId}-${createHash("sha256").update(body).digest("hex").slice(0, 16)}`;
+}
+
+/**
  * Sends the email through Resend's REST API. Returns whether Resend accepted it.
  * Logs only the status and Resend's error name, never the API key or form data.
  */
 export async function sendWithResend(
   config: Extract<DeliveryConfig, { mode: "resend" }>,
   email: QuoteEmail,
-  idempotencyKey: string,
+  submissionId: string,
   { fetchImpl = fetch, log = console }: { fetchImpl?: typeof fetch; log?: Logger } = {},
 ): Promise<boolean> {
+  const body = JSON.stringify({
+    from: config.from,
+    to: config.to,
+    reply_to: email.replyTo,
+    subject: email.subject,
+    text: email.text,
+    html: email.html,
+  });
   try {
     const response = await fetchImpl(config.endpoint, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${config.apiKey}`,
         "Content-Type": "application/json",
-        // Resend ignores repeats of the same key for 24 hours, so a retried request is not emailed twice.
-        "Idempotency-Key": idempotencyKey,
+        "Idempotency-Key": quoteIdempotencyKey(submissionId, body),
       },
-      body: JSON.stringify({
-        from: config.from,
-        to: config.to,
-        reply_to: email.replyTo,
-        subject: email.subject,
-        text: email.text,
-        html: email.html,
-      }),
+      body,
       signal: AbortSignal.timeout(RESEND_TIMEOUT_MS),
       cache: "no-store",
     });

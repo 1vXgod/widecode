@@ -101,11 +101,7 @@ export async function handleQuoteSubmission(raw: unknown, context: SubmissionCon
     typeof raw.submissionId === "string" && SUBMISSION_ID_PATTERN.test(raw.submissionId)
       ? raw.submissionId
       : crypto.randomUUID();
-  const email = buildQuoteEmail(
-    request,
-    { submissionId, submittedAt: new Date(now), siteUrl: siteConfig.url },
-    getDictionary(),
-  );
+  const email = buildQuoteEmail(request, { submissionId, siteUrl: siteConfig.url }, getDictionary());
 
   if (config.mode === "log") {
     // Developer aid only: the visitor gets the same honest "not sent" answer as when delivery is off.
@@ -119,6 +115,6 @@ export async function handleQuoteSubmission(raw: unknown, context: SubmissionCon
     return { status: "rateLimited", retryAfterSeconds: Math.ceil(globalLimit.retryAfterMs / 1000) };
   }
 
-  const sent = await sendWithResend(config, email, `quote-${submissionId}`, { fetchImpl, log });
+  const sent = await sendWithResend(config, email, submissionId, { fetchImpl, log });
   return sent ? { status: "sent" } : { status: "failed" };
 }
