@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@/i18n/link";
 import { Check } from "lucide-react";
 import { SectionHeader } from "@/components/sections/section-header";
 import { serviceIcons } from "@/components/services/service-icons";

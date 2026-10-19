@@ -94,7 +94,7 @@ test.describe("404 pages", () => {
     "/sherbimet/extra",
     "/projektet/nuk-ekziston",
     "/projektet/studio-fotografie/extra",
-    "/en",
+    "/de",
     "/de/leistungen",
     "/fr/services",
     "/brand/nuk-ekziston",

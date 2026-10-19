@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/link";
 import { usePublicPathname } from "@/i18n/use-public-pathname";
 import { cn } from "@/lib/cn";
 import { isActivePath, type NavItem } from "./nav-types";

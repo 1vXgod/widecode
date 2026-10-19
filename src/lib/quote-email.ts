@@ -3,6 +3,7 @@ import { projectHref } from "@/config/projects";
 import { calculateEstimate } from "@/lib/estimator";
 import { estimateDetailRows, estimateLineLabel, packageOptionLabel } from "@/lib/quote-labels";
 import type { QuoteRequest } from "@/lib/quote-request";
+import { defaultLocale } from "@/i18n/config";
 import { fill } from "@/lib/template";
 import type { Dictionary } from "@/types/content";
 
@@ -52,6 +53,8 @@ export function buildQuoteEmail(request: QuoteRequest, meta: QuoteEmailMeta, dic
     [labels.packageId.label, packageOptionLabel(request.packageId, dict)],
     [labels.budget.label, options.budget[request.budget]],
     [labels.timeline.label, options.timeline[request.timeline]],
+    // The email stays in Albanian (for WideCode); this says which language the visitor used.
+    [copy.email.customerLanguage, copy.email.languageNames[request.locale ?? defaultLocale]],
   ];
 
   const project = request.projectSlug

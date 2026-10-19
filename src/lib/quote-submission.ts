@@ -2,6 +2,7 @@ import { findProject } from "@/config/projects";
 import { quoteProtection } from "@/config/quote";
 import { siteConfig } from "@/config/site";
 import { getDictionary } from "@/content";
+import { defaultLocale, isLocale } from "@/i18n/config";
 import { logQuoteEmail, resolveDeliveryConfig, sendWithResend, type DeliveryConfig } from "@/lib/quote-delivery";
 import { buildQuoteEmail } from "@/lib/quote-email";
 import {
@@ -95,6 +96,8 @@ export async function handleQuoteSubmission(raw: unknown, context: SubmissionCon
     ...validation.values,
     estimate: normalizeQuoteEstimate(validation.values.packageId, raw.estimate),
     projectSlug: typeof raw.projectSlug === "string" ? (findProject(raw.projectSlug)?.slug ?? null) : null,
+    // Only a supported language is accepted; anything else (or nothing) counts as Albanian.
+    locale: isLocale(raw.locale) ? raw.locale : defaultLocale,
   };
 
   const submissionId =

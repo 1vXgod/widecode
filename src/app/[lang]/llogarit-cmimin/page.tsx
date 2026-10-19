@@ -1,17 +1,20 @@
+import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Estimator } from "@/components/estimator/estimator";
 import { EstimatorFromUrl } from "@/components/estimator/estimator-from-url";
 import { CtaSection } from "@/components/sections/cta-section";
 import { PageIntro } from "@/components/sections/page-intro";
 import { Section } from "@/components/ui/section";
-import { getDictionary } from "@/content";
+import { getLocale, getPageDictionary } from "@/i18n/server";
 import { normalizeInput } from "@/lib/estimator";
 import { pageMetadata } from "@/lib/metadata";
 
-export const metadata = pageMetadata("estimator");
+export async function generateMetadata(): Promise<Metadata> {
+  return pageMetadata("estimator", undefined, await getLocale());
+}
 
-export default function EstimatorPage() {
-  const dict = getDictionary();
+export default async function EstimatorPage() {
+  const dict = await getPageDictionary();
   const { intro } = dict.estimator;
 
   return (

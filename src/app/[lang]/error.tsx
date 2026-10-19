@@ -5,7 +5,8 @@ import { ButtonLink, buttonClasses } from "@/components/ui/button";
 import { Section } from "@/components/ui/section";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { routes } from "@/config/routes";
-import { errorPage } from "@/content/sq/error-page";
+import { errorPages } from "@/content/error-pages";
+import { useLocale } from "@/i18n/locale-context";
 
 /**
  * Shown in place of a page that failed to render, inside the normal header and
@@ -13,6 +14,7 @@ import { errorPage } from "@/content/sq/error-page";
  * production); only the digest is shown, so it can be matched to the server log.
  */
 export default function ErrorPage({ error, retry }: { error: unknown; retry: () => void }) {
+  const errorPage = errorPages[useLocale()];
   const digest = error instanceof Error && "digest" in error && typeof error.digest === "string" ? error.digest : null;
 
   return (

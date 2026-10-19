@@ -1,21 +1,24 @@
-import Link from "next/link";
+import type { Metadata } from "next";
+import { Link } from "@/i18n/link";
 import { CtaSection } from "@/components/sections/cta-section";
 import { FaqList } from "@/components/sections/faq-list";
 import { PageIntro } from "@/components/sections/page-intro";
 import { JsonLd } from "@/components/seo/json-ld";
 import { Section } from "@/components/ui/section";
 import { faqCategoryIds } from "@/config/faq";
-import { getDictionary } from "@/content";
+import { getLocale, getPageDictionary } from "@/i18n/server";
 import { faqValues, fillFaqItem } from "@/lib/faq";
 import { pageMetadata } from "@/lib/metadata";
 import { faqJsonLd } from "@/lib/seo";
 
-export const metadata = pageMetadata("faq");
+export async function generateMetadata(): Promise<Metadata> {
+  return pageMetadata("faq", undefined, await getLocale());
+}
 
-export default function FaqPage() {
-  const dict = getDictionary();
+export default async function FaqPage() {
+  const dict = await getPageDictionary();
   const page = dict.faqPage;
-  const values = faqValues();
+  const values = faqValues(dict.locale);
   const categories = faqCategoryIds.map((id) => ({
     id,
     title: page.categories[id].title,
@@ -24,7 +27,7 @@ export default function FaqPage() {
 
   return (
     <>
-      <JsonLd data={faqJsonLd(categories.flatMap((category) => category.items))} />
+      <JsonLd data={faqJsonLd(categories.flatMap((category) => category.items), dict.locale)} />
 
       <PageIntro headingId="faq-page-title" eyebrow={page.intro.eyebrow} title={page.intro.title} lead={page.intro.lead}>
         <nav aria-label={page.onThisPage} className="mt-14 animate-fade-up">

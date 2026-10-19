@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { FaqPreview } from "@/components/home/faq-preview";
 import { Hero } from "@/components/home/hero";
 import { PricingPreview } from "@/components/home/pricing-preview";
@@ -8,20 +9,22 @@ import { WhySection } from "@/components/home/why-section";
 import { CtaSection } from "@/components/sections/cta-section";
 import { JsonLd } from "@/components/seo/json-ld";
 import { siteConfig } from "@/config/site";
-import { getDictionary } from "@/content";
+import { getLocale, getPageDictionary } from "@/i18n/server";
 import { homeMetadata } from "@/lib/metadata";
 import { siteJsonLd } from "@/lib/seo";
 
 // The title comes from the layout's default; canonical and social fields are page-specific.
-export const metadata = homeMetadata();
+export async function generateMetadata(): Promise<Metadata> {
+  return homeMetadata(undefined, await getLocale());
+}
 
-export default function HomePage() {
-  const dict = getDictionary();
+export default async function HomePage() {
+  const dict = await getPageDictionary();
 
   return (
     <>
       {/* Structured data needs absolute URLs, so it waits for the production domain. */}
-      {siteConfig.canonicalUrl ? <JsonLd data={siteJsonLd(dict.meta.description, siteConfig.canonicalUrl)} /> : null}
+      {siteConfig.canonicalUrl ? <JsonLd data={siteJsonLd(dict.meta.description, siteConfig.canonicalUrl, dict.locale)} /> : null}
       <Hero copy={dict.home} />
       <ServicesSection copy={dict.services} />
       <ProjectsSection copy={dict.projects} />

@@ -4,39 +4,16 @@ import { bodyClassName, SiteShell } from "@/components/layout/site-shell";
 import { siteConfig } from "@/config/site";
 import { getDictionary } from "@/content";
 import { isLocale, localeMeta, locales } from "@/i18n/config";
-import { baseOpenGraph } from "@/lib/metadata";
+import { siteMetadata } from "@/lib/metadata";
 import { isIndexable } from "@/lib/seo";
 import { htmlClassName } from "../fonts";
 import "../globals.css";
 
-// Site-wide defaults (title template, description, social fields). Albanian
-// until localized metadata arrives with the other languages.
-const dict = getDictionary(siteConfig.locale);
-
-export const metadata: Metadata = {
-  metadataBase: siteConfig.url,
-  title: {
-    default: dict.meta.defaultTitle,
-    template: `%s | ${siteConfig.name}`,
-  },
-  description: dict.meta.description,
-  applicationName: siteConfig.name,
-  openGraph: {
-    ...baseOpenGraph(),
-    title: dict.meta.defaultTitle,
-    description: dict.meta.description,
-  },
-  twitter: {
-    card: "summary_large_image",
-  },
-  // Vercel preview deployments stay out of search results (see also robots.ts).
-  ...(isIndexable() ? {} : { robots: { index: false, follow: false } }),
-  formatDetection: {
-    telephone: false,
-    email: false,
-    address: false,
-  },
-};
+/** Site-wide defaults in the page's language (title template, description, social fields). */
+export async function generateMetadata({ params }: LayoutProps<"/[lang]">): Promise<Metadata> {
+  const { lang } = await params;
+  return isLocale(lang) ? siteMetadata(lang, isIndexable()) : {};
+}
 
 export const viewport: Viewport = {
   themeColor: siteConfig.themeColor,

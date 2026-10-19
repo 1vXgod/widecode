@@ -5,6 +5,7 @@ import { ArrowRight, Check, Info, Minus, Plus, RotateCcw } from "lucide-react";
 import { buttonClasses, ButtonLink } from "@/components/ui/button";
 import { addOns, defaultEstimatorPackage, pageRules } from "@/config/estimator";
 import { formatPrice, packages, type PackageId } from "@/config/pricing";
+import { useLocale } from "@/i18n/locale-context";
 import { cn } from "@/lib/cn";
 import {
   addOnStatus,
@@ -33,6 +34,8 @@ const SUMMARY_ID = "vleresimi";
 export function Estimator({ initialInput, copy, pricing }: EstimatorProps) {
   const [input, setInput] = useState<EstimateInput>(() => normalizeInput(initialInput));
   const [pagesDraft, setPagesDraft] = useState(() => String(normalizeInput(initialInput).pages ?? ""));
+  const locale = useLocale();
+  const price = (amount: number) => formatPrice(amount, locale);
   const estimate = calculateEstimate(input);
   const rule = pageRules[input.packageId];
   const pagesHelpId = useId();
@@ -96,7 +99,7 @@ export function Estimator({ initialInput, copy, pricing }: EstimatorProps) {
   }
 
   const packageName = pricing.packages[input.packageId].name;
-  const totalText = estimate.kind === "estimate" ? formatPrice(estimate.total) : pricing.customPrice;
+  const totalText = estimate.kind === "estimate" ? price(estimate.total) : pricing.customPrice;
   const announcement =
     estimate.kind === "estimate" ? fill(copy.summary.announce, { total: totalText }) : copy.summary.announceQuote;
   const visibleAddOns = addOns.filter((a) => addOnStatus(a.id, input.packageId) !== "unavailable");
@@ -152,7 +155,7 @@ export function Estimator({ initialInput, copy, pricing }: EstimatorProps) {
                         pricing.customPrice
                       ) : (
                         <>
-                          {pricing.from} <span className="font-semibold text-fg">{formatPrice(pkg.startingPrice)}</span>
+                          {pricing.from} <span className="font-semibold text-fg">{price(pkg.startingPrice)}</span>
                         </>
                       )}
                     </span>
@@ -208,7 +211,7 @@ export function Estimator({ initialInput, copy, pricing }: EstimatorProps) {
                 <p id={pagesHelpId} className="text-sm text-fg-muted sm:max-w-xs sm:text-right">
                   {fill(copy.pagesHelp, {
                     count: String(rule.included),
-                    price: formatPrice(rule.extraPagePrice ?? 0),
+                    price: price(rule.extraPagePrice ?? 0),
                   })}
                 </p>
               </div>
@@ -258,7 +261,7 @@ export function Estimator({ initialInput, copy, pricing }: EstimatorProps) {
                           >
                             {included
                               ? copy.addOnState.included
-                              : fill(copy.addOnState.price, { price: formatPrice(addOn.price) })}
+                              : fill(copy.addOnState.price, { price: price(addOn.price) })}
                           </span>
                         </span>
                         <span className="mt-1 block text-sm leading-relaxed text-fg-muted">{text.description}</span>
@@ -297,13 +300,13 @@ export function Estimator({ initialInput, copy, pricing }: EstimatorProps) {
                       : line.kind === "extraPages"
                         ? fill(copy.summary.extraPages, {
                             count: String(line.quantity),
-                            price: formatPrice(line.unitPrice),
+                            price: price(line.unitPrice),
                           })
                         : copy.addOns[line.addOnId].label;
                   return (
                     <div key={line.kind === "addOn" ? line.addOnId : line.kind} className="flex justify-between gap-4">
                       <dt className="text-fg-muted">{label}</dt>
-                      <dd className="shrink-0 font-medium text-fg">{formatPrice(line.amount)}</dd>
+                      <dd className="shrink-0 font-medium text-fg">{price(line.amount)}</dd>
                     </div>
                   );
                 })}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useSyncExternalStore, useTransition, type FormEvent, type ReactNode } from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/link";
 import { AlertCircle, ArrowRight, Calculator, CheckCircle2, ChevronDown, Clock, Info, Loader2, X } from "lucide-react";
 import { submitQuoteRequest } from "@/app/[lang]/kontakt/actions";
 import { buttonClasses, ButtonLink } from "@/components/ui/button";
@@ -9,6 +9,7 @@ import { formatPrice } from "@/config/pricing";
 import { type ProjectSlug } from "@/config/projects";
 import { budgetIds, projectTypeIds, quoteLimits, quotePackageIds, timelineIds } from "@/config/quote";
 import { routes } from "@/config/routes";
+import { defaultLocale } from "@/i18n/config";
 import { cn } from "@/lib/cn";
 import { calculateEstimate, estimateToSearchParams, type EstimateInput } from "@/lib/estimator";
 import { applyPrefill, clearStoredDraft, mergeDraft, readStoredDraft, storeDraft } from "@/lib/quote-form-state";
@@ -164,6 +165,7 @@ export function QuoteForm({ prefill, available, keepDraft = false, copy, project
       website: honeypotRef.current?.value ?? "",
       elapsedMs: Math.round(performance.now() - mountedAt.current),
       submissionId: submissionId.current,
+      locale: copy.locale ?? defaultLocale,
     };
 
     startTransition(async () => {
@@ -362,13 +364,13 @@ export function QuoteForm({ prefill, available, keepDraft = false, copy, project
               {estimateResult.lines.map((line) => (
                 <div key={line.kind === "addOn" ? line.addOnId : line.kind} className="flex justify-between gap-4">
                   <dt className="text-fg-muted">{estimateLineLabel(line, copy)}</dt>
-                  <dd className="shrink-0 font-medium text-fg">{formatPrice(line.amount)}</dd>
+                  <dd className="shrink-0 font-medium text-fg">{formatPrice(line.amount, copy.locale)}</dd>
                 </div>
               ))}
               <div className="mt-1 flex justify-between gap-4 border-t border-border pt-3">
                 <dt className="font-medium text-fg">{copy.estimator.summary.total}</dt>
                 <dd data-testid="quote-estimate-total" className="shrink-0 font-semibold text-fg">
-                  {copy.pricing.from} {formatPrice(estimateResult.total)}
+                  {copy.pricing.from} {formatPrice(estimateResult.total, copy.locale)}
                 </dd>
               </div>
             </dl>

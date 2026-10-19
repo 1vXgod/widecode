@@ -15,7 +15,7 @@ type AddOnListProps = {
 export function AddOnList({ dict }: AddOnListProps) {
   const copy = dict.pricingPage.addOns;
   const names = (ids: readonly PackageId[]) =>
-    formatList(packageIds.filter((id) => ids.includes(id)).map((id) => dict.pricing.packages[id].name));
+    formatList(packageIds.filter((id) => ids.includes(id)).map((id) => dict.pricing.packages[id].name), dict.locale);
 
   const pagePackages = packageIds.filter((id) => pageRules[id]?.extraPagePrice !== undefined);
   const extraPagePrice = pagePackages.map((id) => pageRules[id]?.extraPagePrice).find((p) => p !== undefined);
@@ -34,8 +34,9 @@ export function AddOnList({ dict }: AddOnListProps) {
                   count: String(pageRules[id]?.included ?? 0),
                 }),
               ),
+              dict.locale,
             )}).`,
-            price: fill(copy.perPage, { price: formatPrice(extraPagePrice) }),
+            price: fill(copy.perPage, { price: formatPrice(extraPagePrice, dict.locale) }),
             availability: [fill(copy.availableFor, { packages: names(pagePackages) })],
           },
         ]
@@ -44,7 +45,7 @@ export function AddOnList({ dict }: AddOnListProps) {
       key: addOn.id,
       label: dict.estimator.addOns[addOn.id].label,
       description: dict.estimator.addOns[addOn.id].description,
-      price: `+${formatPrice(addOn.price)}`,
+      price: `+${formatPrice(addOn.price, dict.locale)}`,
       availability: [
         fill(copy.availableFor, { packages: names(addOn.availableFor) }),
         ...(addOn.includedIn?.length ? [fill(copy.includedIn, { packages: names(addOn.includedIn) })] : []),

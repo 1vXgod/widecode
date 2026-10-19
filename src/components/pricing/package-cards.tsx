@@ -1,8 +1,10 @@
-import Link from "next/link";
+import { Link } from "@/i18n/link";
 import { ArrowRight, Calculator, Check, Info } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { ButtonLink } from "@/components/ui/button";
 import { formatPrice, packages, type PricingPackage } from "@/config/pricing";
+import type { Locale } from "@/i18n/config";
+import { getLocale } from "@/i18n/server";
 import { cn } from "@/lib/cn";
 import { estimatorHref, quoteHref } from "@/lib/quote";
 import type { Dictionary } from "@/types/content";
@@ -16,19 +18,30 @@ const customPackage = packages.find((p) => p.startingPrice === null);
  * Package cards for every priced package, from the central pricing config.
  * Pass `estimateCta` to add a link that opens the estimator with the package preselected.
  */
-export function PackageGrid({ copy, estimateCta }: { copy: PricingCopy; estimateCta?: string }) {
+export async function PackageGrid({ copy, estimateCta }: { copy: PricingCopy; estimateCta?: string }) {
+  const locale = await getLocale();
   return (
     <ul className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
       {pricedPackages.map((pkg) => (
         <li key={pkg.id} className="reveal">
-          <PackageCard pkg={pkg} copy={copy} estimateCta={estimateCta} />
+          <PackageCard pkg={pkg} copy={copy} estimateCta={estimateCta} locale={locale} />
         </li>
       ))}
     </ul>
   );
 }
 
-function PackageCard({ pkg, copy, estimateCta }: { pkg: PricingPackage; copy: PricingCopy; estimateCta?: string }) {
+function PackageCard({
+  pkg,
+  copy,
+  estimateCta,
+  locale,
+}: {
+  pkg: PricingPackage;
+  copy: PricingCopy;
+  estimateCta?: string;
+  locale: Locale;
+}) {
   const text = copy.packages[pkg.id];
 
   return (
@@ -49,7 +62,7 @@ function PackageCard({ pkg, copy, estimateCta }: { pkg: PricingPackage; copy: Pr
       <p className="mt-6 flex items-baseline gap-2">
         <span className="text-sm text-fg-subtle">{copy.from}</span>
         <span className="font-display text-4xl font-semibold tracking-tight text-fg">
-          {formatPrice(pkg.startingPrice ?? 0)}
+          {formatPrice(pkg.startingPrice ?? 0, locale)}
         </span>
       </p>
       <ul className="mt-6 grid gap-2.5 border-t border-border pt-6">

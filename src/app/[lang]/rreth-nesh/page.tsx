@@ -1,4 +1,5 @@
-import Link from "next/link";
+import type { Metadata } from "next";
+import { Link } from "@/i18n/link";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -22,12 +23,14 @@ import { Card } from "@/components/ui/card";
 import { Section } from "@/components/ui/section";
 import { routes } from "@/config/routes";
 import { serviceHref, serviceIds } from "@/config/services";
-import { getDictionary } from "@/content";
+import { getLocale, getPageDictionary } from "@/i18n/server";
 import { pageMetadata } from "@/lib/metadata";
 import { quoteHref } from "@/lib/quote";
 import { valueIds, type ValueId } from "@/types/content";
 
-export const metadata = pageMetadata("about");
+export async function generateMetadata(): Promise<Metadata> {
+  return pageMetadata("about", undefined, await getLocale());
+}
 
 const valueIcons: Record<ValueId, LucideIcon> = {
   transparency: BadgeEuro,
@@ -38,8 +41,8 @@ const valueIcons: Record<ValueId, LucideIcon> = {
   partnership: Handshake,
 };
 
-export default function AboutPage() {
-  const dict = getDictionary();
+export default async function AboutPage() {
+  const dict = await getPageDictionary();
   const page = dict.aboutPage;
 
   return (

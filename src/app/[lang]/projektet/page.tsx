@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Suspense, type ReactNode } from "react";
 import { ArrowRight, Calculator } from "lucide-react";
 import { ProjectCard } from "@/components/projects/project-card";
@@ -8,14 +9,16 @@ import { PageIntro } from "@/components/sections/page-intro";
 import { ButtonLink } from "@/components/ui/button";
 import { Section } from "@/components/ui/section";
 import { projects, type ProjectSlug } from "@/config/projects";
-import { getDictionary } from "@/content";
+import { getLocale, getPageDictionary } from "@/i18n/server";
 import { pageMetadata } from "@/lib/metadata";
 import { estimatorHref, quoteHref } from "@/lib/quote";
 
-export const metadata = pageMetadata("projects");
+export async function generateMetadata(): Promise<Metadata> {
+  return pageMetadata("projects", undefined, await getLocale());
+}
 
-export default function ProjectsPage() {
-  const dict = getDictionary();
+export default async function ProjectsPage() {
+  const dict = await getPageDictionary();
   const page = dict.projectsPage;
   // Server-rendered cards; the client-side filter only chooses which to show.
   // The first preview is the largest element on screen from tablet width up, so it is not lazy-loaded.

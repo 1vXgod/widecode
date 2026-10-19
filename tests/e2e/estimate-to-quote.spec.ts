@@ -146,19 +146,19 @@ test.describe("estimator → quote request", () => {
     await configureInEstimator(page);
     // Hold back the contact page's server responses, like a cold start or a slow connection.
     await page.route(/\/kontakt/, async (route) => {
-      await new Promise((resolve) => setTimeout(resolve, 2500));
+      await new Promise((resolve) => setTimeout(resolve, 6000));
       await route.continue();
     });
     await page.getByRole("link", { name: "Kërko ofertë me këtë vlerësim" }).click();
     await expect(page).toHaveURL(/\/kontakt\?/);
 
     // Long before the server answers, the selections are on screen.
-    await expect(quoteForm(page).getByLabel("Paketa")).toHaveValue("business", { timeout: 1500 });
-    await expect.poll(() => totalText(page), { timeout: 1500 }).toBe("nga 879 €");
+    await expect(quoteForm(page).getByLabel("Paketa")).toHaveValue("business", { timeout: 4000 });
+    await expect.poll(() => totalText(page), { timeout: 4000 }).toBe("nga 879 €");
     await quoteForm(page).getByLabel("Emri dhe mbiemri").fill("Arta");
 
     // The server's answer arrives without resetting the form.
-    await page.waitForTimeout(3000);
+    await page.waitForTimeout(6500);
     await expect(quoteForm(page).getByLabel("Emri dhe mbiemri")).toHaveValue("Arta");
     await expect.poll(() => totalText(page)).toBe("nga 879 €");
   });

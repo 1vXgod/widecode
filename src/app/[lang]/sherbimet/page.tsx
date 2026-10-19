@@ -1,4 +1,5 @@
-import Link from "next/link";
+import type { Metadata } from "next";
+import { Link } from "@/i18n/link";
 import { Accessibility, ArrowRight, CodeXml, Gauge, Info, Search, ShieldCheck, Smartphone, type LucideIcon } from "lucide-react";
 import { FaqPreview } from "@/components/home/faq-preview";
 import { CtaSection } from "@/components/sections/cta-section";
@@ -13,13 +14,16 @@ import { getPackage } from "@/config/pricing";
 import { routes } from "@/config/routes";
 import { serviceHref, services } from "@/config/services";
 import { siteConfig } from "@/config/site";
-import { getDictionary } from "@/content";
+import { localizeHref } from "@/i18n/routing";
+import { getLocale, getPageDictionary } from "@/i18n/server";
 import { pageMetadata } from "@/lib/metadata";
 import { quoteHref } from "@/lib/quote";
 import { servicesJsonLd } from "@/lib/seo";
 import { standardIds, type StandardId } from "@/types/content";
 
-export const metadata = pageMetadata("services");
+export async function generateMetadata(): Promise<Metadata> {
+  return pageMetadata("services", undefined, await getLocale());
+}
 
 const standardIcons: Record<StandardId, LucideIcon> = {
   responsive: Smartphone,
@@ -33,8 +37,8 @@ const standardIcons: Record<StandardId, LucideIcon> = {
 /** FAQ entries most relevant to services: cost, timeline and mobile support. */
 const SERVICE_FAQ = [0, 2, 3] as const;
 
-export default function ServicesPage() {
-  const dict = getDictionary();
+export default async function ServicesPage() {
+  const dict = await getPageDictionary();
   const page = dict.servicesPage;
 
   return (
@@ -51,11 +55,12 @@ export default function ServicesPage() {
               return {
                 name: dict.services.items[service.id].title,
                 description: dict.services.items[service.id].summary,
-                path: serviceHref(service.id),
+                path: localizeHref(serviceHref(service.id), dict.locale),
                 startingPrice: prices.length > 0 ? Math.min(...prices) : null,
               };
             }),
             siteConfig.canonicalUrl,
+            dict.locale,
           )}
         />
       ) : null}

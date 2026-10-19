@@ -1,14 +1,16 @@
 import type { Metadata } from "next";
 import { NotFoundContent } from "@/components/sections/not-found-content";
-import { getDictionary } from "@/content";
+import { getPageDictionary } from "@/i18n/server";
 
-const { notFound } = getDictionary();
+export async function generateMetadata(): Promise<Metadata> {
+  const { notFound } = await getPageDictionary();
+  return {
+    title: notFound.title,
+    robots: { index: false },
+  };
+}
 
-export const metadata: Metadata = {
-  title: notFound.title,
-  robots: { index: false },
-};
-
-export default function NotFound() {
+export default async function NotFound() {
+  const { notFound } = await getPageDictionary();
   return <NotFoundContent copy={notFound} />;
 }

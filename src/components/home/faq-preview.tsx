@@ -1,9 +1,10 @@
-import Link from "next/link";
+import { Link } from "@/i18n/link";
 import { ArrowRight } from "lucide-react";
 import { FaqList } from "@/components/sections/faq-list";
 import { Section } from "@/components/ui/section";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { routes } from "@/config/routes";
+import { getLocale } from "@/i18n/server";
 import { fillFaqItem, faqValues } from "@/lib/faq";
 import type { Dictionary } from "@/types/content";
 
@@ -15,8 +16,8 @@ type FaqPreviewProps = {
   itemIndices?: readonly number[];
 };
 
-export function FaqPreview({ copy, itemIndices = DEFAULT_ITEMS }: FaqPreviewProps) {
-  const values = faqValues();
+export async function FaqPreview({ copy, itemIndices = DEFAULT_ITEMS }: FaqPreviewProps) {
+  const values = faqValues(await getLocale());
   const items = itemIndices.flatMap((i) => {
     const item = copy.items[i];
     return item ? [fillFaqItem(item, values)] : [];

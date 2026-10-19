@@ -14,6 +14,7 @@ import {
 } from "@/config/quote";
 import { services } from "@/config/services";
 import { ESTIMATE_PARAMS, normalizeInput, parseEstimateParams, readParam, type EstimateInput, type ParamSource } from "@/lib/estimator";
+import type { Locale } from "@/i18n/config";
 import { QUOTE_ESTIMATE_PARAM, QUOTE_PROJECT_PARAM } from "@/lib/quote";
 
 /**
@@ -64,6 +65,8 @@ export type QuoteRequest = QuoteValues & {
   estimate: EstimateInput | null;
   /** Website concept the visitor came from, if any. */
   projectSlug: ProjectSlug | null;
+  /** Language the visitor used on the site (validated; the server always sets it). */
+  locale?: Locale;
 };
 
 /** Estimator choices sent with the form; the price is always recalculated, never sent. */
@@ -80,6 +83,8 @@ export type QuoteSubmission = {
   elapsedMs: number;
   /** Random id per form fill; makes retries of the same request idempotent. */
   submissionId: string;
+  /** Language of the page the form was sent from; only accepted if it is a supported locale. */
+  locale?: string;
 };
 
 export const emptyQuoteValues: QuoteFormValues = {

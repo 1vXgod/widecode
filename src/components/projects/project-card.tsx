@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@/i18n/link";
 import { ArrowUpRight } from "lucide-react";
 import { projectHref, type Project } from "@/config/projects";
 import { fill } from "@/lib/template";

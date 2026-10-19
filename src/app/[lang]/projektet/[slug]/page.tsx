@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { Link } from "@/i18n/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight, ArrowUpRight, Calculator, Check } from "lucide-react";
 import { PricingDisclaimer } from "@/components/pricing/package-cards";
@@ -10,10 +10,12 @@ import { Card } from "@/components/ui/card";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { formatPrice, getPackage } from "@/config/pricing";
-import { findProject, projectHref, projectSlugs, relatedProjects } from "@/config/projects";
+import { findProject, projectSlugs, relatedProjects } from "@/config/projects";
 import { routes } from "@/config/routes";
 import { serviceHref } from "@/config/services";
 import { getDictionary } from "@/content";
+import { pagePath } from "@/i18n/routing";
+import { getLocale, getPageDictionary } from "@/i18n/server";
 import { seoMetadata } from "@/lib/metadata";
 import { estimatorHref, quoteHref } from "@/lib/quote";
 import { fill } from "@/lib/template";
@@ -27,12 +29,16 @@ export async function generateMetadata({ params }: PageProps<"/[lang]/projektet/
   const { slug } = await params;
   const project = findProject(slug);
   if (!project) return {};
-  const dict = getDictionary();
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
   const item = dict.projects.items[project.slug];
+  const page = { key: "project", slug: project.slug } as const;
   return seoMetadata({
     title: fill(dict.projectsPage.detail.metaTitle, { title: item.title }),
     description: fill(dict.projectsPage.detail.metaDescription, { summary: item.summary }),
-    path: projectHref(project.slug),
+    path: pagePath(locale, page),
+    page,
+    locale,
   });
 }
 
@@ -41,7 +47,7 @@ export default async function ProjectPage({ params }: PageProps<"/[lang]/projekt
   const project = findProject(slug);
   if (!project) notFound();
 
-  const dict = getDictionary();
+  const dict = await getPageDictionary();
   const copy = dict.projectsPage.detail;
   const item = dict.projects.items[project.slug];
   const pkg = getPackage(project.packageId);
@@ -188,7 +194,7 @@ export default async function ProjectPage({ params }: PageProps<"/[lang]/projekt
                   <span className="ml-2 text-fg-muted">
                     {pkg.startingPrice === null
                       ? dict.pricing.customPrice
-                      : `${dict.pricing.from} ${formatPrice(pkg.startingPrice)}`}
+                      : `${dict.pricing.from} ${formatPrice(pkg.startingPrice, dict.locale)}`}
                   </span>
                 </dd>
               </div>

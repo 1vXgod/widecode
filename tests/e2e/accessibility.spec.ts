@@ -16,13 +16,16 @@ async function revealWholePage(page: Page) {
   await page.evaluate(() => window.scrollTo(0, 0));
   // Stop the hero showcase rotation (as a visitor can) so axe never samples a
   // half-finished crossfade between stages.
-  const pause = page.getByRole("button", { name: "Ndalo ndërrimin automatik" });
+  const pause = page.getByRole("button", { name: /Ndalo ndërrimin automatik|Pause automatic switching/ });
   if (await pause.count()) await pause.click();
   await page.mouse.move(0, 0);
   await page.waitForTimeout(800); // longer than the 0.7s reveal and 0.5s crossfade transitions
 }
 
-const pages = ["/", "/sherbimet", "/rreth-nesh", "/cmimet", "/llogarit-cmimin", "/projektet", "/projektet/klinike-dentare", "/kontakt", "/kontakt?paketa=business&faqe=7&shtesa=blog&projekti=klinike-dentare", "/pyetje-te-shpeshta", "/nuk-ekziston"];
+const pages = ["/", "/sherbimet", "/rreth-nesh", "/cmimet", "/llogarit-cmimin", "/projektet", "/projektet/klinike-dentare", "/kontakt", "/kontakt?paketa=business&faqe=7&shtesa=blog&projekti=klinike-dentare", "/pyetje-te-shpeshta", "/nuk-ekziston",
+  // English (Phase B)
+  "/en", "/en/services", "/en/about", "/en/pricing", "/en/price-calculator", "/en/projects", "/en/projects/klinike-dentare",
+  "/en/contact?paketa=business&faqe=7&shtesa=blog&projekti=klinike-dentare", "/en/faq", "/en/does-not-exist"];
 const viewports = [
   { name: "mobile", width: 390, height: 844 },
   { name: "desktop", width: 1280, height: 800 },
@@ -56,4 +59,25 @@ test.describe("axe with mobile menu open", () => {
     const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
     expect(results.violations.map((v) => `${v.id}: ${v.help}`)).toEqual([]);
   });
+});
+
+test.describe("axe with the language menu open", () => {
+  test.use({ viewport: { width: 1280, height: 800 } });
+
+  for (const [path, button] of [
+    ["/", /Ndrysho gjuhën/],
+    ["/en", /Change language/],
+  ] as const) {
+    test(`${path}: open language menu has no detectable violations`, async ({ page }) => {
+      await page.goto(path);
+      // Same preparation as the page checks above: animations finished, hero rotation paused.
+      await revealWholePage(page);
+      await page.getByRole("button", { name: button }).click();
+      await expect(page.getByRole("button", { name: button })).toHaveAttribute("aria-expanded", "true");
+      const results = await new AxeBuilder({ page })
+        .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
+        .analyze();
+      expect(results.violations.map((v) => `${v.id}: ${v.help}`)).toEqual([]);
+    });
+  }
 });

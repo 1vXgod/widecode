@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/link";
 import { usePublicPathname } from "@/i18n/use-public-pathname";
 import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { ArrowRight, Menu, X } from "lucide-react";
@@ -8,6 +8,7 @@ import { Logo } from "@/components/brand/logo";
 import { buttonClasses } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { cn } from "@/lib/cn";
+import { LanguageSwitcher, type LanguageSwitcherLabels } from "./language-switcher";
 import { isActivePath, type NavItem } from "./nav-types";
 
 type MobileMenuProps = {
@@ -22,6 +23,8 @@ type MobileMenuProps = {
   };
   /** Optional content below the links (configured contact details, social links). */
   extra?: ReactNode;
+  /** Labels for the language switcher shown in the menu (omitted: no switcher). */
+  languageLabels?: LanguageSwitcherLabels;
 };
 
 /** Matches Tailwind's `lg` breakpoint, where the desktop nav takes over. */
@@ -31,7 +34,7 @@ const DESKTOP_QUERY = "(min-width: 64rem)";
  * Full-screen mobile navigation built on the native <dialog> element, which
  * provides a focus trap, Escape-to-close and an inert background.
  */
-export function MobileMenu({ items, cta, labels, extra }: MobileMenuProps) {
+export function MobileMenu({ items, cta, labels, extra, languageLabels }: MobileMenuProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState(false);
@@ -130,6 +133,10 @@ export function MobileMenu({ items, cta, labels, extra }: MobileMenuProps) {
             {cta.label}
             <ArrowRight aria-hidden="true" />
           </Link>
+
+          {languageLabels ? (
+            <LanguageSwitcher variant="inline" labels={languageLabels} onSelect={closeMenu} className="mt-8" />
+          ) : null}
 
           {extra ? <div className="mt-10 grid gap-6 border-t border-border pt-8">{extra}</div> : null}
         </Container>

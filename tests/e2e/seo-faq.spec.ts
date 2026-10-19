@@ -1,9 +1,14 @@
 import { expect, test } from "@playwright/test";
 import { projectSlugs } from "../../src/config/projects";
 import { routes } from "../../src/config/routes";
+import { localizedRoutes } from "../../src/i18n/routing";
 import { E2E_SITE_URL } from "./e2e-site";
 
 const allPaths = [...Object.values(routes), ...projectSlugs.map((slug) => `${routes.projects}/${slug}`)];
+const englishPaths = [
+  ...Object.values(localizedRoutes.en),
+  ...projectSlugs.map((slug) => `${localizedRoutes.en.projects}/${slug}`),
+];
 
 test.describe("FAQ page", () => {
   test("is a complete, indexable page with every topic", async ({ page }) => {
@@ -92,7 +97,8 @@ test.describe("search engine metadata", () => {
     const response = await request.get("/sitemap.xml");
     expect(response.headers()["content-type"]).toContain("xml");
     const locs = [...(await response.text()).matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => new URL(m[1]!).pathname);
-    expect(locs).toEqual(allPaths);
+    // Every page in every published language: Albanian, then English (Phase B).
+    expect(locs).toEqual([...allPaths, ...englishPaths]);
     for (const path of locs) expect((await request.get(path)).status(), path).toBe(200);
   });
 

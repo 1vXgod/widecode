@@ -1,6 +1,9 @@
 "use client";
 
-import { errorPage } from "@/content/sq/error-page";
+import { errorPages } from "@/content/error-pages";
+import { localeMeta } from "@/i18n/config";
+import { localizedRoutes } from "@/i18n/routing";
+import { useLocale } from "@/i18n/locale-context";
 import "./globals.css";
 
 /**
@@ -8,8 +11,10 @@ import "./globals.css";
  * replaces the whole document, so it renders its own <html> and <body>.
  */
 export default function GlobalError({ retry }: { error: unknown; retry: () => void }) {
+  const locale = useLocale();
+  const errorPage = errorPages[locale];
   return (
-    <html lang="sq">
+    <html lang={localeMeta[locale].htmlLang}>
       <body className="grid min-h-dvh place-items-center px-6">
         <title>{errorPage.title}</title>
         <main className="max-w-narrow">
@@ -24,8 +29,7 @@ export default function GlobalError({ retry }: { error: unknown; retry: () => vo
               {errorPage.retry}
             </button>
             {/* A full page load, since the app itself may be what failed. */}
-            {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
-            <a href="/" className="inline-flex h-11 items-center rounded-full border border-border-strong px-5 font-medium text-fg">
+            <a href={localizedRoutes[locale].home} className="inline-flex h-11 items-center rounded-full border border-border-strong px-5 font-medium text-fg">
               {errorPage.backHome}
             </a>
           </div>

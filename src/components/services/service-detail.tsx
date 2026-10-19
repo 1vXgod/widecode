@@ -81,7 +81,7 @@ export function ServiceDetail({ service, index, dict }: ServiceDetailProps) {
                       ) : (
                         <>
                           {dict.pricing.from}{" "}
-                          <span className="font-semibold text-fg">{formatPrice(pkg.startingPrice)}</span>
+                          <span className="font-semibold text-fg">{formatPrice(pkg.startingPrice, dict.locale)}</span>
                         </>
                       )}
                     </p>

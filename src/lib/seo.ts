@@ -1,7 +1,8 @@
 import type { MetadataRoute } from "next";
-import { projectHref, projectSlugs } from "@/config/projects";
-import { routes } from "@/config/routes";
 import { siteConfig } from "@/config/site";
+import { getDictionary } from "@/content";
+import { defaultLocale, localeMeta, locales, type Locale } from "@/i18n/config";
+import { allPages, pagePath } from "@/i18n/routing";
 import { getContactChannels, getSocialLinks } from "@/lib/contact";
 import { resolveCanonicalOrigin } from "@/lib/site-url";
 import type { FaqItem } from "@/types/content";
@@ -21,14 +22,27 @@ export function isIndexable(env: Env = process.env): boolean {
 }
 
 /** Every public, indexable page. There are no admin, login or private routes. */
-export function indexablePaths(): string[] {
-  return [...Object.values(routes), ...projectSlugs.map(projectHref)];
+export function indexablePaths(locale: Locale = defaultLocale): string[] {
+  return allPages().map((page) => pagePath(locale, page));
 }
 
 /** Sitemap entries on the canonical origin; empty while the domain is not configured. */
 export function sitemapEntries(origin: URL | null = siteConfig.canonicalUrl): MetadataRoute.Sitemap {
   if (!origin) return [];
-  return indexablePaths().map((path) => ({ url: new URL(path, origin).href }));
+  const url = (path: string) => new URL(path, origin).href;
+  // Every page in every published language, each listing all its language versions
+  // (hreflang, with x-default = Albanian), as Google recommends for multilingual sitemaps.
+  return locales.flatMap((locale) =>
+    allPages().map((page) => ({
+      url: url(pagePath(locale, page)),
+      alternates: {
+        languages: Object.fromEntries([
+          ...locales.map((other) => [localeMeta[other].htmlLang, url(pagePath(other, page))]),
+          ["x-default", url(pagePath(defaultLocale, page))],
+        ]),
+      },
+    })),
+  );
 }
 
 /** robots.txt rules: crawl everything on the configured production domain, nothing elsewhere. */
@@ -38,7 +52,10 @@ export function robotsRules(env: Env = process.env): MetadataRoute.Robots {
   return { rules: { userAgent: "*", allow: "/" }, sitemap: new URL("/sitemap.xml", origin).href };
 }
 
-const KOSOVO = { "@type": "Country", name: "Kosovë" } as const;
+/** The country WideCode serves, named in the page's language. */
+function areaServed(locale: Locale) {
+  return { "@type": "Country", name: getDictionary(locale).meta.country } as const;
+}
 
 function organizationReference(origin: URL) {
   return { "@type": "Organization", "@id": new URL("/#organization", origin).href, name: siteConfig.name };
@@ -49,7 +66,7 @@ function organizationReference(origin: URL) {
  * real contact details and profiles are included; no address, phone number,
  * ratings or other facts are added unless they are configured.
  */
-export function siteJsonLd(description: string, origin: URL) {
+export function siteJsonLd(description: string, origin: URL, locale: Locale = defaultLocale) {
   const channels = getContactChannels(siteConfig.contact);
   const email = channels.find((c) => c.type === "email")?.value;
   const telephone = channels.find((c) => c.type === "phone")?.value;
@@ -60,10 +77,10 @@ export function siteJsonLd(description: string, origin: URL) {
     "@graph": [
       {
         ...organizationReference(origin),
-        url: new URL("/", origin).href,
+        url: new URL(pagePath(locale, { key: "home" }), origin).href,
         logo: new URL("/apple-icon.png", origin).href,
         description,
-        areaServed: KOSOVO,
+        areaServed: areaServed(locale),
         ...(email ? { email } : {}),
         ...(telephone ? { telephone } : {}),
         ...(sameAs.length > 0 ? { sameAs } : {}),
@@ -72,8 +89,8 @@ export function siteJsonLd(description: string, origin: URL) {
         "@type": "WebSite",
         "@id": new URL("/#website", origin).href,
         name: siteConfig.name,
-        url: new URL("/", origin).href,
-        inLanguage: siteConfig.locale,
+        url: new URL(pagePath(locale, { key: "home" }), origin).href,
+        inLanguage: localeMeta[locale].htmlLang,
         publisher: { "@id": new URL("/#organization", origin).href },
       },
     ],
@@ -90,7 +107,7 @@ export type ServiceJsonLdInput = {
 };
 
 /** schema.org Service entries for the services page, with the published starting prices only. */
-export function servicesJsonLd(services: readonly ServiceJsonLdInput[], origin: URL) {
+export function servicesJsonLd(services: readonly ServiceJsonLdInput[], origin: URL, locale: Locale = defaultLocale) {
   return {
     "@context": "https://schema.org",
     "@graph": services.map((service) => ({
@@ -100,7 +117,7 @@ export function servicesJsonLd(services: readonly ServiceJsonLdInput[], origin: 
       serviceType: service.name,
       description: service.description,
       url: new URL(service.path, origin).href,
-      areaServed: KOSOVO,
+      areaServed: areaServed(locale),
       provider: organizationReference(origin),
       ...(service.startingPrice === null
         ? {}
@@ -121,11 +138,11 @@ export function servicesJsonLd(services: readonly ServiceJsonLdInput[], origin: 
 }
 
 /** schema.org FAQPage; answers must already have their placeholders filled. Contains no URLs. */
-export function faqJsonLd(items: readonly FaqItem[]) {
+export function faqJsonLd(items: readonly FaqItem[], locale: Locale = defaultLocale) {
   return {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    inLanguage: siteConfig.locale,
+    inLanguage: localeMeta[locale].htmlLang,
     mainEntity: items.map((item) => ({
       "@type": "Question",
       name: item.question,

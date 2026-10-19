@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Suspense } from "react";
 import { connection } from "next/server";
 import { ArrowRight, Calculator } from "lucide-react";
@@ -10,14 +11,16 @@ import { Section } from "@/components/ui/section";
 import { projectSlugs, type ProjectSlug } from "@/config/projects";
 import { routes } from "@/config/routes";
 import { siteConfig } from "@/config/site";
-import { getDictionary } from "@/content";
+import { getLocale, getPageDictionary } from "@/i18n/server";
 import { getContactChannels } from "@/lib/contact";
 import { pageMetadata } from "@/lib/metadata";
 import { resolveDeliveryConfig } from "@/lib/quote-delivery";
 import type { QuoteCopy } from "@/lib/quote-labels";
 import { emptyQuotePrefill } from "@/lib/quote-request";
 
-export const metadata = pageMetadata("contact");
+export async function generateMetadata(): Promise<Metadata> {
+  return pageMetadata("contact", undefined, await getLocale());
+}
 
 /**
  * Whether quote requests can be delivered, from server environment variables
@@ -29,10 +32,10 @@ async function deliveryAvailability(): Promise<boolean> {
   return resolveDeliveryConfig().mode !== "disabled";
 }
 
-export default function ContactPage() {
-  const dict = getDictionary();
+export default async function ContactPage() {
+  const dict = await getPageDictionary();
   const page = dict.contactPage;
-  const copy: QuoteCopy = { contactPage: page, pricing: dict.pricing, estimator: dict.estimator };
+  const copy: QuoteCopy = { contactPage: page, pricing: dict.pricing, estimator: dict.estimator, locale: dict.locale };
   const projectTitles = Object.fromEntries(
     projectSlugs.map((slug) => [slug, dict.projects.items[slug].title]),
   ) as Record<ProjectSlug, string>;

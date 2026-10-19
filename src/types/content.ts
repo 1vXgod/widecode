@@ -5,6 +5,7 @@ import type { ProjectCategory, ProjectSlug } from "@/config/projects";
 import type { BudgetId, ProjectTypeId, TimelineId } from "@/config/quote";
 import type { ServiceId } from "@/config/services";
 import type { FooterNavGroup, RouteKey } from "@/config/routes";
+import type { Locale } from "@/i18n/config";
 import type { ContactChannel, SocialPlatform } from "@/lib/contact";
 import type { QuoteField, QuoteFieldError } from "@/lib/quote-request";
 
@@ -72,10 +73,14 @@ export interface ShowcaseCopy {
 
 /** Shape every locale dictionary must satisfy (src/content/<locale>). */
 export interface Dictionary {
+  /** The dictionary's language, for locale-aware formatting (prices, lists). */
+  locale: Locale;
   meta: {
     defaultTitle: string;
     description: string;
-    /** Text on the shared social preview image (src/app/opengraph-image.tsx). */
+    /** Country name for structured data (areaServed). */
+    country: string;
+    /** Text on the social preview image (src/app/[lang]/opengraph-image.tsx). */
     ogImage: {
       headline: string;
       subline: string;
@@ -92,6 +97,10 @@ export interface Dictionary {
     menuTitle: string;
     homeLinkLabel: string;
     opensInNewTab: string;
+    /** Name of the language switcher. */
+    language: string;
+    /** Accessible name of the switcher button; uses {language} (the current language). */
+    languageButton: string;
   };
   /** Short labels used in navigation. */
   nav: Record<RouteKey, string>;
@@ -433,6 +442,10 @@ export interface Dictionary {
       project: string;
       reference: string;
       replyHint: string;
+      /** Row with the language the visitor used on the site. */
+      customerLanguage: string;
+      /** Language names, in this dictionary's language. */
+      languageNames: Record<Locale, string>;
     };
   };
   notFound: {

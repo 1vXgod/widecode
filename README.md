@@ -124,13 +124,23 @@ The official logo comes from the `WIDE_CODE_LOGO_PACK` folder. The original file
 
 ## Content and localization
 
-All copy lives in `src/content/sq/` and must satisfy the `Dictionary` type. English and German are being added in phases (routing foundation done; see `docs/CHECKLIST.md`).
+The site is published in **Albanian** (default) and **English**; German follows in a later phase (see `docs/CHECKLIST.md`). All copy lives in `src/content/<locale>/` and must satisfy the `Dictionary` type, so a missing translation is a type error; `tests/unit/i18n.test.ts` also checks that both dictionaries have the same entries and placeholders and that the English one contains no Albanian text. The concept previews (`src/content/sq/concepts.ts`) show websites for fictional Kosovo businesses and stay in Albanian in every language.
+
+- **Server Components** get the page's language from the `[lang]` segment: `getLocale()` / `getPageDictionary()` in [`src/i18n/server.ts`](src/i18n/server.ts). Components that receive the whole dictionary use `dict.locale`.
+- **Client Components** use `useLocale()` ([`src/i18n/locale-context.tsx`](src/i18n/locale-context.tsx)), set by `SiteShell` from the route, so server HTML and browser always agree.
+- **Links** are written with the Albanian routes (`src/config/routes.ts`) and the `Link` from [`src/i18n/link.tsx`](src/i18n/link.tsx) (also inside `ButtonLink`) translates them into the current language, keeping query strings and anchors.
+- **Prices and lists:** `formatPrice(amount, locale)` (`199 €` in Albanian, `€199` in English) and `formatList(items, locale)`; deterministic, never `Intl`. Amounts and rules are the same in every language.
+- **Language switcher** (`src/components/layout/language-switcher.tsx`): header (from `sm`) and mobile menu; opens the same page in the other language with the current query string and anchor (estimator choices, filters, pre-filled form); the quote form's draft carries over through `sessionStorage`. No automatic redirects by browser language or location.
+- **Quote requests** send the page's language with the form; the server accepts only a supported locale (anything else counts as Albanian). The notification email to WideCode stays in Albanian and has a "Gjuha e klientit" row. No confirmation email is sent to customers.
 
 **URLs and languages:** every page lives under `src/app/[lang]/` (folder names are the Albanian slugs), prerendered once per locale in `src/i18n/config.ts`. Public URLs are mapped by [`src/i18n/routing.ts`](src/i18n/routing.ts), applied by [`src/proxy.ts`](src/proxy.ts) on every page request:
 
 - Albanian URLs have no prefix and are unchanged: `/sherbimet` is served by `/sq/sherbimet`; query strings and anchors pass through.
 - `/sq` and `/sq/...` redirect (308) to the unprefixed URL, so every page has one address.
-- Anything that is not a page (unknown paths, project slugs or languages) is sent to a path without a route, which Next.js answers with [`src/app/global-not-found.tsx`](src/app/global-not-found.tsx): the complete Albanian 404 page, status 404 (`experimental.globalNotFound`; a `notFound()` thrown inside the prerendered app would only give a client-rendered error shell with Cache Components).
+- English URLs have the `/en` prefix and their own slugs (`localizedRoutes` in `routing.ts`): `/en/services`, `/en/projects/<slug>`, `/en/pricing`, `/en/price-calculator`, `/en/about`, `/en/faq`, `/en/contact`. The internal Albanian slugs under `/en` (e.g. `/en/sherbimet`) redirect to them. Project slugs, section anchors and query parameter names are the same in every language.
+- Each language has its own social image: `/opengraph-image` and `/en/opengraph-image` (`src/app/[lang]/opengraph-image.tsx`).
+- Anything that is not a page (unknown paths, project slugs or languages) is sent to a path without a route, which Next.js answers with [`src/app/global-not-found.tsx`](src/app/global-not-found.tsx): the complete 404 page, status 404 (`experimental.globalNotFound`; a `notFound()` thrown inside the prerendered app would only give a client-rendered error shell with Cache Components). It is prerendered once for all URLs, so it holds every language and shows the one in the URL (`LocaleViews`); its HTML, also without JavaScript, is Albanian.
+- **SEO per language:** titles, descriptions, canonical URL, `hreflang` alternates (all languages + `x-default` = Albanian), `og:locale` (+ alternates), social image and JSON-LD (`inLanguage`) come from the page's language; the sitemap lists every page in every language with its alternates. As before, all of this is published only on the configured production domain.
 
 Content rules: natural Kosovo Albanian with correct **ë** and **ç**; no invented clients, testimonials, statistics or contact details; prices are indicative starting prices only.
 

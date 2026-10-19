@@ -2,11 +2,11 @@ import { ArrowRight } from "lucide-react";
 import { ButtonLink } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { routes } from "@/config/routes";
-import { getDictionary } from "@/content";
+import { getPageDictionary } from "@/i18n/server";
 
 /** Closing call to action, shared by the home page and inner pages. */
-export function CtaSection() {
-  const { cta } = getDictionary();
+export async function CtaSection() {
+  const { cta } = await getPageDictionary();
 
   return (
     <section aria-labelledby="cta-title" className="pb-section">

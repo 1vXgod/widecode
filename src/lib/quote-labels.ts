@@ -4,10 +4,14 @@ import type { QuotePackageId } from "@/config/quote";
 import { addOnStatus, type EstimateInput, type EstimateLine } from "@/lib/estimator";
 import { formatList } from "@/lib/format";
 import { fill } from "@/lib/template";
+import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/types/content";
 
-/** The dictionary parts the quote labels need (keeps client props small). */
-export type QuoteCopy = Pick<Dictionary, "contactPage" | "pricing" | "estimator">;
+/**
+ * The dictionary parts the quote labels need (keeps client props small).
+ * `locale` sets the price and list notation (Albanian when omitted).
+ */
+export type QuoteCopy = Pick<Dictionary, "contactPage" | "pricing" | "estimator"> & { locale?: Locale };
 
 /**
  * Human-readable labels for quote request values, shared by the form, its
@@ -22,7 +26,7 @@ export function packageOptionLabel(id: QuotePackageId, dict: QuoteCopy): string 
   const price =
     startingPrice === null
       ? dict.pricing.customPrice.toLowerCase()
-      : `${dict.pricing.from.toLowerCase()} ${formatPrice(startingPrice)}`;
+      : `${dict.pricing.from.toLowerCase()} ${formatPrice(startingPrice, dict.locale)}`;
   return `${dict.pricing.packages[packageId].name} (${price})`;
 }
 
@@ -44,7 +48,7 @@ export function estimateDetailRows(input: EstimateInput, dict: QuoteCopy): Array
   }
   const included = addOnIds.filter((id) => addOnStatus(id, input.packageId) === "included");
   if (included.length > 0) {
-    rows.push([copy.includedFeatures, formatList(included.map((id) => dict.estimator.addOns[id].label))]);
+    rows.push([copy.includedFeatures, formatList(included.map((id) => dict.estimator.addOns[id].label), dict.locale)]);
   }
   return rows;
 }
@@ -54,7 +58,7 @@ export function estimateLineLabel(line: EstimateLine, dict: QuoteCopy): string {
   const copy = dict.estimator;
   if (line.kind === "base") return fill(copy.summary.base, { name: dict.pricing.packages[line.packageId].name });
   if (line.kind === "extraPages") {
-    return fill(copy.summary.extraPages, { count: String(line.quantity), price: formatPrice(line.unitPrice) });
+    return fill(copy.summary.extraPages, { count: String(line.quantity), price: formatPrice(line.unitPrice, dict.locale) });
   }
   return copy.addOns[line.addOnId].label;
 }

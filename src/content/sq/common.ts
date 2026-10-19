@@ -16,10 +16,12 @@ import { servicesPage } from "./services-page";
 const cta = "Merr një ofertë";
 
 export const sq = {
+  locale: "sq",
   meta: {
     defaultTitle: "Website dhe online shop me porosi në Kosovë | WideCode",
     description:
       "WideCode ndërton website dhe online shop me porosi për bizneset në Kosovë, me dizajn modern për çdo pajisje dhe çmime fillestare transparente.",
+    country: "Kosovë",
     ogImage: {
       headline: "Website dhe online shop me porosi",
       subline: "Për bizneset në Kosovë · Çmime fillestare transparente",
@@ -36,6 +38,8 @@ export const sq = {
     menuTitle: "Menyja",
     homeLinkLabel: "WideCode — ballina",
     opensInNewTab: "(hapet në skedë të re)",
+    language: "Gjuha",
+    languageButton: "Ndrysho gjuhën (tani: {language})",
   },
   nav: {
     home: "Ballina",

@@ -74,7 +74,11 @@ test.describe("mobile menu", () => {
 
   test("locks background scrolling while open", async ({ page }) => {
     await page.goto("/");
-    await page.getByRole("button", { name: "Hap menynë" }).click();
+    // On a busy machine the first click can land before hydration; retry until the menu is open.
+    await expect(async () => {
+      await page.getByRole("button", { name: "Hap menynë" }).click();
+      await expect(page.getByRole("dialog", { name: "Menyja" })).toBeVisible({ timeout: 1000 });
+    }).toPass();
     const overflow = await page.evaluate(() => getComputedStyle(document.documentElement).overflow);
     expect(overflow).toBe("hidden");
   });

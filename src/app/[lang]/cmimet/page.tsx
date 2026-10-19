@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { ArrowRight, Blocks, Calculator, FileText, Gauge, Layers, Plug, type LucideIcon } from "lucide-react";
 import { FaqPreview } from "@/components/home/faq-preview";
 import { AddOnList } from "@/components/pricing/add-on-list";
@@ -7,12 +8,14 @@ import { PageIntro } from "@/components/sections/page-intro";
 import { SectionHeader } from "@/components/sections/section-header";
 import { ButtonLink } from "@/components/ui/button";
 import { Section } from "@/components/ui/section";
-import { getDictionary } from "@/content";
+import { getLocale, getPageDictionary } from "@/i18n/server";
 import { pageMetadata } from "@/lib/metadata";
 import { estimatorHref, quoteHref } from "@/lib/quote";
 import { priceFactorIds, type PriceFactorId } from "@/types/content";
 
-export const metadata = pageMetadata("pricing");
+export async function generateMetadata(): Promise<Metadata> {
+  return pageMetadata("pricing", undefined, await getLocale());
+}
 
 const factorIcons: Record<PriceFactorId, LucideIcon> = {
   scope: Layers,
@@ -25,8 +28,8 @@ const factorIcons: Record<PriceFactorId, LucideIcon> = {
 /** FAQ entries about prices: cost, why prices are "starting" prices, and timelines. */
 const PRICING_FAQ = [0, 1, 2] as const;
 
-export default function PricingPage() {
-  const dict = getDictionary();
+export default async function PricingPage() {
+  const dict = await getPageDictionary();
   const page = dict.pricingPage;
 
   return (

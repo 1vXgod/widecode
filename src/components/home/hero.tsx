@@ -4,13 +4,14 @@ import { ButtonLink } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { formatPrice, lowestStartingPrice } from "@/config/pricing";
 import { routes } from "@/config/routes";
+import { getLocale } from "@/i18n/server";
 import { fill } from "@/lib/template";
 import type { Dictionary } from "@/types/content";
 import { HeroShowcase } from "./hero-showcase";
 
-export function Hero({ copy }: { copy: Dictionary["home"] }) {
+export async function Hero({ copy }: { copy: Dictionary["home"] }) {
   const { hero } = copy;
-  const priceNote = fill(hero.priceNote, { price: formatPrice(lowestStartingPrice()) });
+  const priceNote = fill(hero.priceNote, { price: formatPrice(lowestStartingPrice(), await getLocale()) });
 
   return (
     // Pulled up behind the transparent header so the backdrop runs edge to edge.
