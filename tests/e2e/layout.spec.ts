@@ -71,6 +71,47 @@ test.describe("scroll reveal", () => {
     });
   }
 
+  // The reveal runs in the root layout, which can hydrate before the page's segments. If it
+  // changed the markup (classes, attributes), React would find attributes on not yet hydrated
+  // elements that the server never rendered: a hydration mismatch. It must only animate.
+  for (const path of ["/", "/cmimet", "/pyetje-te-shpeshta"]) {
+    test(`${path}: revealing never changes the server-rendered markup`, async ({ page }) => {
+      await page.setViewportSize({ width: 390, height: 844 });
+      await page.addInitScript(() => {
+        const changes: string[] = [];
+        (window as unknown as { __revealMutations: string[] }).__revealMutations = changes;
+        new MutationObserver((records) => {
+          for (const record of records) {
+            const target = record.target as Element;
+            if (target.classList.contains("reveal") || target === document.documentElement) {
+              changes.push(`${target.tagName.toLowerCase()}.${String(target.className).slice(0, 40)} [${record.attributeName}]`);
+            }
+          }
+        }).observe(document, { attributes: true, subtree: true });
+      });
+      await page.goto(path);
+      await page.waitForLoadState("networkidle");
+      for (let i = 0; i < 30; i++) {
+        await page.mouse.wheel(0, 500);
+        await page.waitForTimeout(40);
+      }
+      await page.waitForTimeout(800);
+      expect(await page.evaluate(() => (window as unknown as { __revealMutations: string[] }).__revealMutations)).toEqual([]);
+      // ...and still animates: everything scrolled past is fully visible.
+      const states = await revealStates(page);
+      expect(states.filter((s) => s.onScreen && s.opacity < 0.99)).toEqual([]);
+    });
+  }
+
+  test("elements below the fold wait hidden until they are scrolled to", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/");
+    await page.waitForLoadState("networkidle");
+    const below = (await revealStates(page)).filter((s) => !s.onScreen);
+    expect(below.length).toBeGreaterThan(0);
+    expect(below.every((s) => s.opacity < 0.01)).toBe(true);
+  });
+
   test("nothing is hidden without JavaScript", async ({ browser }) => {
     const context = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 390, height: 844 } });
     const page = await context.newPage();

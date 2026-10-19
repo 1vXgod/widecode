@@ -171,6 +171,12 @@ Legend: `[x]` done · `[ ]` open · `[~]` partial / placeholder
 - [x] Unsent draft kept in `sessionStorage` (this tab only, validated like URL input, cleared once sent), so a refresh or a longer detour (Next.js keeps only 3 pages alive) loses nothing
 - [x] Tests: marker parsing and link round-trip for every package, draft parsing incl. tampered storage, configuration rows, email with a tampered estimate (unit); card content, URL changes keep typed details, draft restore and clearing (component); full flow with refresh and mock email, adjusting the estimate, slow server, Starter/E-commerce, direct visit, unknown package, tampered parameters, Custom (e2e)
 
+### Fix: hydration mismatch from the scroll reveal ✅
+
+- [x] Root cause: `ScrollReveal` (root layout) marked on-screen `.reveal` elements with `data-revealed` and set `reveal-ready` on `<html>` in a layout effect. The root layout hydrates before the page segment, so on some loads the attribute landed on server HTML React had not hydrated yet: "attributes of the server rendered HTML didn't match" (reproduced in a clean browser without extensions, e.g. every load of `/cmimet` and `/pyetje-te-shpeshta` in `next dev`; production builds do not report it)
+- [x] Fix: the reveal now uses the Web Animations API (a paused fade-up per element below the fold, played when it scrolls into view) and never changes classes or attributes. Same timing, easing and offset; nothing hidden without JavaScript or with reduced motion; the CSS rules for `.reveal-ready` are gone
+- [x] Tests: the reveal never changes server-rendered markup (MutationObserver during load and scroll; fails on the old implementation), elements below the fold start hidden, plus the existing visibility, reduced-motion, no-JS, axe and CLS tests
+
 ## Open decisions and inputs needed
 
 - [x] Official logo and brand assets (WIDE_CODE_LOGO_PACK, integrated)

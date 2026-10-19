@@ -140,8 +140,12 @@ test.describe("price estimator", () => {
 
   test("never shows a number for Custom Development", async ({ page }) => {
     await openEstimator(page);
-    await page.getByText("Custom", { exact: true }).click();
-    await expect(page.getByRole("radio", { name: /Custom/ })).toBeChecked();
+    // On a busy machine the click can land before hydration: the browser checks the native radio
+    // and React then restores its own state. Retry until the hydrated estimator takes the choice.
+    await expect(async () => {
+      await page.getByText("Custom", { exact: true }).click();
+      await expect(page.getByRole("radio", { name: /Custom/ })).toBeChecked({ timeout: 1000 });
+    }).toPass();
     await expect.poll(() => totalText(page)).toBe("Me ofertë");
     await expect(page.getByTestId("estimate-total").first()).not.toContainText(/\d/);
     const summary = page.getByRole("complementary", { name: "Vlerësimi juaj" });
