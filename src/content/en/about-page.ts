@@ -3,13 +3,14 @@ import type { Dictionary } from "@/types/content";
 /**
  * About page copy. Same rule as the Albanian original: mission, approach and
  * services only; no founding year, team, clients, statistics or achievements
- * unless the owner provides and confirms them.
+ * unless the owner provides and confirms them. No languages of communication
+ * are promised beyond what the owner has confirmed (Albanian).
  */
 export const aboutPage = {
   intro: {
     eyebrow: "About us",
     title: "We build websites with care, clarity and fair pricing",
-    lead: "WideCode is a web development company that builds custom websites, online shops and web applications, mainly for businesses in Kosovo, and also for clients abroad.",
+    lead: "WideCode is a web development company that builds custom websites, online shops and web applications. Our focus is on businesses in Kosovo, and we also welcome projects from clients abroad.",
     primaryCta: "Get a quote",
     secondaryCta: "View services",
   },
@@ -41,7 +42,7 @@ export const aboutPage = {
       },
       communication: {
         title: "Clear communication",
-        text: "We speak Albanian and English, explain things simply and keep you informed at every stage.",
+        text: "We explain things simply and keep you informed at every stage.",
       },
       honesty: {
         title: "Honesty",

@@ -9,6 +9,10 @@ const englishPaths = [
   ...Object.values(localizedRoutes.en),
   ...projectSlugs.map((slug) => `${localizedRoutes.en.projects}/${slug}`),
 ];
+const germanPaths = [
+  ...Object.values(localizedRoutes.de),
+  ...projectSlugs.map((slug) => `${localizedRoutes.de.projects}/${slug}`),
+];
 
 test.describe("FAQ page", () => {
   test("is a complete, indexable page with every topic", async ({ page }) => {
@@ -97,8 +101,8 @@ test.describe("search engine metadata", () => {
     const response = await request.get("/sitemap.xml");
     expect(response.headers()["content-type"]).toContain("xml");
     const locs = [...(await response.text()).matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => new URL(m[1]!).pathname);
-    // Every page in every published language: Albanian, then English (Phase B).
-    expect(locs).toEqual([...allPaths, ...englishPaths]);
+    // Every page in every published language: Albanian, then English (Phase B) and German (Phase C).
+    expect(locs).toEqual([...allPaths, ...englishPaths, ...germanPaths]);
     for (const path of locs) expect((await request.get(path)).status(), path).toBe(200);
   });
 

@@ -7,6 +7,7 @@ import { siteConfig } from "@/config/site";
 import { getContactChannels, getSocialLinks } from "@/lib/contact";
 import { getCurrentYear } from "@/lib/current-year";
 import type { Dictionary } from "@/types/content";
+import { BackToTop } from "./back-to-top";
 import { ContactList } from "./contact-list";
 import { SocialLinks } from "./social-links";
 
@@ -76,12 +77,14 @@ export async function SiteFooter({ dict }: { dict: Dictionary }) {
         </div>
       </Container>
 
-      {/* Legal */}
+      {/* Legal; the right padding keeps the line clear of the back-to-top button on narrow screens. */}
       <Container>
-        <p className="border-t border-border py-6 text-xs text-fg-subtle">
+        <p className="border-t border-border py-6 pe-16 text-xs text-fg-subtle">
           © {year} {siteConfig.name}. {dict.footer.rights}
         </p>
       </Container>
+
+      <BackToTop label={dict.a11y.backToTop} />
     </footer>
   );
 }

@@ -16,7 +16,7 @@ async function revealWholePage(page: Page) {
   await page.evaluate(() => window.scrollTo(0, 0));
   // Stop the hero showcase rotation (as a visitor can) so axe never samples a
   // half-finished crossfade between stages.
-  const pause = page.getByRole("button", { name: /Ndalo ndërrimin automatik|Pause automatic switching/ });
+  const pause = page.getByRole("button", { name: /Ndalo ndërrimin automatik|Pause automatic switching|Automatischen Wechsel anhalten/ });
   if (await pause.count()) await pause.click();
   await page.mouse.move(0, 0);
   await page.waitForTimeout(800); // longer than the 0.7s reveal and 0.5s crossfade transitions
@@ -25,7 +25,10 @@ async function revealWholePage(page: Page) {
 const pages = ["/", "/sherbimet", "/rreth-nesh", "/cmimet", "/llogarit-cmimin", "/projektet", "/projektet/klinike-dentare", "/kontakt", "/kontakt?paketa=business&faqe=7&shtesa=blog&projekti=klinike-dentare", "/pyetje-te-shpeshta", "/nuk-ekziston",
   // English (Phase B)
   "/en", "/en/services", "/en/about", "/en/pricing", "/en/price-calculator", "/en/projects", "/en/projects/klinike-dentare",
-  "/en/contact?paketa=business&faqe=7&shtesa=blog&projekti=klinike-dentare", "/en/faq", "/en/does-not-exist"];
+  "/en/contact?paketa=business&faqe=7&shtesa=blog&projekti=klinike-dentare", "/en/faq", "/en/does-not-exist",
+  // German (Phase C)
+  "/de", "/de/leistungen", "/de/ueber-uns", "/de/preise", "/de/preisrechner", "/de/projekte", "/de/projekte/klinike-dentare",
+  "/de/kontakt?paketa=business&faqe=7&shtesa=blog&projekti=klinike-dentare", "/de/faq", "/de/gibt-es-nicht"];
 const viewports = [
   { name: "mobile", width: 390, height: 844 },
   { name: "desktop", width: 1280, height: 800 },
@@ -67,8 +70,11 @@ test.describe("axe with the language menu open", () => {
   for (const [path, button] of [
     ["/", /Ndrysho gjuhën/],
     ["/en", /Change language/],
+    ["/de", /Sprache wechseln/],
   ] as const) {
     test(`${path}: open language menu has no detectable violations`, async ({ page }) => {
+      // The same budget as the page checks above: revealWholePage scrolls the whole (long) home page.
+      test.setTimeout(60_000);
       await page.goto(path);
       // Same preparation as the page checks above: animations finished, hero rotation paused.
       await revealWholePage(page);

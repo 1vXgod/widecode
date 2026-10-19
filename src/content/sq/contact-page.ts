@@ -165,6 +165,6 @@ export const contactPage = {
     reference: "Referenca",
     replyHint: "Përgjigjuni këtij email-i për t'i shkruar drejtpërdrejt dërguesit.",
     customerLanguage: "Gjuha e klientit",
-    languageNames: { sq: "Shqip", en: "Anglisht" },
+    languageNames: { sq: "Shqip", en: "Anglisht", de: "Gjermanisht" },
   },
 } satisfies Dictionary["contactPage"];

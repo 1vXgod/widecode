@@ -40,6 +40,7 @@ export const sq = {
     opensInNewTab: "(hapet në skedë të re)",
     language: "Gjuha",
     languageButton: "Ndrysho gjuhën (tani: {language})",
+    backToTop: "Kthehu në krye",
   },
   nav: {
     home: "Ballina",

@@ -29,6 +29,16 @@ export const localizedRoutes = {
     faq: "/en/faq",
     contact: "/en/contact",
   },
+  de: {
+    home: "/de",
+    services: "/de/leistungen",
+    projects: "/de/projekte",
+    pricing: "/de/preise",
+    estimator: "/de/preisrechner",
+    about: "/de/ueber-uns",
+    faq: "/de/faq",
+    contact: "/de/kontakt",
+  },
 } as const satisfies Record<Locale, Record<RouteKey, string>>;
 
 /** Route-like metadata files served per language (app/[lang]/opengraph-image.tsx). */
@@ -41,6 +51,18 @@ const LOCALE_FILES = new Set(["opengraph-image"]);
  * a 200 (see below).
  */
 export const NOT_FOUND_SEGMENT = "_nuk-ekziston";
+
+/**
+ * Request header with the language of a URL sent to the 404 page. The proxy
+ * sets it (overwriting any value the client sent), so app/global-not-found.tsx,
+ * which has no route params, renders the page in the URL's language.
+ */
+export const NOT_FOUND_LOCALE_HEADER = "x-widecode-locale";
+
+/** Whether an internal path is the 404 path that resolvePublicPath() returns. */
+export function isNotFoundPath(path: string): boolean {
+  return splitPath(path)[1] === NOT_FOUND_SEGMENT;
+}
 
 const routeKeys = Object.keys(routes) as RouteKey[];
 const knownProjects = new Set<string>(projectSlugs);

@@ -98,7 +98,7 @@ test.describe("prices", () => {
 });
 
 test.describe("language switcher", () => {
-  test("is a keyboard-accessible menu that marks the current language and offers no German yet", async ({ page }) => {
+  test("is a keyboard-accessible menu that marks the current language and offers all three", async ({ page }) => {
     await page.goto("/llogarit-cmimin");
     await page.waitForLoadState("networkidle");
     const button = page.getByRole("button", { name: "Ndrysho gjuhën (tani: Shqip)" });
@@ -106,7 +106,7 @@ test.describe("language switcher", () => {
     await page.keyboard.press("Enter");
     await expect(button).toHaveAttribute("aria-expanded", "true");
     const menu = page.getByRole("navigation", { name: "Gjuha" }).first();
-    await expect(menu.getByRole("link")).toHaveText(["Shqip", "English"]);
+    await expect(menu.getByRole("link")).toHaveText(["Shqip", "English", "Deutsch"]);
     await expect(menu.getByRole("link", { name: "Shqip" })).toHaveAttribute("aria-current", "true");
     await expect(menu.getByRole("link", { name: "English" })).toHaveAttribute("hreflang", "en");
     await page.keyboard.press("Escape");
@@ -227,10 +227,16 @@ test.describe("404 in English", () => {
   test("unknown English URLs get the English 404 page with status 404", async ({ page, request }) => {
     const response = await request.get("/en/does-not-exist", { maxRedirects: 0 });
     expect(response.status()).toBe(404);
-    // The HTML works without JavaScript (the default language's version)…
-    expect(await response.text()).toContain("<title>Faqja nuk u gjet | WideCode</title>");
+    // Rendered on the server in English: complete without JavaScript.
+    const html = await response.text();
+    expect(html).toContain('<html lang="en"');
+    expect(html).toContain("<title>Page not found | WideCode</title>");
+    expect(html).toMatch(/<h1[^>]*>Page not found<\/h1>/);
+    expect(html).toContain('aria-label="Main navigation"');
+    expect(html).not.toContain("Faqja nuk u gjet");
+    expect(html).toContain('name="robots" content="noindex');
 
-    // …and visitors see it in English.
+    // And in the browser, without hydration errors.
     const errors: string[] = [];
     page.on("pageerror", (error) => errors.push(error.message));
     await page.goto("/en/does-not-exist");
@@ -241,15 +247,17 @@ test.describe("404 in English", () => {
     expect(errors).toEqual([]);
   });
 
-  test("German is not published yet", async ({ request }) => {
-    for (const path of ["/de", "/de/leistungen", "/de/kontakt"]) {
-      expect((await request.get(path, { maxRedirects: 0 })).status(), path).toBe(404);
+  test("unknown languages still get the Albanian 404", async ({ request }) => {
+    for (const path of ["/fr", "/es/servicios", "/en-us/services"]) {
+      const response = await request.get(path, { maxRedirects: 0 });
+      expect(response.status(), path).toBe(404);
+      expect(await response.text(), path).toContain('<html lang="sq"');
     }
   });
 });
 
 test.describe("multilingual SEO", () => {
-  test("each page names its own canonical URL and both language versions", async ({ page }) => {
+  test("each page names its own canonical URL and every language version", async ({ page }) => {
     test.slow(); // six pages
     for (const [sqPath, enPath] of [["/", "/en"], ["/llogarit-cmimin", "/en/price-calculator"], ["/projektet/dyqan-veshjesh", "/en/projects/dyqan-veshjesh"]] as const) {
       for (const [path, locale] of [[sqPath, "sq"], [enPath, "en"]] as const) {
@@ -263,13 +271,15 @@ test.describe("multilingual SEO", () => {
         expect(await href('link[rel="alternate"][hreflang="en"]'), path).toBe(url(enPath));
         expect(await href('link[rel="alternate"][hreflang="x-default"]'), path).toBe(url(sqPath));
         await expect(head.locator('meta[property="og:locale"]'), path).toHaveAttribute("content", locale === "en" ? "en_US" : "sq_AL");
-        await expect(head.locator('meta[property="og:locale:alternate"]'), path).toHaveAttribute("content", locale === "en" ? "sq_AL" : "en_US");
+        const alternates = await head.locator('meta[property="og:locale:alternate"]').evaluateAll((tags) => tags.map((tag) => tag.getAttribute("content")));
+        expect(alternates.sort(), path).toEqual(locale === "en" ? ["de_DE", "sq_AL"] : ["de_DE", "en_US"]);
+        expect(await head.locator('link[rel="alternate"][hreflang="de"]').count(), path).toBe(1);
         await expect(head.locator('meta[property="og:image"]'), path).toHaveAttribute("content", locale === "en" ? /\/en\/opengraph-image$/ : /\.example\/opengraph-image$/);
       }
     }
   });
 
-  test("the sitemap lists both languages with their alternates, and every URL exists", async ({ request }) => {
+  test("the sitemap lists the English pages with their alternates, and every URL exists", async ({ request }) => {
     const xml = await (await request.get("/sitemap.xml")).text();
     const urls = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]!);
     expect(urls).toContain(`${E2E_SITE_URL}/en/price-calculator`);
@@ -277,8 +287,8 @@ test.describe("multilingual SEO", () => {
     expect(urls.filter((url) => url.startsWith(`${E2E_SITE_URL}/en`))).toHaveLength(englishPages.length);
     expect(xml).toContain(`hreflang="en" href="${E2E_SITE_URL}/en/price-calculator"`);
     expect(xml).toContain(`hreflang="x-default" href="${E2E_SITE_URL}/llogarit-cmimin"`);
-    expect(xml).not.toContain("/de/");
-    for (const url of urls.filter((u) => u.includes("/en"))) {
+    expect(xml).toContain(`hreflang="de" href="${E2E_SITE_URL}/de/preisrechner"`);
+    for (const url of urls.filter((u) => u.startsWith(`${E2E_SITE_URL}/en`))) {
       expect((await request.get(new URL(url).pathname, { maxRedirects: 0 })).status(), url).toBe(200);
     }
   });

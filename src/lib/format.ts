@@ -1,6 +1,6 @@
 import type { Locale } from "@/i18n/config";
 
-const conjunctions: Record<Locale, string> = { sq: "dhe", en: "and" };
+const conjunctions: Record<Locale, string> = { sq: "dhe", en: "and", de: "und" };
 
 /**
  * Joins items as a list in a language: "A", "A dhe B", "A, B dhe C" (Albanian),

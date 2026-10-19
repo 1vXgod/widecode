@@ -39,10 +39,9 @@ describe("resolvePublicPath", () => {
       "/projektet/nuk-ekziston",
       "/projektet/%E0%A4%A",
       "/projektet/studio-fotografie/extra",
-      "/de",
-      "/de/leistungen",
-      "/de/leistungen",
+      "/fr",
       "/fr/services",
+      "/es/servicios",
       "/foo.php",
       `/${NOT_FOUND_SEGMENT}`,
     ]) {
@@ -77,8 +76,9 @@ describe("locale config", () => {
     expect(defaultLocale).toBe("sq");
     expect(locales).toContain(defaultLocale);
     expect(isLocale("sq")).toBe(true);
-    // English is published (Phase B); German is not yet, so it must not count as a locale.
+    // English (Phase B) and German (Phase C) are published; anything else is not a locale.
     expect(isLocale("en")).toBe(true);
-    for (const value of ["de", "fr", "", null, undefined, 1]) expect(isLocale(value)).toBe(false);
+    expect(isLocale("de")).toBe(true);
+    for (const value of ["fr", "DE", "de-DE", "", null, undefined, 1]) expect(isLocale(value)).toBe(false);
   });
 });

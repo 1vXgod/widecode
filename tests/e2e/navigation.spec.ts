@@ -92,6 +92,8 @@ test.describe("mobile navigation", () => {
 
   test("menu CTA leads to the contact page", async ({ page }) => {
     await page.goto("/");
+    // A click before hydration reaches the button without its handler yet.
+    await page.waitForLoadState("networkidle");
     await page.getByRole("button", { name: "Hap menynë" }).click();
     await page.getByRole("dialog", { name: "Menyja" }).getByRole("link", { name: "Merr një ofertë" }).click();
     await expect(page).toHaveURL(/\/kontakt$/);

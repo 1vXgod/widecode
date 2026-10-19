@@ -8,7 +8,7 @@ import { defaultLocale, isLocale, locales } from "@/i18n/config";
 /**
  * Social preview image (Open Graph and X) per language, generated at build time
  * in the site's colors with the official app icon. Public URLs: /opengraph-image
- * (Albanian) and /en/opengraph-image (see src/i18n/routing.ts). Pages reference
+ * (Albanian), /en/opengraph-image and /de/opengraph-image (see src/i18n/routing.ts). Pages reference
  * it explicitly through baseOpenGraph() in src/lib/metadata.ts, with a localized alt.
  */
 export const alt = getDictionary(defaultLocale).meta.ogImage.alt;

@@ -169,6 +169,6 @@ export const contactPage = {
     reference: "Reference",
     replyHint: "Reply to this email to write directly to the sender.",
     customerLanguage: "Customer's language",
-    languageNames: { sq: "Albanian", en: "English" },
+    languageNames: { sq: "Albanian", en: "English", de: "German" },
   },
 } satisfies Dictionary["contactPage"];

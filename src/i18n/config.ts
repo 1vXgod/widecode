@@ -4,7 +4,7 @@
  * its URLs in routing.ts and a dictionary in src/content) to publish the site
  * in another language.
  */
-export const locales = ["sq", "en"] as const;
+export const locales = ["sq", "en", "de"] as const;
 
 export type Locale = (typeof locales)[number];
 
@@ -29,4 +29,5 @@ export type LocaleMeta = {
 export const localeMeta: Record<Locale, LocaleMeta> = {
   sq: { htmlLang: "sq", ogLocale: "sq_AL", name: "Shqip", short: "SQ" },
   en: { htmlLang: "en", ogLocale: "en_US", name: "English", short: "EN" },
+  de: { htmlLang: "de", ogLocale: "de_DE", name: "Deutsch", short: "DE" },
 };

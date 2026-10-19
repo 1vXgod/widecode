@@ -98,7 +98,7 @@ So a deployment can go live on the `*.vercel.app` address to be reviewed before 
 
 - **Titles and descriptions:** unique Albanian titles (with " | WideCode") and meta descriptions for every page, from `pages` and `meta` in [`src/content/sq/common.ts`](../src/content/sq/common.ts); project pages use their concept's name and summary.
 - **Canonical URLs** without query parameters (pre-fill, filter and estimate parameters never create separate indexable URLs).
-- **Open Graph and X** metadata on every page, with the shared social image `/opengraph-image` (1200×630, generated at build time).
+- **Open Graph and X** metadata on every page, with a social image per language: `/opengraph-image`, `/en/opengraph-image`, `/de/opengraph-image` (1200×630, generated at build time).
 - **Structured data** (JSON-LD), only facts that are configured: Organization and WebSite on the home page, Service (with the published starting prices) on `/sherbimet`, FAQPage on `/pyetje-te-shpeshta`. No address, phone number, ratings, reviews or awards. Email, phone and social profiles are added automatically once set in `src/config/site.ts`.
 - **No private routes:** the site has no admin, login or account pages; every public page is in the sitemap. The 404 page is always `noindex`.
 
@@ -110,7 +110,7 @@ So a deployment can go live on the `*.vercel.app` address to be reviewed before 
 4. At your domain registrar or DNS provider, add that TXT record to the root of the domain (host `@`). Keep it there permanently; removing it removes the verification.
 5. Back in Search Console, click **Verify**. DNS changes can take from a few minutes up to a day; retry if it is not found yet.
    *Alternative:* a **URL prefix** property (`https://example.com/`) can be verified with an HTML meta tag; that would need a small code change (`metadata.verification.google`), so the Domain property is simpler.
-6. Go to **Indexing → Sitemaps**, enter `sitemap.xml` and click **Submit**. The status should become **Success** with 28 discovered URLs today (8 pages and 6 website concepts, in Albanian and English; the number grows with concepts, client projects and languages). Each URL lists its other language versions (`hreflang`), so Google shows the right language to each visitor.
+6. Go to **Indexing → Sitemaps**, enter `sitemap.xml` and click **Submit**. The status should become **Success** with 42 discovered URLs today (8 pages and 6 website concepts, in Albanian, English and German; the number grows with concepts, client projects and languages). Each URL lists its other language versions (`hreflang`), so Google shows the right language to each visitor.
 7. Use **URL inspection** on the home page, then **Request indexing**, to speed up the first crawl. Repeat for the most important pages (services, pricing, contact) if you like.
 8. Over the next days, check **Indexing → Pages** for errors and **Enhancements** for the FAQ and structured data reports.
 9. **Bing Webmaster Tools** (optional, also feeds other search engines): sign in and choose **Import from Google Search Console**. This adds the site and its sitemap without another DNS record.

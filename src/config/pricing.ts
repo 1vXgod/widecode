@@ -45,7 +45,8 @@ const NBSP = " ";
 /**
  * Formats whole-euro amounts for a language. Only the notation changes, never
  * the amount:
- * - Albanian (and German): "199 €", "1299 €", "12 500 €"
+ * - Albanian: "199 €", "1299 €", "12 500 €"
+ * - German: "199 €", "1.299 €", "12.500 €"
  * - English: "€199", "€1,299", "€12,500"
  *
  * Deliberately not Intl.NumberFormat: browsers ship different locale data
@@ -56,6 +57,7 @@ export function formatPrice(amount: number, locale: Locale = "sq"): string {
   const digits = String(Math.round(Math.abs(amount)));
   const sign = amount < 0 ? "-" : "";
   if (locale === "en") return `${sign}€${digits.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
+  if (locale === "de") return `${sign}${digits.replace(/\B(?=(\d{3})+(?!\d))/g, ".")}${NBSP}€`;
   // Albanian groups thousands only from five digits up (like Intl's sq data).
   const grouped = digits.length > 4 ? digits.replace(/\B(?=(\d{3})+(?!\d))/g, NBSP) : digits;
   return `${sign}${grouped}${NBSP}€`;

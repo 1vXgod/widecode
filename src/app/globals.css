@@ -56,6 +56,26 @@
   }
 }
 
+/*
+ * Back-to-top button (src/components/layout/back-to-top.tsx): the page gutter
+ * from the bottom-right edges, clear of the phone's safe areas (home indicator,
+ * rounded corners). While a fixed bar at the bottom of the screen is shown
+ * (marked with data-bottom-bar="shown", e.g. the price calculator's compact
+ * total, only below lg), the button sits above it instead of covering it.
+ */
+.back-to-top {
+  --back-to-top-offset: 0rem;
+  right: calc(var(--spacing-gutter) + env(safe-area-inset-right, 0px));
+  bottom: calc(var(--spacing-gutter) + var(--back-to-top-offset) + env(safe-area-inset-bottom, 0px));
+}
+
+@media (width < 64rem) {
+  html:has([data-bottom-bar="shown"]) .back-to-top {
+    /* The calculator's bar is about 3.4rem tall. */
+    --back-to-top-offset: 4rem;
+  }
+}
+
 /* Respect reduced-motion preferences globally. */
 @media (prefers-reduced-motion: reduce) {
   *,

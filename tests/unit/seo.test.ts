@@ -96,9 +96,9 @@ describe("page metadata", () => {
 describe("sitemap and robots", () => {
   it("lists every page and project on the production domain, without invented dates", () => {
     const entries = sitemapEntries(ORIGIN);
-    // Every published language: Albanian, then English (Phase B).
+    // Every published language: Albanian, then English (Phase B) and German (Phase C).
     expect(entries.map((e) => e.url)).toEqual(
-      [...indexablePaths("sq"), ...indexablePaths("en")].map((path) => new URL(path, ORIGIN).href),
+      [...indexablePaths("sq"), ...indexablePaths("en"), ...indexablePaths("de")].map((path) => new URL(path, ORIGIN).href),
     );
     expect(indexablePaths()).toEqual([...Object.values(routes), ...projectSlugs.map((slug) => `/projektet/${slug}`)]);
     for (const entry of entries) expect(entry.lastModified).toBeUndefined();

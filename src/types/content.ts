@@ -101,6 +101,8 @@ export interface Dictionary {
     language: string;
     /** Accessible name of the switcher button; uses {language} (the current language). */
     languageButton: string;
+    /** Accessible name of the floating button that scrolls back to the top of the page. */
+    backToTop: string;
   };
   /** Short labels used in navigation. */
   nav: Record<RouteKey, string>;

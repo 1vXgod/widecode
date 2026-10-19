@@ -41,6 +41,7 @@ export const en = {
     opensInNewTab: "(opens in a new tab)",
     language: "Language",
     languageButton: "Change language (current: {language})",
+    backToTop: "Back to top",
   },
   nav: {
     home: "Home",

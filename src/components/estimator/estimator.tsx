@@ -63,7 +63,12 @@ export function Estimator({ initialInput, copy, pricing }: EstimatorProps) {
     });
     observer.observe(form);
     observer.observe(summary);
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      // Also when Next.js keeps this page hidden after navigating away: a hidden page's bar must not
+      // count as shown (the back-to-top button rises above a shown bar, see data-bottom-bar below).
+      setShowMobileBar(false);
+    };
   }, []);
 
   /** Applies a change; normalizeInput clamps pages and drops add-ons that no longer apply. */
@@ -362,6 +367,7 @@ export function Estimator({ initialInput, copy, pricing }: EstimatorProps) {
       {/* Compact total on small screens while the summary is out of view. */}
       <div
         aria-hidden="true"
+        data-bottom-bar={showMobileBar ? "shown" : "hidden"}
         className={cn(
           "fixed inset-x-0 bottom-0 z-30 border-t border-border bg-bg/90 backdrop-blur-xl transition-transform duration-300 ease-out-expo lg:hidden",
           showMobileBar ? "translate-y-0" : "translate-y-full",

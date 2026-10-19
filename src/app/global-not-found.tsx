@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import type { ReactNode } from "react";
-import { LocaleViews } from "@/components/layout/locale-views";
+import { headers } from "next/headers";
 import { bodyClassName, SiteShell } from "@/components/layout/site-shell";
 import { NotFoundContent } from "@/components/sections/not-found-content";
 import { siteConfig } from "@/config/site";
 import { getDictionary } from "@/content";
-import { defaultLocale, localeMeta, locales, type Locale } from "@/i18n/config";
+import { defaultLocale, isLocale, localeMeta, type Locale } from "@/i18n/config";
+import { NOT_FOUND_LOCALE_HEADER } from "@/i18n/routing";
 import { siteMetadata } from "@/lib/metadata";
 import { isIndexable } from "@/lib/seo";
 import { htmlClassName } from "./fonts";
@@ -17,39 +17,39 @@ import "./globals.css";
  * The root layout lives in app/[lang], so Next.js serves unmatched URLs from
  * this complete document instead of a layout + not-found.tsx; a notFound()
  * thrown inside the prerendered app would only produce a client-rendered error
- * shell. With Cache Components it is prerendered once for all URLs, so it
- * contains the page in every language and shows the one matching the URL
- * (LocaleViews). The HTML (and the version without JavaScript) is Albanian.
+ * shell. It has no route params, so the proxy passes the URL's language in a
+ * request header, and the page is rendered on the server for each request
+ * (`instant = false`: a blocking route, not prerendered): complete HTML in the
+ * URL's language with its own <html lang>, also without JavaScript.
  */
-const title = (locale: Locale) => `${getDictionary(locale).notFound.title} | ${siteConfig.name}`;
+export const instant = false;
 
-export const metadata: Metadata = {
-  ...siteMetadata(defaultLocale, isIndexable()),
-  // No title here: LocaleViews renders it, so it follows the shown language.
-  title: null,
-  robots: { index: false },
-};
+async function requestLocale(): Promise<Locale> {
+  const value = (await headers()).get(NOT_FOUND_LOCALE_HEADER);
+  return isLocale(value) ? value : defaultLocale;
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await requestLocale();
+  return {
+    ...siteMetadata(locale, isIndexable()),
+    // There is no layout here to apply the title template.
+    title: { absolute: `${getDictionary(locale).notFound.title} | ${siteConfig.name}` },
+    robots: { index: false },
+  };
+}
 
 export { viewport } from "./[lang]/layout";
 
-export default function GlobalNotFound() {
-  const views = Object.fromEntries(
-    locales.map((locale) => {
-      const dict = getDictionary(locale);
-      return [
-        locale,
-        <SiteShell key={locale} dict={dict}>
-          <NotFoundContent copy={dict.notFound} />
-        </SiteShell>,
-      ];
-    }),
-  ) as Record<Locale, ReactNode>;
-  const titles = Object.fromEntries(locales.map((locale) => [locale, title(locale)])) as Record<Locale, string>;
-
+export default async function GlobalNotFound() {
+  const locale = await requestLocale();
+  const dict = getDictionary(locale);
   return (
-    <html lang={localeMeta[defaultLocale].htmlLang} className={htmlClassName}>
+    <html lang={localeMeta[locale].htmlLang} className={htmlClassName}>
       <body className={bodyClassName}>
-        <LocaleViews views={views} titles={titles} />
+        <SiteShell dict={dict}>
+          <NotFoundContent copy={dict.notFound} />
+        </SiteShell>
       </body>
     </html>
   );

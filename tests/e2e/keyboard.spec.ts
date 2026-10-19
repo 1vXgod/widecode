@@ -43,8 +43,10 @@ test.describe("mobile menu", () => {
     // The page behind the modal is inert: tabbing cycles through the dialog and
     // may pass through the browser UI (activeElement = <body>), but never lands
     // on page content outside the dialog.
+    // Enough presses to go round the dialog once, whatever its number of links (e.g. languages).
+    const stops = await dialog.locator("a[href], button").count();
     const locations: string[] = [];
-    for (let i = 0; i < 12; i++) {
+    for (let i = 0; i < stops + 3; i++) {
       await page.keyboard.press("Tab");
       locations.push(
         await page.evaluate(() => {
@@ -65,6 +67,8 @@ test.describe("mobile menu", () => {
 
   test("navigates and closes when a link is chosen", async ({ page }) => {
     await page.goto("/");
+    // A click before hydration reaches the button without its handler yet.
+    await page.waitForLoadState("networkidle");
     await page.getByRole("button", { name: "Hap menynë" }).click();
     const dialog = page.getByRole("dialog", { name: "Menyja" });
     await dialog.getByRole("link", { name: "Shërbimet" }).click();

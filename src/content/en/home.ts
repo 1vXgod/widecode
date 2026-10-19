@@ -85,7 +85,7 @@ export const why = {
     },
     communication: {
       title: "Direct communication",
-      text: "You talk directly to us throughout the project, in Albanian or English.",
+      text: "You talk directly to us throughout the project, with no middlemen.",
     },
   },
 } satisfies Dictionary["why"];
