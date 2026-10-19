@@ -25,7 +25,7 @@ export async function SiteFooter({ dict }: { dict: Dictionary }) {
       <Container className="grid gap-12 py-14 sm:grid-cols-2 sm:py-16 lg:grid-cols-[1.6fr_1fr_1fr_1.3fr]">
         <div className="flex max-w-sm flex-col gap-5 sm:col-span-2 lg:col-span-1">
           <Link href={routes.home} aria-label={dict.a11y.homeLinkLabel} className="self-start rounded-lg">
-            <Logo height={52} />
+            <Logo height={32} />
           </Link>
           <p className="text-sm leading-relaxed text-fg-muted">{dict.footer.tagline}</p>
         </div>

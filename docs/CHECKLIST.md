@@ -43,7 +43,7 @@ Legend: `[x]` done · `[ ]` open · `[~]` partial / placeholder
 ## Brand assets ✅ (between Sprint 2 and Sprint 3)
 
 - [x] Evaluated all 9 files in `WIDE_CODE_LOGO_PACK` on the site background (originals unchanged, SHA-256 verified)
-- [x] Primary logo: `wide-code-dark.png` → `public/brand/wide-code-logo-dark.png` (transparent margin removed only); used in header (44px), mobile menu (44px) and footer (52px)
+- [x] Primary logo: `wide-code-dark.png` → `public/brand/wide-code-logo-dark.png` (transparent margin removed only); used in header (44px), mobile menu (44px) and footer (52px). Replaced in the logo review below
 - [x] Favicon: `wide-code-app-icon-gradient.png` → `src/app/icon.png` (96×96)
 - [x] Apple touch icon: `wide-code-app-icon-gradient.png` → `src/app/apple-icon.png` (180×180 on `#07070a`)
 - [x] Removed the temporary hand-made logo, `icon.svg` and generated `apple-icon.tsx`
@@ -240,6 +240,15 @@ Approved decisions (2026-10-19): localized English and German slugs (Albanian UR
 - [x] Tests: contrast for both themes, logo variants (unit); default from the system, live system changes, toggle and persistence in all three languages, saved choice over system, client-side navigation, language switch, 404, keyboard, phone header, no `<html>`/`<body>` changes, no page errors, no horizontal overflow at 320/390/768/1280 px on 20 pages, axe on 7 pages × 2 viewports, calculator and quote form in the light theme (e2e). The rest of the suite runs in the dark theme (`colorScheme: "dark"` in playwright.config.ts)
 - [ ] Known (pre-existing, not changed): in `next dev`, client-side navigation logs Next's notice that `<html>` has `scroll-behavior: smooth` without `data-scroll-behavior="smooth"` (from the smooth-scrolling rule in globals.css)
 - [ ] Without JavaScript the dark theme is always shown; the browser UI color follows the system setting, not an explicit choice on the site
+
+### Logo review (both themes) ✅
+
+- [x] Reviewed the logo in the header (top and scrolled), mobile menu, footer and About page, dark and light, desktop/tablet/phone, and all 9 files of `WIDE_CODE_LOGO_PACK` (left untouched)
+- [x] Light theme: already right (transparent `wide-code-horizontal.png`), unchanged
+- [x] Dark theme: the logo sat on a visible black rounded box (the navy pill baked into `wide-code-dark.png`, darker than every dark surface, with a lighter rim and wide padding). No transparent dark-background lockup exists in the pack, so the pill was removed from the official artwork: `public/brand/wide-code-logo-on-dark.png` (562×102). Artwork pixels keep their exact colors; edges composited over the pill reproduce the original (> 90 % of pixels within 2 levels; the rest is the pill's own gradient and the symbol's cast shadow on it). No halo on any dark surface (checked at 4×)
+- [x] Same logo size in both themes (26 px header/menu, 32 px footer/About; the symbol matches the previous size); the dark header logo is 31 px narrower, which also eases the 1024 px header
+- [x] Blues: the logo's blue is the palette's `#1034f8`; concept previews untouched
+- [x] Tests: same height in both themes and file aspect ratios (unit); logos per theme in header, footer and mobile menu, not stretched; logo files transparent around the artwork, no baked-in box (e2e)
 
 ## Open decisions and inputs needed
 

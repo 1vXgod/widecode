@@ -118,12 +118,12 @@ The official logo comes from the `WIDE_CODE_LOGO_PACK` folder. The original file
 
 | Site file | Source in pack | Used for |
 | --------- | -------------- | -------- |
-| `public/brand/wide-code-logo-dark.png` (688×174) | `wide-code-dark.png` | Header, mobile menu and footer in the dark theme, rendered by `src/components/brand/logo.tsx` via `next/image` at quality 90 |
-| `public/brand/wide-code-logo-light.png` (694×139) | `wide-code-horizontal.png` | The same places in the light theme (navy "WIDE", blue "CODE"); shown at 60% of the dark logo's height, since it has no pill around it |
+| `public/brand/wide-code-logo-on-dark.png` (562×102, transparent) | `wide-code-dark.png`, without its baked-in navy pill | Header, mobile menu, footer and the About page in the dark theme, rendered by `src/components/brand/logo.tsx` via `next/image` at quality 90 |
+| `public/brand/wide-code-logo-light.png` (694×139, transparent) | `wide-code-horizontal.png` | The same places in the light theme (navy "WIDE", blue "CODE"), at the same height |
 | `src/app/icon.png` (96×96, transparent) | `wide-code-app-icon-gradient.png` | Browser favicon |
 | `src/app/apple-icon.png` (180×180) | `wide-code-app-icon-gradient.png`, on the site background `#07070a` | iOS home-screen icon |
 
-`wide-code-dark.png` is the pack's dark-background version and the only full logo whose "WIDE" wordmark is legible on the near-black theme. The other lockups (`primary`, `horizontal`, `divider-tagline`, `stacked`) use a dark navy wordmark intended for light backgrounds; `horizontal` (transparent, one line) is used in the light theme. To change the logo size, pass `height` to `<Logo />`; the width always follows the file's aspect ratio.
+`wide-code-dark.png` is the pack's dark-background version and the only full logo whose "WIDE" wordmark is legible on the dark theme, but it comes on a navy pill (with a rim and a shadow) that showed as a dark box on every surface. The site file is that artwork without the pill: pixels at least 60 % artwork keep their exact original color (fully opaque); only anti-aliased edge pixels are partly transparent, with the color that reproduces the original exactly over the pill. Nothing was redrawn or recolored. The other lockups (`primary`, `horizontal`, `divider-tagline`, `stacked`) use a dark navy wordmark intended for light backgrounds; `horizontal` (transparent, one line) is used in the light theme. Both site files are cropped to the artwork, so `<Logo height={…} />` renders the same size in both themes (26 px in the header and menu, 32 px in the footer and on the About page); the width follows each file's aspect ratio. A new file name was used for the transparent version, because optimized images are cached by URL (4 hours).
 
 ## Content and localization
 

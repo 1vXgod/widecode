@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { LOGO_DARK, LOGO_LIGHT, LOGO_LIGHT_SCALE, Logo } from "@/components/brand/logo";
+import { LOGO_DARK, LOGO_LIGHT, Logo } from "@/components/brand/logo";
 
 /** Both theme versions are in the markup; CSS shows one (jsdom applies no CSS, so both are found here). */
 function logos() {
@@ -19,13 +19,17 @@ describe("Logo", () => {
     expect(light).toHaveClass("hidden", "light:block");
   });
 
-  it.each([32, 44, 52])("keeps each file's aspect ratio at %ipx high", (height) => {
+  it.each([26, 32, 44])("has the same height in both themes and keeps each file's aspect ratio at %ipx", (height) => {
     render(<Logo height={height} />);
     const { dark, light } = logos();
-    expect(Number(dark.getAttribute("height"))).toBe(height);
-    expect(Number(dark.getAttribute("width")) / height).toBeCloseTo(LOGO_DARK.width / LOGO_DARK.height, 1);
-    const lightHeight = Number(light.getAttribute("height"));
-    expect(lightHeight).toBe(Math.round(height * LOGO_LIGHT_SCALE));
-    expect(Number(light.getAttribute("width")) / lightHeight).toBeCloseTo(LOGO_LIGHT.width / LOGO_LIGHT.height, 1);
+    for (const [img, file] of [[dark, LOGO_DARK], [light, LOGO_LIGHT]] as const) {
+      expect(Number(img.getAttribute("height"))).toBe(height);
+      expect(Number(img.getAttribute("width")) / height).toBeCloseTo(file.width / file.height, 1);
+    }
+  });
+
+  it("defaults to the header size", () => {
+    render(<Logo />);
+    expect(Number(logos().dark.getAttribute("height"))).toBe(26);
   });
 });

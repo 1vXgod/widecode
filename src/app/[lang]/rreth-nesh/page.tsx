@@ -84,7 +84,7 @@ export default async function AboutPage() {
             aria-hidden="true"
             className="absolute -top-24 -right-24 -z-10 size-72 rounded-full bg-accent/25 blur-[90px]"
           />
-          <Logo height={52} />
+          <Logo height={32} />
           <blockquote className="mt-10 font-display text-heading leading-snug font-medium text-fg">
             {page.mission.statement}
           </blockquote>

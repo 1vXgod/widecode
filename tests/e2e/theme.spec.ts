@@ -23,7 +23,7 @@ async function expectTheme(page: Page, theme: "dark" | "light") {
   // The matching logo is shown in the header.
   const shown = page.getByRole("banner").getByRole("img", { name: "WideCode" });
   await expect(shown).toHaveCount(1);
-  await expect(shown).toHaveAttribute("src", new RegExp(theme === "light" ? "logo-light" : "logo-dark"));
+  await expect(shown).toHaveAttribute("src", new RegExp(theme === "light" ? "logo-light" : "logo-on-dark"));
 }
 
 /**
