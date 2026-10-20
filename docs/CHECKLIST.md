@@ -260,12 +260,27 @@ Approved decisions (2026-10-19): localized English and German slugs (Albanian UR
 - [ ] **Owner decision (concept preview):** in the "Local products online shop" concept, the small amber eyebrow (`#b07a12` on cream) is below 4.5:1 contrast (axe: that page in every language, theme and viewport, 12 scans). It is text inside a picture of a fictional brand's website (`role="img"` with a description), which WCAG 1.4.3 exempts, and the concept previews keep their own branding, so it was left unchanged. A slightly darker amber would satisfy axe
 - [ ] Owner review of [CONTENT_REVIEW.md](CONTENT_REVIEW.md)
 
+### Phase D: production readiness audit ✅
+
+- [x] Scroll fix re-verified on the production build and in `next dev`: a page navigation from the bottom of a page lands on the top of the new page in one jump; in-page anchors (FAQ topics) and back-to-top scroll smoothly; with reduced motion all three are instant; browser back works. No console errors or hydration warnings
+- [x] Production build: no warnings, 63 pages generated. Client bundles contain no server-only variable names, Resend keys or the receiving address
+- [x] Browser sweep of the production build: 45 URLs (every page in every language and the three 404s) × dark/light × phone (390 px)/desktop (1280 px) = 180 loads. No console errors or warnings apart from the browser reporting the 404 status of the 404 pages, no failed requests, no horizontal overflow, no broken images, one `h1` per page, the right logo for each theme at its natural aspect ratio. Screenshots reviewed at 390/768/1440 px in both themes (home, contact, German calculator, mobile menu, footer)
+- [x] Fix found by the sweep: on every page without a concept preview, Chrome warned that a stylesheet "was preloaded using link preload but not used". Prefetching the "Projects" link preloaded the project pages' own stylesheet (the concept fonts' `@font-face` rules, 0.9 kB gzipped), which the current page never applied. The concept font variables are now set on `<html>` with the site's fonts, so every page shares one stylesheet (same total size); the concept font files still download only where a preview uses them. Test: no preloaded stylesheet left unused after prefetching (fails without the fix); plus a test that in-page anchors still scroll smoothly
+- [x] Security: security headers on pages (CSP, `nosniff`, `Referrer-Policy`, `X-Frame-Options`, `Permissions-Policy`, HSTS), no `X-Powered-By`; quote action validates and rate-limits untrusted input on the server; no secrets in tracked files or Git history (only the unit tests' fake key); `.env.example` holds no values; `.env*` ignored
+- [x] Dependencies: `npm audit --omit=dev` 0 advisories; the 5 dev-only `braces` advisories unchanged (see Known issues). Patch available: `react`/`react-dom` 19.3.0 → 19.3.1 (no advisory; not applied in this audit)
+- [x] Environment: the variables read by the code, `.env.example` and `docs/DEPLOYMENT.md` match (`NEXT_PUBLIC_SITE_URL`, `RESEND_API_KEY`, `QUOTE_TO_EMAIL`, `QUOTE_FROM_EMAIL`, `QUOTE_DELIVERY`). Without a domain the build is correctly closed to search engines (`noindex, nofollow`, `Disallow: /`, empty sitemap, no canonical); with the test domain the e2e suite checks canonical, `hreflang`, Open Graph, sitemap, robots and JSON-LD
+- [ ] **Needs owner input: privacy policy / legal pages.** The site has none. The quote form collects name, email, phone and project details, and the site addresses visitors in Kosovo and abroad (English, German), so a privacy policy (and, depending on where WideCode is registered, an imprint) is normally expected. Its content needs facts only the owner has (the legal entity or person responsible, address, contact for data requests, how long requests are kept, that Resend processes the emails) and ideally legal review; nothing was written
+- [ ] **Needs owner input:** contact details (the footer and contact page say they will be published soon), production domain, Resend sending domain (`.env.local` uses Resend's sandbox sender, which only delivers to the account owner)
+- [x] Results on the final code: lint and typecheck clean, 315 unit tests and 407 e2e tests passed (`--workers=2`), production build without warnings
+- [x] [LAUNCH.md](LAUNCH.md): the exact values and decisions needed for launch, what is complete, and what to test on the live domain
+
 ## Open decisions and inputs needed
 
 - [x] Official logo and brand assets (WIDE_CODE_LOGO_PACK, integrated)
 - [ ] Production domain (`NEXT_PUBLIC_SITE_URL`)
 - [ ] Real contact details (email, phone, location) and social profile URLs → `src/config/site.ts`
 - [ ] Resend API key, receiving email address and verified sending domain (`RESEND_API_KEY`, `QUOTE_TO_EMAIL`, `QUOTE_FROM_EMAIL`)
+- [ ] Privacy policy (and imprint, if required) with the owner's legal details
 - [ ] Deployment approval (Vercel)
 
 ## Known issues

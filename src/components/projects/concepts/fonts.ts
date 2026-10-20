@@ -3,7 +3,8 @@ import { Bebas_Neue, Cormorant_Garamond } from "next/font/google";
 /**
  * Display fonts used only inside portfolio concept canvases, to give each
  * concept its own character. Not preloaded: they are not needed for the
- * first paint of the page itself.
+ * first paint of the page itself. Their variables are set on <html> (see
+ * src/app/fonts.ts).
  */
 export const conceptSerif = Cormorant_Garamond({
   variable: "--font-concept-serif",

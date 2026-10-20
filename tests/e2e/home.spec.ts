@@ -161,6 +161,23 @@ test.describe("stability", () => {
     expect(problems).toEqual([]);
   });
 
+  test("prefetching other pages preloads no stylesheet the page does not use", async ({ page }) => {
+    // Next.js preloads the CSS of prefetched routes; a route-specific stylesheet (formerly the
+    // concept fonts of the project pages) then sat unused on every other page, and Chrome warned
+    // about it in the console. Every page now shares one stylesheet.
+    for (const path of [routes.services, routes.pricing, routes.faq, routes.contact]) {
+      await page.goto(path);
+      await page.waitForLoadState("networkidle");
+      const unused = await page.evaluate(() => {
+        const applied = new Set([...document.styleSheets].map((sheet) => sheet.href));
+        return [...document.querySelectorAll<HTMLLinkElement>("link[rel=preload][as=style]")]
+          .map((link) => link.href)
+          .filter((href) => !applied.has(href));
+      });
+      expect(unused, path).toEqual([]);
+    }
+  });
+
   for (const [path, viewport] of ["/", "/sherbimet", "/rreth-nesh", "/cmimet", "/llogarit-cmimin", "/projektet", "/projektet/klinike-dentare", "/kontakt", "/kontakt?paketa=business&faqe=7&shtesa=blog", "/pyetje-te-shpeshta"].flatMap((p) =>
     [
       { name: "mobile", width: 390, height: 844 },

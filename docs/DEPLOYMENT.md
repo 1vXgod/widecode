@@ -14,7 +14,7 @@ This guide takes the site from this repository to a live deployment on **Vercel*
 
 ## 1. Before you deploy
 
-Decisions and inputs that only the owner can provide (also tracked in [`CHECKLIST.md`](CHECKLIST.md)):
+Decisions and inputs that only the owner can provide (also tracked in [`CHECKLIST.md`](CHECKLIST.md); the exact values needed and the launch checklist are in [`LAUNCH.md`](LAUNCH.md)):
 
 | Item | Where it goes | Without it |
 | --- | --- | --- |

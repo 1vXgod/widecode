@@ -4,7 +4,6 @@ import type { ProjectSlug } from "@/config/projects";
 import { cn } from "@/lib/cn";
 import { DentalConcept } from "./dental-concept";
 import { FashionConcept } from "./fashion-concept";
-import { conceptFontVariables } from "./fonts";
 import { GymConcept } from "./gym-concept";
 import { LocalProductsConcept } from "./local-products-concept";
 import { PhotographyConcept } from "./photography-concept";
@@ -53,7 +52,7 @@ export function ConceptFrame({ slug, device, label, sizes, eager, className }: C
 
   if (device === "mobile") {
     return (
-      <div role="img" aria-label={label} className={cn(conceptFontVariables, "mx-auto w-full", className)}>
+      <div role="img" aria-label={label} className={cn("mx-auto w-full", className)}>
         <div className="@container rounded-[2.4rem] border-[7px] border-[#1c1c22] bg-black shadow-2xl shadow-black/60">
           <div className="concept-canvas relative aspect-[390/844] overflow-hidden rounded-[1.9rem]" style={canvasStyle}>
             <Concept device="mobile" sizes={sizes} eager={eager} />
@@ -70,7 +69,6 @@ export function ConceptFrame({ slug, device, label, sizes, eager, className }: C
       role="img"
       aria-label={label}
       className={cn(
-        conceptFontVariables,
         "@container overflow-hidden rounded-[0.9rem] border border-white/10 bg-[#0d0d11] shadow-2xl shadow-black/50",
         className,
       )}

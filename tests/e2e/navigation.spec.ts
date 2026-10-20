@@ -135,4 +135,21 @@ test.describe("scrolling on page navigation", () => {
     // No animation frames between the old position and the top of the new page.
     expect(positions.filter((y) => y > 400 && y < start - 1)).toEqual([]);
   });
+
+  test("an in-page anchor still scrolls smoothly", async ({ page }) => {
+    await page.goto(routes.faq);
+    await page.waitForLoadState("networkidle");
+    await page.evaluate(() => {
+      const positions: number[] = [];
+      (window as unknown as { __positions: number[] }).__positions = positions;
+      window.addEventListener("scroll", () => positions.push(window.scrollY), { passive: true });
+    });
+    await page.locator("main a[href='#pas-publikimit']").first().click();
+    await expect(page).toHaveURL(/#pas-publikimit$/);
+    const target = await page.locator("#pas-publikimit").evaluate((el) => el.getBoundingClientRect().top + window.scrollY);
+    await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(target - 200);
+    const positions = await page.evaluate(() => (window as unknown as { __positions: number[] }).__positions);
+    // Several intermediate positions on the way down, not a single jump.
+    expect(new Set(positions.map(Math.round)).size).toBeGreaterThan(3);
+  });
 });
